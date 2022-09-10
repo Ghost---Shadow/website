@@ -1,10 +1,16 @@
-import Content from './blog/content.mdx';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import BlogPage from './pages/BlogPage';
+import LandingPage from './pages/LandingPage';
 
 function App() {
   return (
-    <div>
-      <Content />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="*" element={<LandingPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
