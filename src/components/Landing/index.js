@@ -2,8 +2,10 @@ import {
   Title, Stack, Center, Text, Image, Button,
   Group,
   ActionIcon,
+  useMantineTheme,
 } from '@mantine/core';
 import { IconBrandLinkedin, IconBrandGithub, IconBrandStackoverflow } from '@tabler/icons';
+import { useMediaQuery } from '@mantine/hooks';
 import IllustrationSvg from '../../assets/illustration.svg';
 
 function SocialMediaLinks() {
@@ -46,13 +48,42 @@ function SocialMediaLinks() {
   );
 }
 
-function Landing() {
+function ButtonGroup() {
   const onBellClick = () => {
     const audio = new Audio('/assets/service-bell-ring-14610.mp3');
     audio.currentTime = 0.1;
     audio.play();
   };
+  return (
+    <>
+      <Button
+        variant="outline"
+        color="dark"
+        radius="xs"
+        component="a"
+        href="/blog"
+      >
+        Blog
+      </Button>
+      <Button
+        variant="outline"
+        color="dark"
+        radius="xs"
+        component="a"
+        href="#bio"
+      >
+        Bio
+      </Button>
+      <Button variant="outline" color="dark" radius="xs" onClick={onBellClick}>
+        Bell
+      </Button>
+    </>
+  );
+}
 
+function Landing() {
+  const theme = useMantineTheme();
+  const isMd = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
   return (
     <Center sx={{ margin: '5vw' }}>
       <Stack sx={{ flex: 1 }}>
@@ -66,32 +97,12 @@ function Landing() {
           <SocialMediaLinks />
         </Group>
         <Group sx={{ flex: 1 }}>
-          <Stack sx={{ flex: 1 }}>
+          <Stack sx={{ flex: 1, display: isMd ? 'none' : 'inherit' }}>
             <Image src={IllustrationSvg} alt="stacks" />
           </Stack>
           <Group sx={{ flex: 1, justifyContent: 'center' }}>
-            <Stack sx={{ flex: 0.5 }}>
-              <Button
-                variant="outline"
-                color="dark"
-                radius="xs"
-                component="a"
-                href="/blog"
-              >
-                Blog
-              </Button>
-              <Button
-                variant="outline"
-                color="dark"
-                radius="xs"
-                component="a"
-                href="#bio"
-              >
-                Bio
-              </Button>
-              <Button variant="outline" color="dark" radius="xs" onClick={onBellClick}>
-                Bell
-              </Button>
+            <Stack sx={{ flex: isMd ? 1 : 0.5 }}>
+              <ButtonGroup />
             </Stack>
           </Group>
         </Group>
