@@ -1,5 +1,7 @@
+import BlogShell from '../components/BlogShell';
+
 function BlogPage() {
-  return <div>BlogPage</div>;
+  return <BlogShell />;
 }
 
 export default BlogPage;

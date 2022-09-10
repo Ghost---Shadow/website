@@ -1,5 +1,13 @@
+import Biography from '../components/Biography';
+import Landing from '../components/Landing';
+
 function LandingPage() {
-  return <div>LandingPage</div>;
+  return (
+    <div>
+      <Landing />
+      <Biography />
+    </div>
+  );
 }
 
 export default LandingPage;
