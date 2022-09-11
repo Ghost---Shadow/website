@@ -57,13 +57,16 @@ function ProfessionalTimeline() {
 
 function Biography() {
   return (
-    <Stack sx={{
-      flex: 1,
-      height: '100vh',
-      backgroundColor: 'black',
-      alignItems: 'center',
-      padding: '5rem',
-    }}
+    <Stack
+      id="bio"
+      sx={{
+        flex: 1,
+        height: '100vh',
+        backgroundColor: 'black',
+        alignItems: 'center',
+        padding: '5rem',
+        boxSizing: 'border-box',
+      }}
     >
       <Stack sx={{ alignItems: 'center' }}>
         <Title variant="h2" color="white">About me</Title>

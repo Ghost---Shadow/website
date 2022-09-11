@@ -1,5 +1,5 @@
 import {
-  Title, Stack, Center, Text, Image, Button,
+  Title, Stack, Text, Image, Button,
   Group,
   ActionIcon,
   useMantineTheme,
@@ -85,29 +85,30 @@ function Landing() {
   const theme = useMantineTheme();
   const isMd = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
   return (
-    <Center sx={{ height: '100vh', margin: '0px 2rem' }}>
-      <Stack sx={{ flex: 1 }}>
-        <Group sx={{ flex: 1, marginBottom: '2rem' }}>
-          <Stack sx={{ flex: 1 }}>
-            <Title order={2}>Souradeep Nanda</Title>
-            <Text order={6}>
-              Tech Generalist - Full stack developer, devops, ML engineer, data analyst
-            </Text>
+    <Stack sx={{
+      flex: 1, height: '100vh', margin: '5rem', boxSizing: 'border-box',
+    }}
+    >
+      <Group sx={{ marginBottom: '2rem' }}>
+        <Stack sx={{ flex: 1 }}>
+          <Title order={2}>Souradeep Nanda</Title>
+          <Text order={6}>
+            Tech Generalist - Full stack developer, devops, ML engineer, data analyst
+          </Text>
+        </Stack>
+        <SocialMediaLinks />
+      </Group>
+      <Group sx={{ flex: 0.5 }}>
+        <Stack sx={{ flex: 1, display: isMd ? 'none' : 'inherit' }}>
+          <Image src={IllustrationSvg} alt="stacks" />
+        </Stack>
+        <Group sx={{ flex: 1, justifyContent: 'flex-end' }}>
+          <Stack sx={{ flex: isMd ? 1 : 0.5 }}>
+            <ButtonGroup />
           </Stack>
-          <SocialMediaLinks />
         </Group>
-        <Group sx={{ flex: 1 }}>
-          <Stack sx={{ flex: 1, display: isMd ? 'none' : 'inherit' }}>
-            <Image src={IllustrationSvg} alt="stacks" />
-          </Stack>
-          <Group sx={{ flex: 1, justifyContent: 'center' }}>
-            <Stack sx={{ flex: isMd ? 1 : 0.5 }}>
-              <ButtonGroup />
-            </Stack>
-          </Group>
-        </Group>
-      </Stack>
-    </Center>
+      </Group>
+    </Stack>
   );
 }
 
