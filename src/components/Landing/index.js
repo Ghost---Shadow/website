@@ -85,7 +85,7 @@ function Landing() {
   const theme = useMantineTheme();
   const isMd = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
   return (
-    <Center sx={{ margin: '5vw' }}>
+    <Center sx={{ height: '100vh', margin: '0px 2rem' }}>
       <Stack sx={{ flex: 1 }}>
         <Group sx={{ flex: 1, marginBottom: '2rem' }}>
           <Stack sx={{ flex: 1 }}>
