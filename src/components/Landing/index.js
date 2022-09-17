@@ -1,52 +1,15 @@
 import {
-  Title, Stack, Text, Image, Button,
+  Title,
+  Stack,
+  Text,
+  Image,
+  Button,
   Group,
-  ActionIcon,
   useMantineTheme,
 } from '@mantine/core';
-import { IconBrandLinkedin, IconBrandGithub, IconBrandStackoverflow } from '@tabler/icons';
 import { useMediaQuery } from '@mantine/hooks';
 import IllustrationSvg from '../../assets/illustration.svg';
-
-function SocialMediaLinks() {
-  return (
-    <Group>
-      <ActionIcon
-        variant="subtle"
-        color="dark"
-        radius="xs"
-        component="a"
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.linkedin.com/in/souradeep-nanda/"
-      >
-        <IconBrandLinkedin />
-      </ActionIcon>
-      <ActionIcon
-        variant="subtle"
-        color="dark"
-        radius="xs"
-        component="a"
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://github.com/Ghost---Shadow"
-      >
-        <IconBrandGithub />
-      </ActionIcon>
-      <ActionIcon
-        variant="subtle"
-        color="dark"
-        radius="xs"
-        component="a"
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://stackoverflow.com/users/1217998/souradeep-nanda"
-      >
-        <IconBrandStackoverflow />
-      </ActionIcon>
-    </Group>
-  );
-}
+import SocialMediaLinks from '../common/SocialMediaLinks';
 
 function ButtonGroup() {
   const onBellClick = () => {
@@ -96,7 +59,9 @@ function Landing() {
             Tech Generalist - Full stack developer, devops, ML engineer, data analyst
           </Text>
         </Stack>
-        <SocialMediaLinks />
+        <Group>
+          <SocialMediaLinks />
+        </Group>
       </Group>
       <Group sx={{ flex: 0.5 }}>
         <Stack sx={{ flex: 1, display: isMd ? 'none' : 'inherit' }}>
