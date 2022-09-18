@@ -1,12 +1,17 @@
-import Biography from '../components/Biography';
+import React, { Suspense } from 'react';
+
 import Landing from '../components/Landing';
+
+const Biography = React.lazy(() => import('../components/Biography'));
 
 function LandingPage() {
   return (
-    <div>
+    <>
       <Landing />
-      <Biography />
-    </div>
+      <Suspense>
+        <Biography />
+      </Suspense>
+    </>
   );
 }
 
