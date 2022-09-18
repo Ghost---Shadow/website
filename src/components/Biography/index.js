@@ -25,6 +25,7 @@ const timelineData = [
 function ProfessionalTimeline() {
   const timelineDom = timelineData.map((job) => (
     <Timeline.Item
+      key={`${job.company} - ${job.role}`}
       bullet={<IconBriefcase size={12} />}
       title={(
         <Anchor
