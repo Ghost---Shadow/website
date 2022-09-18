@@ -14,19 +14,19 @@ import { IconMenu2, IconHome } from '@tabler/icons';
 import PropTypes from 'prop-types';
 import { useParams, Link } from 'react-router-dom';
 import SocialMediaLinks from '../common/SocialMediaLinks';
-import blogRegistry from './blog-registry';
+import { blogRegistry, slugToId } from './blog-registry';
 
-function BlogListItem({ id, title, date }) {
+function BlogListItem({ slug, title, date }) {
   return (
     <Stack sx={{ gap: 0, margin: '1rem 0' }}>
-      <Anchor component={Link} sx={{ margin: 0 }} to={`/blog/${id}`}>{title}</Anchor>
+      <Anchor component={Link} sx={{ margin: 0 }} to={`/blog/${slug}`}>{title}</Anchor>
       <Text color="subtle">{date}</Text>
     </Stack>
   );
 }
 
 BlogListItem.propTypes = {
-  id: PropTypes.number.isRequired,
+  slug: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
 };
@@ -40,7 +40,7 @@ function Footer() {
 }
 
 function BlogShell() {
-  const { id } = useParams();
+  const { slug } = useParams();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -48,12 +48,13 @@ function BlogShell() {
     setDrawerOpen((lastDrawerState) => !lastDrawerState);
   };
 
+  const id = slugToId[slug];
   const activePage = blogRegistry[id || 0];
 
   const blogDoms = blogRegistry.map((blogItem) => (
     <BlogListItem
-      key={blogItem.id}
-      id={blogItem.id}
+      key={blogItem.slug}
+      slug={blogItem.slug}
       title={blogItem.title}
       date={blogItem.date}
     />
