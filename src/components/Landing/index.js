@@ -12,9 +12,18 @@ import { Link } from 'react-router-dom';
 import IllustrationSvg from '../../assets/illustration.svg';
 import SocialMediaLinks from '../common/SocialMediaLinks';
 
+const BELL_AUDIO = '/assets/service-bell-ring-14610.mp3';
+
+const preloadAudio = () => {
+  const audio = new Audio();
+  audio.src = BELL_AUDIO;
+  return audio;
+};
+
 function ButtonGroup() {
+  preloadAudio();
   const onBellClick = () => {
-    const audio = new Audio('/assets/service-bell-ring-14610.mp3');
+    const audio = new Audio(BELL_AUDIO);
     audio.currentTime = 0.1;
     audio.play();
   };
