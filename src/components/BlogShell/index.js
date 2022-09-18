@@ -7,29 +7,14 @@ import {
   Text,
   Stack,
   Center,
+  Loader,
 } from '@mantine/core';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { IconMenu2, IconHome } from '@tabler/icons';
 import PropTypes from 'prop-types';
 import { useParams, Link } from 'react-router-dom';
-import Page1 from '../../blog/page1.mdx';
-import Page2 from '../../blog/page2.mdx';
 import SocialMediaLinks from '../common/SocialMediaLinks';
-
-const blogRegistry = [
-  {
-    id: 0,
-    title: 'Page 1',
-    component: Page1,
-    date: '19-Feb-2022',
-  },
-  {
-    id: 1,
-    title: 'Page 2',
-    component: Page2,
-    date: '20-Feb-2022',
-  },
-];
+import blogRegistry from './blog-registry';
 
 function BlogListItem({ id, title, date }) {
   return (
@@ -97,7 +82,9 @@ function BlogShell() {
             <IconMenu2 />
           </ActionIcon>
         </Group>
-        <activePage.component />
+        <Suspense fallback={<Center sx={{ margin: '30vh 0' }}><Loader /></Center>}>
+          <activePage.component />
+        </Suspense>
         <hr />
         <Center sx={{ flexDirection: 'column' }}>
           <Text component="h3">
