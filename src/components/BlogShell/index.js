@@ -11,7 +11,7 @@ import {
 import { useState } from 'react';
 import { IconMenu2, IconHome } from '@tabler/icons';
 import PropTypes from 'prop-types';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import Page1 from '../../blog/page1.mdx';
 import Page2 from '../../blog/page2.mdx';
 import SocialMediaLinks from '../common/SocialMediaLinks';
@@ -34,7 +34,7 @@ const blogRegistry = [
 function BlogListItem({ id, title, date }) {
   return (
     <Stack sx={{ gap: 0, margin: '1rem 0' }}>
-      <Anchor sx={{ margin: 0 }} href={`/blog/${id}`}>{title}</Anchor>
+      <Anchor component={Link} sx={{ margin: 0 }} to={`/blog/${id}`}>{title}</Anchor>
       <Text color="subtle">{date}</Text>
     </Stack>
   );
@@ -82,8 +82,8 @@ function BlogShell() {
             variant="subtle"
             color="dark"
             radius="xs"
-            component="a"
-            href="/"
+            component={Link}
+            to="/"
           >
             <IconHome />
           </ActionIcon>

@@ -82,7 +82,9 @@ function Biography() {
         variant="outline"
         radius="xs"
         component="a"
-        href="/blog"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://github.com/Ghost---Shadow/"
       >
         Personal Projects
       </Button>

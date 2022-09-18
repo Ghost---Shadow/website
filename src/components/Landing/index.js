@@ -8,6 +8,7 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
+import { Link } from 'react-router-dom';
 import IllustrationSvg from '../../assets/illustration.svg';
 import SocialMediaLinks from '../common/SocialMediaLinks';
 
@@ -23,8 +24,8 @@ function ButtonGroup() {
         variant="outline"
         color="dark"
         radius="xs"
-        component="a"
-        href="/blog"
+        component={Link}
+        to="/blog"
       >
         Blog
       </Button>
