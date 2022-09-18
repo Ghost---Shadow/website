@@ -62,7 +62,7 @@ function BlogShell() {
 
   return (
     <>
-      <Container>
+      <Container sx={{ marginTop: '2rem' }}>
         <Group position="right">
           <ActionIcon
             variant="subtle"
