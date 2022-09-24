@@ -17,6 +17,7 @@ import { createWorkerFactory, useWorker } from '@shopify/react-web-worker';
 import SocialMediaLinks from '../common/SocialMediaLinks';
 import { blogRegistry, slugToId } from './blog-registry';
 import './prism-vsc-dark-plus.css';
+import DisqusComments from '../Disqus';
 
 const highlightWorker = createWorkerFactory(() => import('../../highlight-worker'));
 
@@ -107,6 +108,8 @@ function BlogShell() {
             <activePage.component />
           </WrappedBlog>
         </Suspense>
+        <hr />
+        <DisqusComments slug={slug} />
         <hr />
         <Center sx={{ flexDirection: 'column' }}>
           <Text component="h3">
