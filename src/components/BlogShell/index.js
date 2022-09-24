@@ -8,6 +8,7 @@ import {
   Stack,
   Center,
   Loader,
+  useMantineColorScheme,
 } from '@mantine/core';
 import { Suspense, useState, useEffect } from 'react';
 import { IconMenu2, IconHome } from '@tabler/icons';
@@ -36,13 +37,17 @@ BlogListItem.propTypes = {
   date: PropTypes.string.isRequired,
 };
 
-function Footer() {
+function Footer({ colorScheme }) {
   return (
     <Center>
-      <Text sx={{ fontFamily: 'arial' }} color="white">You are a curious guy. I like you. ( ͡° ͜ʖ ͡°)</Text>
+      <Text sx={{ fontFamily: 'arial' }} color={colorScheme === 'light' ? 'white' : 'dark.7'}>You are a curious guy. I like you. ( ͡° ͜ʖ ͡°)</Text>
     </Center>
   );
 }
+
+Footer.propTypes = {
+  colorScheme: PropTypes.string.isRequired,
+};
 
 function WrappedBlog({ children, slug }) {
   const worker = useWorker(highlightWorker);
@@ -63,6 +68,8 @@ function BlogShell() {
   const { slug } = useParams();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const { colorScheme } = useMantineColorScheme();
 
   const toggleDrawer = () => {
     setDrawerOpen((lastDrawerState) => !lastDrawerState);
@@ -104,12 +111,12 @@ function BlogShell() {
           </ActionIcon>
         </Group>
         <Suspense fallback={<Center sx={{ margin: '30vh 0' }}><Loader /></Center>}>
-          <WrappedBlog slug={slug}>
+          <WrappedBlog slug={slug || activePage.slug}>
             <activePage.component />
           </WrappedBlog>
         </Suspense>
         <hr />
-        <DisqusComments slug={slug} />
+        <DisqusComments slug={slug} colorScheme={colorScheme} />
         <hr />
         <Center sx={{ flexDirection: 'column' }}>
           <Text component="h3">
@@ -117,7 +124,7 @@ function BlogShell() {
           </Text>
           {blogDoms}
         </Center>
-        <Footer />
+        <Footer colorScheme={colorScheme} />
       </Container>
       <Drawer
         opened={drawerOpen}

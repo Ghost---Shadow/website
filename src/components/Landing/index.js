@@ -6,6 +6,7 @@ import {
   Button,
   Group,
   useMantineTheme,
+  useMantineColorScheme,
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { Link } from 'react-router-dom';
@@ -22,16 +23,20 @@ const preloadAudio = () => {
 
 function ButtonGroup() {
   preloadAudio();
+  const { colorScheme } = useMantineColorScheme();
   const onBellClick = () => {
     const audio = new Audio(BELL_AUDIO);
     audio.currentTime = 0.1;
     audio.play();
   };
+
+  const buttonColor = colorScheme === 'light' ? 'dark' : 'gray';
+
   return (
     <>
       <Button
         variant="outline"
-        color="dark"
+        color={buttonColor}
         radius="xs"
         component={Link}
         to="/blog"
@@ -40,14 +45,14 @@ function ButtonGroup() {
       </Button>
       <Button
         variant="outline"
-        color="dark"
+        color={buttonColor}
         radius="xs"
         component="a"
         href="#bio"
       >
         Bio
       </Button>
-      <Button variant="outline" color="dark" radius="xs" onClick={onBellClick}>
+      <Button variant="outline" color={buttonColor} radius="xs" onClick={onBellClick}>
         Bell
       </Button>
     </>

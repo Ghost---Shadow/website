@@ -15,10 +15,10 @@ const disqusScript = (slug) => {
   (d.head || d.body).appendChild(s);
 };
 
-function DisqusComments({ slug }) {
+function DisqusComments({ slug, colorScheme }) {
   useEffect(() => {
     disqusScript(slug);
-  }, [slug]);
+  }, [slug, colorScheme]);
 
   return (
     <div className="disqus_container" id="disqus_thread" />
@@ -27,6 +27,7 @@ function DisqusComments({ slug }) {
 
 DisqusComments.propTypes = {
   slug: PropTypes.string.isRequired,
+  colorScheme: PropTypes.string.isRequired,
 };
 
 export default DisqusComments;

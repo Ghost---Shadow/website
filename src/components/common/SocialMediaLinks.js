@@ -1,11 +1,24 @@
 import {
-  ActionIcon,
+  ActionIcon, useMantineColorScheme,
 } from '@mantine/core';
-import { IconBrandLinkedin, IconBrandGithub, IconBrandStackoverflow } from '@tabler/icons';
+import {
+  IconBrandLinkedin, IconBrandGithub, IconBrandStackoverflow, IconSun, IconMoon,
+} from '@tabler/icons';
 
 function SocialMediaLinks() {
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const dark = colorScheme === 'dark';
+
   return (
     <>
+      <ActionIcon
+        variant="subtle"
+        color="dark"
+        radius="xs"
+        onClick={toggleColorScheme}
+      >
+        {dark ? <IconSun /> : <IconMoon />}
+      </ActionIcon>
       <ActionIcon
         variant="subtle"
         color="dark"
