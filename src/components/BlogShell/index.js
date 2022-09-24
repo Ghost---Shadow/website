@@ -9,12 +9,16 @@ import {
   Center,
   Loader,
 } from '@mantine/core';
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { IconMenu2, IconHome } from '@tabler/icons';
 import PropTypes from 'prop-types';
 import { useParams, Link } from 'react-router-dom';
+import { createWorkerFactory, useWorker } from '@shopify/react-web-worker';
 import SocialMediaLinks from '../common/SocialMediaLinks';
 import { blogRegistry, slugToId } from './blog-registry';
+import './prism-vsc-dark-plus.css';
+
+const highlightWorker = createWorkerFactory(() => import('../../highlight-worker'));
 
 function BlogListItem({ slug, title, date }) {
   return (
@@ -38,6 +42,21 @@ function Footer() {
     </Center>
   );
 }
+
+function WrappedBlog({ children, slug }) {
+  const worker = useWorker(highlightWorker);
+  useEffect(() => {
+    worker.highlight();
+    window.scrollTo(0, 0);
+  }, [worker, slug]);
+
+  return children;
+}
+
+WrappedBlog.propTypes = {
+  children: PropTypes.node.isRequired,
+  slug: PropTypes.string.isRequired,
+};
 
 function BlogShell() {
   const { slug } = useParams();
@@ -84,7 +103,9 @@ function BlogShell() {
           </ActionIcon>
         </Group>
         <Suspense fallback={<Center sx={{ margin: '30vh 0' }}><Loader /></Center>}>
-          <activePage.component />
+          <WrappedBlog slug={slug}>
+            <activePage.component />
+          </WrappedBlog>
         </Suspense>
         <hr />
         <Center sx={{ flexDirection: 'column' }}>
