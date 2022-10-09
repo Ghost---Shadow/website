@@ -9,8 +9,17 @@ import MobiusGlb from '../../assets/mobius.glb';
 function Illustration({ scale, ringScale }) {
   const { nodes, materials } = useGLTF(MobiusGlb);
   const group = useRef();
+  const middleRing = useRef();
+
+  const lowerScale = scale * (1 - ringScale);
+  const upperScale = scale * (1 + ringScale);
+
   useFrame(({ clock }) => {
     group.current.rotation.y = clock.getElapsedTime();
+    const t = ((1 + Math.sin(clock.getElapsedTime())) / 2);
+    const epsilon = 0.2;
+    const sinTime = lowerScale + epsilon + t * (upperScale - lowerScale - 2 * epsilon);
+    middleRing.current.scale.set(sinTime, sinTime, sinTime);
   });
 
   return (
@@ -32,21 +41,21 @@ function Illustration({ scale, ringScale }) {
           receiveShadow
           geometry={nodes.strip.geometry}
           material={materials.blue}
-          scale={scale * (1 + ringScale)}
+          scale={upperScale}
         />
         <mesh
+          ref={middleRing}
           castShadow
           receiveShadow
           geometry={nodes.strip.geometry}
           material={materials.red}
-          scale={scale}
         />
         <mesh
           castShadow
           receiveShadow
           geometry={nodes.strip.geometry}
           material={materials.blue}
-          scale={scale * (1 - ringScale)}
+          scale={lowerScale}
         />
       </group>
     </>
