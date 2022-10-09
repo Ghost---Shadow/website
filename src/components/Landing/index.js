@@ -9,9 +9,11 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
+import { Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import IllustrationSvg from '../../assets/illustration.svg';
 import SocialMediaLinks from '../common/SocialMediaLinks';
+import Illustration from './illustration';
 
 const BELL_AUDIO = '/assets/service-bell-ring-14610.mp3';
 
@@ -79,8 +81,13 @@ function Landing() {
         </Group>
       </Group>
       <Group sx={{ flex: 0.5 }}>
-        <Stack sx={{ flex: 1, display: isMd ? 'none' : 'inherit' }}>
-          <Image src={IllustrationSvg} alt="stacks" />
+        <Stack sx={{
+          flex: 1, display: isMd ? 'none' : 'inherit', width: '400px', height: '300px',
+        }}
+        >
+          <Suspense fallback={<Image src={IllustrationSvg} alt="stacks" />}>
+            <Illustration scale={3} />
+          </Suspense>
         </Stack>
         <Group sx={{ flex: 1, justifyContent: 'flex-end' }}>
           <Stack sx={{ flex: isMd ? 1 : 0.5 }}>
