@@ -1,4 +1,7 @@
 import Prism from 'prismjs';
+import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-yaml';
+import 'prismjs/components/prism-bash';
 
 export const highlight = () => {
   document.querySelectorAll('pre').forEach((match) => {
