@@ -1,5 +1,5 @@
 import { OrbitControls, useGLTF } from '@react-three/drei';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { useRef } from 'react';
 import PropTypes from 'prop-types';
 import MobiusGlb from '../../assets/mobius.glb';
@@ -9,8 +9,12 @@ import MobiusGlb from '../../assets/mobius.glb';
 function Illustration({ scale, ringScale }) {
   const { nodes, materials } = useGLTF(MobiusGlb);
   const group = useRef();
+  useFrame(({ clock }) => {
+    group.current.rotation.y = clock.getElapsedTime();
+  });
+
   return (
-    <Canvas>
+    <>
       <OrbitControls
         makeDefault
         enableDamping
@@ -45,7 +49,7 @@ function Illustration({ scale, ringScale }) {
           scale={scale * (1 - ringScale)}
         />
       </group>
-    </Canvas>
+    </>
   );
 }
 
@@ -59,4 +63,13 @@ Illustration.defaultProps = {
   ringScale: 0.2,
 };
 
-export default Illustration;
+/* eslint-disable react/jsx-props-no-spreading */
+function IllustrationWrapper({ ...props }) {
+  return (
+    <Canvas>
+      <Illustration {...props} />
+    </Canvas>
+  );
+}
+
+export default IllustrationWrapper;
