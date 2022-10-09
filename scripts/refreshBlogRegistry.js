@@ -1,5 +1,6 @@
 const path = require('path');
-
+// eslint-disable-next-line import/no-extraneous-dependencies
+const recursive = require('recursive-readdir');
 const fs = require('fs').promises;
 const moment = require('moment');
 
@@ -14,13 +15,18 @@ const validateEntry = (entry) => {
 };
 
 const fileNameToItem = async (fileName) => {
-  const slug = fileName.split('.mdx')[0];
+  const slug = fileName.split('/')[0];
   const fullPath = path.join(BLOG_DIRECTORY, fileName);
   const contents = (await fs.readFile(fullPath)).toString();
   const lines = contents.split('\n');
 
-  const title = lines[0].split('# ')[1];
-  const date = Date.parse(lines[2]);
+  const titleLine = lines.filter((line) => line.startsWith('# '))[0];
+  const title = titleLine.split('# ')[1];
+
+  const dateRegex = /<date>(.*)<\/date>/;
+  const dateLine = lines.filter((line) => line.match(dateRegex))[0];
+  const maybeDate = dateLine.match(dateRegex)[1];
+  const date = Date.parse(maybeDate);
 
   const blogRegistryDir = path.parse(BLOG_REGISTRY_FILE).dir;
   const relativeDir = path.posix.relative(blogRegistryDir, BLOG_DIRECTORY);
@@ -60,8 +66,12 @@ const templateBlogRegistry = (items) => {
 };
 
 const main = async () => {
-  const markdownFiles = await fs.readdir(BLOG_DIRECTORY);
-  const items = await Promise.all(markdownFiles.map(fileNameToItem));
+  const filePaths = await recursive(BLOG_DIRECTORY);
+  const markdownFiles = filePaths.filter((filePath) => filePath.endsWith('.mdx'));
+  const posixPaths = markdownFiles.map((markdownFile) => markdownFile.replaceAll('\\', '/'));
+  const relativePaths = posixPaths
+    .map((posixPath) => path.posix.relative(BLOG_DIRECTORY, posixPath));
+  const items = await Promise.all(relativePaths.map(fileNameToItem));
   const validItems = items.map(validateEntry);
   const sortedItems = validItems.sort((a, b) => b.date - a.date);
   const fileContents = templateBlogRegistry(sortedItems);

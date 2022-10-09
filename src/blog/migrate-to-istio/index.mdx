@@ -1,0 +1,208 @@
+import istioVsVanila from './istio-vs-vanila.png'
+import whyVirtualServices from './why-virtual-services.png'
+import packetFlowOutToIn from './packet-flow-out-to-in.png'
+import packetFlowInterPod from './packet-flow-inter-pod.png'
+
+# How to migrate from vanilla Kubernetes to Istio service mesh?
+
+<date>14 Oct 2019</date>
+
+The goal of this guide is to give the reader the most concise and non-intimidating introduction to istio while simultaneously providing further reading material if it piques his interest.
+
+Before we start with the installation, let us compare it with vanilla Kubernetes.
+
+## Template flow vanilla vs istio
+
+Instead of ingress, we have gateways which connect to virtual services. Everything else downstream remains the same.
+
+<img width="100%" src={istioVsVanila} alt="istio service mesh vs vanilla kubernetes" />
+
+## Why virtual services?
+
+Virtual services provide many features like 
+[infra level AB testing](https://istio.io/latest/docs/tasks/traffic-management/traffic-shifting/), 
+[fault injection](https://istio.io/latest/docs/tasks/traffic-management/fault-injection/), 
+[circuit breaking](https://istio.io/latest/docs/tasks/traffic-management/circuit-breaking/) and a 
+[lot more](https://istio.io/latest/docs/tasks/).
+
+<img width="100%" src={whyVirtualServices} alt="why use virtual services" />
+
+## Packet flow
+
+### Out to in
+
+Whenever a new deployment is created in an 
+[istio-injected namespace](https://istio.io/latest/docs/setup/additional-setup/sidecar-injection/#automatic-sidecar-injection) 
+an [envoy container](https://www.envoyproxy.io/docs/envoy/latest/intro/what_is_envoy) is inserted into the pod. 
+It is widely referred to as sidecar. It automatically intercepts all incoming and outgoing requests. The application does not need to worry about this abstraction.
+
+> TIP: Reading the logs of the envoy is useful for debugging
+
+<img width="100%" src={packetFlowOutToIn} alt="Packet flow out to in" />
+
+### Intra cluster
+
+One of the benefits of having the envoy is that we can have 
+[mutual TLS](https://istio.io/docs/tasks/security/mutual-tls/) secured connections inside the cluster. 
+It helps in the realization of [zero-trust networks](https://blog.aquasec.com/istio-kubernetes-security-zero-trust-networking).
+
+One of the functions of the [pilot](https://www.youtube.com/watch?v=fqour4ZBzHg) is being a 
+[service discovery service](https://www.youtube.com/watch?v=NrzrpyMLWes).
+
+<img width="100%" src={packetFlowInterPod} alt="Packet flow inter pod" />
+
+## Installation
+
+> This guide was written during istio 1.3.x, if things have changed too much in the future, consider consulting the official documentation.
+
+We will be installing istio for Kubernetes cluster using helm charts.
+
+You can find the detailed process in [istio official website](https://istio.io/latest/docs/setup/install/helm/), but here is a quick version.
+
+First, make sure helm and helm tiler is installed. For more details on helm, refer to the [official guide](https://helm.sh/docs/using_helm/).
+
+```sh
+brew install helm
+helm init
+```
+
+In case you are unable to install helm tiler for some reason, you can just [export the helm charts as k8s templates](https://stackoverflow.com/questions/50584091/helm-export-yaml-files-locally-just-use-templating-engine-do-not-send-to-kuber).
+
+Next, we install istio
+
+```sh
+# First we create the namespace for istio
+kubectl create namespace istio-system
+
+# Add the helm repo
+helm repo add istio.io https://storage.googleapis.com/istio-release/releases/1.3.1/charts/
+
+# Istio bootstrapper 
+# (make sure this process finishes, the pods should be in "finished" state)
+helm install istio.io/istio-init --name istio-init --namespace istio-system
+
+# Should be 23 (at time of writing this guide)
+# kubectl get crds | grep 'istio.io' | wc -l
+
+# Actual istio
+# You can read about SDS over here (https://preliminary.istio.io/docs/tasks/traffic-management/ingress/secure-ingress-sds/)
+helm install istio.io/istio --name istio --set gateways.istio-ingressgateway.sds.enabled=true --set sds.enabled=true --namespace istio-system
+
+# Verify the installation
+# kubectl get svc -n istio-system
+# kubectl get deployment -n istio-system
+```
+
+In order for deployments in your namespace to use istio, we need to enable istio injection.
+
+> IMPORTANT: You have to delete and recreate your existing deployments.
+
+> IMPORTANT: You don't have to inject `istio-system`.
+
+```sh
+# The following command enables injection in the potato namespace
+kubectl label namespace potato istio-injection=enabled
+
+# To verify
+kubectl get namespace -L istio-injection
+```
+
+Next, you need to create a gateway. Use this one as a sample.
+
+```yml
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: my-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway # use Istio default gateway implementation
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+          # - yourdomain.com
+          - '*' # Allow everything
+      # Uncomment next two lines if you dont want any insecure connections
+      # to your website
+      # tls:
+      #   httpsRedirect: true # sends 301 redirect for http requests
+    # Uncomment next block if you want HTTPS
+    # - port:
+    #     number: 443
+    #     name: https
+    #     protocol: HTTPS
+    #   hosts:
+    #     - yourdomain.com
+    #   tls:
+    #     mode: SIMPLE
+    #     credentialName: your.secret
+```
+
+You would also need virtual services to bridge gateways to services. Use this one as a sample.
+
+```yml
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: tomato-virtual-service
+  namespace: potato
+spec:
+  gateways:
+    - istio-system/my-gateway # namespace-where-gateway-is/gateway-name
+  hosts:
+    # - mydomain.com
+    - '*' # Allow everything
+  http:
+  - match:
+    - uri:
+        prefix: /tomato
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        # Name of the service we want to connect to
+        host: tomato.potato.svc.cluster.local # service-name.namespace.svc.cluster.local
+        port:
+          number: 8080 # Port forwarded by the service
+      weight: 100
+```
+
+Everything from service and below is the same as vanilla Kubernetes.
+
+> TROUBLESHOOTING: The `ingress-gateway` in `istio-system` pod is the load balancer. 
+If you are unable to find the external IP of the cluster, try the external IP of the node running this pod. 
+You can read more [here](https://istio.io/docs/tasks/traffic-management/ingress/ingress-control/#determining-the-ingress-ip-and-ports).
+
+## Installing istioctl (optional)
+
+```sh
+cd ~/
+curl -L https://git.io/getLatestIstio
+export PATH="$PATH:~/istio-1.3.0-rc.3/bin" # Assuming the version is 1.3.0
+```
+
+## Troubleshooting
+
+1. Read the pod logs (Start with ingress-gateway, pilot, envoys). [Further reading](https://istio.io/docs/ops/troubleshooting/proxy-cmd/).
+2. Kill all the pods in istio-system
+3. Delete and create the gateway again
+4. Install [kiali](https://www.kiali.io/documentation/getting-started/#_installation) `bash <(curl -L https://git.io/getLatestKialiOperator) --accessible-namespaces '**'`
+5. Run [this](https://stackoverflow.com/a/57920503/1217998) to get a dump of all routes connected to the gateway. (requires istioctl)
+6. Watch these two videos. [#1](https://www.youtube.com/watch?v=FbYBO7Pi2d8) [#2](https://www.youtube.com/watch?v=7cINRP0BFY8)
+
+If all fails you can [helm delete-purge istio](https://stackoverflow.com/questions/51594064/what-is-ther-purpose-of-helm-delete-purge), then `kubectl delete namespace istio-system` and start over again.
+
+Good luck.
+
+## Jargon
+
+* Envoy - Proxy inside your pods which intercepts all network traffic
+* Sidecar - The injected envoy container in your pods
+* Mixer - Collects telemetry and enforces usage policies.
+* Pilot - Service discovery service
+* Citadel - Key management service
+* Galley - Configuration validation

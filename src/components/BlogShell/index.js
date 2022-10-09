@@ -118,12 +118,12 @@ function BlogShell() {
         <hr />
         <DisqusComments slug={slug} colorScheme={colorScheme} />
         <hr />
-        <Center sx={{ flexDirection: 'column' }}>
-          <Text component="h3">
+        <Stack>
+          <Text component="h3" sx={{ textAlign: 'center' }}>
             All articles
           </Text>
           {blogDoms}
-        </Center>
+        </Stack>
         <Footer colorScheme={colorScheme} />
       </Container>
       <Drawer
