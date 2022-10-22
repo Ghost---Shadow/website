@@ -14,12 +14,11 @@ import { Link } from 'react-router-dom';
 import IllustrationSvg from '../../assets/illustration.svg';
 import SocialMediaLinks from '../common/SocialMediaLinks';
 import Illustration from './illustration';
-
-const BELL_AUDIO = '/assets/service-bell-ring-14610.mp3';
+import BellAudio from '../../assets/bell.mp3';
 
 const preloadAudio = () => {
   const audio = new Audio();
-  audio.src = BELL_AUDIO;
+  audio.src = BellAudio;
   return audio;
 };
 
@@ -27,7 +26,7 @@ function ButtonGroup() {
   preloadAudio();
   const { colorScheme } = useMantineColorScheme();
   const onBellClick = () => {
-    const audio = new Audio(BELL_AUDIO);
+    const audio = new Audio(BellAudio);
     audio.currentTime = 0.1;
     audio.play();
   };
