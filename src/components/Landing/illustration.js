@@ -75,7 +75,7 @@ Illustration.defaultProps = {
 /* eslint-disable react/jsx-props-no-spreading */
 function IllustrationWrapper({ ...props }) {
   return (
-    <Canvas>
+    <Canvas style={{ cursor: 'grab' }}>
       <Illustration {...props} />
     </Canvas>
   );
