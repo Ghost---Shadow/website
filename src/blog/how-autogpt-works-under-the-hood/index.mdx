@@ -234,11 +234,11 @@ system_message = (
 
 ## Sub agents
 
-AutoGPT can also spawn sub-agents who have a fresh context and an assigned goal.
+AutoGPT can spawn named sub-agents who have a fresh context and an assigned goal. This seems to be another strategy to get around the problem of limited context size.
 
-This also seems to be a strategy to get around the problem of limited context size.
+At time of writing this blog, the agents are not on a subprocess but a synchronized function call. Communication is done in natural language string and is in practice similar to a function call. An agent is called with argument and it returns with results. Each agent maintains its own chat history.
 
-Communication is done with JSON and is in practice similar to a function call. Where an agent is called with argument, returns with results and is terminated.
+Deciding when to create, list, message and terminate is done using commands discussed above.
 
 ## Conclusion
 
