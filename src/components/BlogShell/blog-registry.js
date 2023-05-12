@@ -1,6 +1,12 @@
 import React from 'react';
 
 export const blogRegistry = [{
+  slug: 'how-autogpt-works-under-the-hood',
+  title: 'How does AutoGPT work under the hood?',
+  component: React.lazy(() => import('../../blog/how-autogpt-works-under-the-hood/index.mdx')),
+  date: '03 May 2023',
+},
+{
   slug: 'unit-test-recorder',
   title: 'Unit Test Recorder - Automatically generate unit tests as you use your application',
   component: React.lazy(() => import('../../blog/unit-test-recorder/index.mdx')),
