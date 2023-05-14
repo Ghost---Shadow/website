@@ -26,3 +26,4 @@ scratch
 
 *.blend1
 firebase-debug.log
+.firebase
