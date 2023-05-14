@@ -25,3 +25,4 @@ yarn-error.log*
 scratch
 
 *.blend1
+firebase-debug.log
