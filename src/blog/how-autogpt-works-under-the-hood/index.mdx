@@ -1,5 +1,6 @@
 import SystemPromptTxt from './system_prompt.txt'
 import FullMessageHistoryPng from './full_message_history.png'
+import FlowDiagramSvg from './mermaid-diagram-2023-05-14-193807.svg'
 
 # How does AutoGPT work under the hood?
 
@@ -15,6 +16,8 @@ When the application is started, the user is given a prompt to give the "AGI" a 
 
 Here is the high level flow
 
+<img src={FlowDiagramSvg}> </img>
+
 ```txt
 Jargon:
 
@@ -24,14 +27,14 @@ Triggering_prompt = the goal the user wants
 Vector memory = long term memory embedded as embeddings
 ```
 
-1. Call ChatGPT API with full message history + system prompt + triggering_prompt + vector memory
-2. ChatGPT replies as JSON
-3. Print the plan of action
-4. The user can now approve the action, provide a critic, reject and terminate or prompt to do a self critic.
-5. If any feedback is provided then do not execute anything and go back to step 1 (this is a safety mechanism)
-6. Execute the command which was planned, e.g. search web, write code
-7. Append the result to the message history as "system"
-8. Check for exit or go back to step 1
+1. The process starts with calling the ChatGPT API with the full message history, system prompt, triggering prompt, and vector memory.
+2. ChatGPT then replies as a JSON.
+3. The plan of action is printed.
+4. User feedback is then taken into account. The user can approve the action, provide a critic, reject and terminate, or prompt to do a self critic.
+5. If any feedback is provided, the process does not execute anything and goes back to step 1. This is a safety mechanism.
+6. If the action is approved, the planned command is executed, such as searching the web or writing code.
+7. The result is then appended to the message history as "system".
+8. Finally, it checks for exit. If exit is chosen, the process ends. If not, it goes back to step 1.
 
 ## System Prompt
 
