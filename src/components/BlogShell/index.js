@@ -13,7 +13,7 @@ import {
 import { Suspense, useState, useEffect } from 'react';
 import { IconMenu2, IconHome } from '@tabler/icons';
 import PropTypes from 'prop-types';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { createWorkerFactory, useWorker } from '@shopify/react-web-worker';
 import SocialMediaLinks from '../common/SocialMediaLinks';
 import { blogRegistry, slugToId } from './blog-registry';
@@ -66,6 +66,7 @@ WrappedBlog.propTypes = {
 
 function BlogShell() {
   const { slug } = useParams();
+  const navigate = useNavigate();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -76,7 +77,18 @@ function BlogShell() {
   };
 
   const id = slugToId[slug];
-  const activePage = blogRegistry[id || 0];
+
+  useEffect(() => {
+    if (id === undefined) {
+      navigate(`/blog/${blogRegistry[0].slug}`);
+    }
+  }, [id]);
+
+  if (id === undefined) {
+    return null;
+  }
+
+  const activePage = blogRegistry[id];
 
   const blogDoms = blogRegistry.map((blogItem) => (
     <BlogListItem
