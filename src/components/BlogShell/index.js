@@ -80,7 +80,7 @@ function BlogShell() {
 
   useEffect(() => {
     if (id === undefined) {
-      navigate(`/blog/${blogRegistry[0].slug}`);
+      navigate(`/blog/${blogRegistry[0].slug}`, { replace: true });
     }
   }, [id]);
 
