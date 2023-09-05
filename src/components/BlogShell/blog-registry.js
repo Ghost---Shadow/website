@@ -1,12 +1,12 @@
 import React from 'react';
 
 export const blogRegistry = [
-//   {
-//   slug: 'immigrating-to-germany',
-//   title: 'The Journey from India to Germany: A Guide for IT Professionals',
-//   component: React.lazy(() => import('../../blog/immigrating-to-germany/index.mdx')),
-//   date: '20 Jun 2023',
-// },
+  {
+    slug: 'immigrating-to-germany',
+    title: 'The Journey from India to Germany: A Guide for IT Professionals',
+    component: React.lazy(() => import('../../blog/immigrating-to-germany/index.mdx')),
+    date: '20 Jun 2023',
+  },
   {
     slug: 'how-autogpt-works-under-the-hood',
     title: 'How does AutoGPT work under the hood?',
