@@ -9,9 +9,15 @@ import {
 
 const timelineData = [
   {
+    company: 'University of Texas at Dallas',
+    role: 'Phd Candidate',
+    tenure: '2023 - Present',
+    description: 'Worked on making large language models slightly better.',
+  },
+  {
     company: 'Aleph Alpha Gmbh',
     role: 'Software Engineer',
-    tenure: '2021 - Present',
+    tenure: '2021 - 2023',
     description: 'Worked on the dashboard and API. Moved to the research team to help out researchers.',
   },
   {
