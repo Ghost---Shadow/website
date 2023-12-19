@@ -2,12 +2,6 @@ import React from 'react';
 
 export const blogRegistry = [
   {
-    slug: 'cruel-irony-of-p-np-problem',
-    title: 'On the cruel irony of the P-NP problem',
-    component: React.lazy(() => import('../../blog/cruel-irony-of-p-np-problem/index.mdx')),
-    date: '18 Dec 2023',
-  },
-  {
     slug: 'immigrating-to-germany',
     title: 'The Journey from India to Germany: A Guide for IT Professionals',
     component: React.lazy(() => import('../../blog/immigrating-to-germany/index.mdx')),
