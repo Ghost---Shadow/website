@@ -1,0 +1,96 @@
+import ComplexityCurves from './complexity_curves.png'
+import RobotWithTape from './robot_with_tape.png'
+
+# On the cruel irony of the P-NP problem
+
+<date>18 Dec 2023</date>
+
+## Part 1: Basics for those who slept in class
+
+### What is the P-NP problem?
+
+For those who dont know the P-NP problem is one of the major unsolved problems in computer science which has baffled scientists for over half a century. It relates to time complexity of a problem and its hardness. I have seen many news outlets often call it how "difficult" a problem is to solve, NP-hard being the hardest problem category to solve. In reality it is not how difficult is it understand but it refers to how much a program slows down as you increase the size of the input.
+
+> In this post I will be using the words "algorithm" and "problem" interchangeably. 
+
+Algorithm is simply "how you solve a problem". In order to prove P=NP one must **reduce** a problem in NP-complete to a problem in P. Which is a fancy way of saying, "show that they are the same thing".
+
+The economic utility of P-NP problem lies from the fact that most passwords we use guarantee that it cannot be cracked in a reasonable amount of time. All passwords can be cracked, but if it takes a hundred years on a conventional PC, it might as well be uncrackable. If P=NP, then that changes and suddenly all passwords become unsafe.
+
+### What is time complexity?
+
+Time complexity refers to how much longer does a program need to execute if you increase the *scale* or size of input. e.g. Lets say we are finding a maximum of 100 stock options and on some computer and lets say it takes 100ms. In order to find the maximum of a bunch of stock options, we need to go over the stocks one by one and store the maximum we have found so far somewhere. In this case we look at each stock exactly once and do the greater than check exactly once per number.
+
+> total_time_taken = time_spent_per_number * number_of_stocks + time_spent_starting_the_script
+
+When number of stocks is small enough, it will run through anyways no matter how bad the code is and the analysis is not interesting. Infact, I have even seen some software engineers, who should know better, throw away NP-hard algorithms without thinking about the scale you would realize in practice. If you are not dealing with large scales, NP-hard algorithms isnt going to kill you.
+
+P stands for polynomial as in the time taken by the algorithm as a function of input size can be represented as polynimials e.g. `y=mx+c`, `y = ax*2 + bx + c`  etc
+
+NP is not "Not Polynomial" it refers to as "Non-deterministic polymial". i.e. Algorithms that would run in polymial time on non-deterministic turing machines. It is not to be confused with exponential time although practically we do observe most NP problems running in exponential time on conventional computers.
+
+<img alt="crudely drawn time complexity curves" src={ComplexityCurves}> </img>
+
+### What are Turing Machines?
+
+Before we dive deeper, we need to get some understanding of turing machines. Alan turing showed that all you need is a single infinitely long tape being worked on by some finitely sized algorithm and it can *compute anything that can be computed*. We will deepdive into turing machiens in another post, we will just leave it at this for now.
+
+Just imagine a robot with a really long tape.
+
+<img alt="robot with really long tape" src={RobotWithTape}> </img>
+
+### What is non-determinism?
+
+Lets go back to the stocks example. What if we had enough cores in the computer that we can offload one stock to each core. Now all the cores can run it in parallel. So, no matter how many stocks you have, it takes the same amount of time (provided we have enough cores).
+
+The equation just becomes
+
+> total_time_taken_for_parallel_script = time_spent_starting_the_script + time_spent_for_all_processes_to_finish
+
+In other words it takes a constant time.
+
+One way to think about it is, everytime we can go down two branches of code, it can go both direction at the same time. Where as a sequential machines will have to go one, come back and go the second one. However, non-determinism should not be confused with quantum entanglement as there is no entanglement. You can explicitly synchronize these parallel branches using some creative ways, but by default, doing something to one, doesnt affect the other.
+
+Think of non-deterministic turing machines as turing machines, but imagine that the robot can split into two and go two different ways whenever it wants.
+
+### Lets put together P, NP-complete, NP-hard
+
+1. P = algorithms which run in polynomical time in deterministic turing machines
+2. NP-complete = algorithms which run in polynomical time in non-deterministic turing machines and their answers can be verified in polynomial time in deterministic turing machines
+3. NP-hard = algorithms which run in polynomical time in non-deterministic turing machines but their answers cannot be verified in polynomial time in deterministic turing machines
+
+All problems in NP can be reduced to some NP-complete problem. Also, all NP-complete problems can be reduced to each other. That means if we can show any one of these NP-complete problem is reducible to P, it solves **EVERYTHING**.
+
+There are also some weird things in NP-hard like the halting problem, but we will not go into that today.
+
+## Part 2: Mind blowing starts here
+
+### Proving a negative is not (always) impossible
+
+It is a well known fact that you cannot prove a negative. We cannot prove that there does not exist a purple squirel with three tails, simply because we havent searched everywhere for it yet. Proving a postive is simpler, you just need to find one and show it. 
+
+This has been known since recorded history and is the foundational reasons why innocent until proven guilty exists in court of law. The burden of proof lies on the accuser.
+
+Going back to the squirel example. What if we say "there does not exist a purple ssquirel with three tails **in this room**". We can check this room in a *time efficient* (foreshadowing) manner and verify that there is indeed no squirels in this room. In other words, in closed domain systems you *can* prove a negative.
+
+### Think meta
+
+If we want to prove that P=NP, the direct way is to find some NP-complete problem and show it can be reduced to a P problem.
+
+What if we show that there does not exist any problem in P that can be reduced to a NP-complete problem. Obviously we cant do that, because there are intractably large number of problems and it would take a crazy amount of time.
+
+If only we had a way of reducing the amount of time taken, oh wait, we could do that if P=NP.
+
+Technically there is a proof that P!=NP which would involve going over all possible problems in P and showing that it cannot be reduced to NP. We could even generate that proof in a tractable amount of time if we knew the solution for P=NP.
+
+### Godels incompleteness theorem
+
+Godels incompleteness theorem is one of the big theorems in mathematics which says that there are things in mathematics that are true but cannot be proven as such.
+
+Although today you will be seeing no such proofs from my side, it would be ironic if the only way to prove P not in NP would be possible if P was in NP because thats the only way we could tractably generate a proof.
+
+### Isnt this a proof by contradiction?
+
+This is not a proof as perhaps while enumerating all possible problems in P, we eventually stumble upon the holy grail! Instead, what we have over here is a *conspiracy theory*, a universal conspiracy theory! Conspiracy theories are characterized by something which sounds plausible but forces at play are obstructing its verification.
+
+This is the cruel irony of the P-NP problem. We can only prove it false, if it were true.
