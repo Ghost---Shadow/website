@@ -1,0 +1,57 @@
+# Debunking Gambler's Fallacy using Multiverse Theory
+
+<date>06 Mar 2024</date>
+
+## What is Gambler's Fallacy?
+
+Lets say a gambler is playing a game of coin flips. The gambler's fallacy says that even if the gambler observed significantly more tails than heads, it does not increase the chances of the next flip to be a head. The chance of head is always 50%.
+
+This goes against a common human belief of [luck running out](https://idioms.thefreedictionary.com/have+luck+run+out) which is a common belief where luck is a finite resource which can deplete from too many good fortunes.
+
+Lets take the coinflip game for example. Since the probability of one coinflip does not influence the next, these are called independent events. So, regarless of the number of heads observed, the probability of heads is always 50%.
+
+## Bringing in Binomial trials
+
+Let's say we toss a coin 5 times. The possible sequences of outcomes would be HHHHH, HHHHT, HHHTH, ... , TTTTT.
+
+Each sequence is equally likely which is 1/2^5 or 1 in 32. So, getting 5 heads in a row has the same probability as HTHHT. Which sounds counter intuitive, if you take a real coin and flip it 5 times, you are more likely to get a sequence similar to HTHHT than 5 heads in a row.
+
+The human brain intuits the sequence as a whole, it interprets HTHHT to be similar to HHTHT although they are essentially different sequences. 
+
+In other words HTHHT and HHTHT seem more random and *natural* than 5 heads in a row. That is because it is.
+
+Before going further, lets introduce the Binomial distribution for getting H heads if we flip a coin N times. 
+
+`<insert latex formula for Binomial distribution>`
+
+If we disregard the order of the sequence and just say if we flip a coin 5 times, what is the probability of getting all heads. Using bionomial distribution we can say that `P(H=5) = <insert formula>`. In the HHTHT and HTHHT case, there are 3 heads. So, `P(H=3) = <insert calculation>`.
+
+We can see that `P(H=3) > P(H=5)` so, 5 heads in a row is indeed more unlikely than a *typical* sequence we would expect when we flip coins.
+
+In other words, if we repeat the experiment many times, getting 5 heads in a row is truly unlikely. 
+
+`<insert monte carlo graph here>`
+
+## Time for multiverse theory
+
+The many worlds interpretation of quantum mechanics says that there are infinitely many parallel universes.
+
+For the sake of this thought experiment for coin flips. Since, there are 2^5 = 32 possible sequences, and lets say we have exactly 32 universes identifyable by a sequence.
+
+The sequence itself is random and independent, but the way we are defining the multiverses makes it look deterministic. Lets say the coin flip sequence went HHHHT instead of HHHHH, then it just means that we were in the HHHHH universe to begin with and our belief that we were in the HHHHT universe was a mistake.
+
+When the experiment starts, the gambler does not know which universe he is in. After 4 trials, lets say the observation is HHHH. The gambler can now confidently cross out the probability that he is in a universe with `P(H<4)` that leaves him with universe HHHHH and universe HHHHT. Gambler knows that `P(H=5) < P(H=4)` so he is more likely in the HHHHT universe instead of the HHHHH universe. So, he should bet that a tail is coming up next.
+
+## But my independence?
+
+The result from the last thought experiment is counter-intuitive as since the coin flips are independent, `P(H|HHHH)` should be equal to `P(T|HHHH)` and it is true! Then how can the gambler be sure that the next coin is more likely to be a tail?
+
+The answer is, the gambler is not predicting the coin flip, he is predicting the universe he is in. If we fix the universe, then the coins are indeed independent and no predictive power can be drawn.
+
+However, since the universe themselves are not equally likely, the gambler can make a prediction about the universe but not the coin itself. Given a belief of a universe, the probability of coin is always 100% because thats how we defined the universe. i.e. `P(HHHHH|HHHHH) = 1` trivially.
+
+So, there is a two step baysean arc, gambler predicts the universe he is in given the observation. Then using the belief of the universe the next coin flip has a probability of 1. Since it is deterministic.
+
+## Conclusion
+
+If the gambler is in a mathematical model with a single universe, then the fallacy holds as he can make no assumption about the universe he is in. However, gamblers in physical space can rejoice knowing that the sneaking suspicion was indeed correct and universal forces were at play.
