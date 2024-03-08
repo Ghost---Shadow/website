@@ -1,7 +1,12 @@
 import CoinFlipMonteCarlo from './coin_flip_monte_carlo.png'
 import CapitalistFrog from './capitalist_frog.jpg'
+import TeaFrog from './tea_frog.webp'
+import Coins from './coins.webp'
+import Multiverse from './multiverse.webp'
 
 import WrappedImage from '../../components/WrappedImage'
+import 'katex/dist/katex.min.css';
+import { InlineMath, BlockMath } from 'react-katex';
 
 # Debunking Gambler's Fallacy using Multiverse Theory
 
@@ -15,29 +20,30 @@ This belief contradicts the common notion of [luck running out](https://idioms.t
 
 Let's take the coin flip game, for example. Since the probability of one coin flip does not influence the next, these are called independent events. So, regardless of the number of heads observed, the probability of heads is always 50%.
 
+<WrappedImage src={Coins} alt="The lack of money is the root of all evil - Mark Twain" /> 
+
 ## Bringing in Bernoulli Trials
 
-Imagine we toss a coin 5 times. The possible sequences of outcomes could range from HHHHH to TTTTT.
+Imagine we toss a coin 5 times. The possible sequences of outcomes could range from <InlineMath math="HHHHH"/> to <InlineMath math="TTTTT"/>.
 
-Each of these sequences is equally likely, each with a probability of \(1/2^5\) or 1 in 32. So, getting 5 heads in a row (HHHHH) has the same probability as any other specific sequence, like HTHHT. This might seem counterintuitive because, in practice, when you flip a real coin 5 times, it feels like you're more likely to get a mixed sequence similar to HTHHT than 5 heads in a row.
+Each of these sequences is equally likely, each with a probability of <InlineMath math="1/2^5"/> or 1 in 32. So, getting 5 heads in a row <InlineMath math="HHHHH"/> has the same probability as any other specific sequence, like <InlineMath math="HTHHT"/>. This might seem counterintuitive because, in practice, when you flip a real coin 5 times, it feels like you're more likely to get a mixed sequence similar to  <InlineMath math="HTHHT"/> than 5 heads in a row.
+Our brains tend to perceive sequences as a whole, interpreting <InlineMath math="HTHHT"/> as being similar to <InlineMath math="HHTHT"/>, even though they are, in fact, distinct sequences. In other words, <InlineMath math="HTHHT"/> and <InlineMath math="HHTHT"/> appear more random and *natural* than a straight run of 5 heads, because, statistically, they are.
 
-Our brains tend to perceive sequences as a whole, interpreting HTHHT as being similar to HHTHT, even though they are, in fact, distinct sequences. In other words, HTHHT and HHTHT appear more random and *natural* than a straight run of 5 heads, because, statistically, they are.
+Before we dive deeper, let's introduce the Binomial distribution formula for getting <InlineMath math="H"/> heads in <InlineMath math="N"/> coin flips:
 
-Before we dive deeper, let's introduce the Binomial distribution formula for getting \(H\) heads in \(N\) coin flips:
+<BlockMath math="P(H=k) = \binom{N}{k} p^k (1-p)^{N-k}" />
 
-\[ P(H=k) = \binom{N}{k} p^k (1-p)^{N-k} \]
+where <InlineMath math="\binom{N}{k}" /> is the binomial coefficient (representing the number of ways to choose <InlineMath math="k" /> successes out of <InlineMath math="N" /> trials), <InlineMath math="p" /> is the probability of getting heads on a single flip (0.5 for a fair coin), and <InlineMath math="N-k" /> represents the number of tails.
 
-where \( \binom{N}{k} \) is the binomial coefficient (representing the number of ways to choose \(k\) successes out of \(N\) trials), \(p\) is the probability of getting heads on a single flip (0.5 for a fair coin), and \(N-k\) represents the number of tails.
+For a scenario where we flip a coin 5 times, asking for the probability of getting all heads, we use the Binomial distribution to find <InlineMath math="P(H=5)" />:
 
-For a scenario where we flip a coin 5 times, asking for the probability of getting all heads, we use the Binomial distribution to find \( P(H=5) \):
-
-\[ P(H=5) = \binom{5}{5} (0.5)^5 (1-0.5)^{5-5} = (0.5)^5 \]
+<BlockMath math="P(H=5) = \binom{5}{5} (0.5)^5 (1-0.5)^{5-5} = (0.5)^5 = 0.03125" />
 
 In cases like HHTHT and HTHHT, where there are 3 heads, the probability is:
 
-\[ P(H=3) = \binom{5}{3} (0.5)^3 (1-0.5)^{5-3} \]
+<BlockMath math="P(H=3) = \binom{5}{3} (0.5)^3 (1-0.5)^{5-3} = 0.3125" />
 
-A quick calculation shows that \( P(H=3) \) is indeed greater than \( P(H=5) \), confirming that obtaining 5 heads in a row is more unlikely than a more *typical* sequence one might expect when flipping coins.
+A quick calculation shows that <InlineMath math="P(H=3)" /> is indeed greater than <InlineMath math="P(H=5)" />, confirming that obtaining 5 heads in a row is more unlikely than a more *typical* sequence one might expect when flipping coins.
 
 In practical terms, if we repeat the experiment many times, achieving 5 heads in a row is indeed quite rare.
 
@@ -47,23 +53,27 @@ In practical terms, if we repeat the experiment many times, achieving 5 heads in
 
 The many-worlds interpretation of quantum mechanics posits the existence of infinitely many parallel universes, each representing a different outcome of every possible event.
 
-For our coin flip thought experiment, imagine there are exactly 32 universes, each uniquely identified by one of the 2^5 = 32 possible sequences of a 5-coin-flip experiment.
+For our coin flip thought experiment, imagine there are exactly 32 universes, each uniquely identified by one of the <InlineMath math="2^5 = 32" /> possible sequences of a 5-coin-flip experiment.
 
-This setup makes the sequence of flips appear deterministic within the context of each universe, though the outcome is fundamentally random and independent. If, for example, the coin flip sequence results in HHHHT instead of HHHHH, it implies we were always in the universe designated for the HHHHT sequence, and any prior belief of being in the HHHHH universe was incorrect.
+This setup makes the sequence of flips appear deterministic within the context of each universe, though the outcome is fundamentally random and independent. If, for example, the coin flip sequence results in <InlineMath math="HHHHT" /> instead of <InlineMath math="HHHHH" />, it implies we were always in the universe designated for the <InlineMath math="HHHHT" /> sequence, and any prior belief of being in the <InlineMath math="HHHHH" /> universe was incorrect.
 
-At the start of the experiment, the gambler does not know which universe he occupies. After observing four heads in a row (HHHH), he can eliminate any universe where the probability of getting less than 4 heads `\(P(H<4)\)` exists. This leaves him with two possibilities: the universe with a final sequence of HHHHH and the one with HHHHT. Knowing that `\(P(H=5) < P(H=4)\)`, the gambler might conclude he is more likely in the HHHHT universe, implying a tail is expected next.
+At the start of the experiment, the gambler does not know which universe he occupies. After observing four heads in a row <InlineMath math="HHHH" />, he can eliminate any universe where the probability of getting less than 4 heads <InlineMath math="P(H < 4)" /> exists. This leaves him with two possibilities: the universe with a final sequence of <InlineMath math="HHHHH" /> and the one with <InlineMath math="HHHHT" />. Knowing that <InlineMath math="P(H=5)  <  P(H=4)" />, the gambler might conclude he is more likely in the <InlineMath math="HHHHT" /> universe, implying a tail is expected next.
+
+<WrappedImage src={Multiverse} alt="Frogs in crowds are more credulous than individuals - H. L. Mencken" /> 
 
 ## But My Independence?
 
-The result from our previous thought experiment seems counter-intuitive. Since the coin flips are independent, the probability of getting a head after observing four consecutive heads (\(P(H|HHHH)\)) should indeed be equal to the probability of getting a tail (\(P(T|HHHH)\)), and this is indeed the case. Then, how can the gambler be so confident that the next coin is more likely to be a tail?
+The result from our previous thought experiment seems counter-intuitive. Since the coin flips are independent, the probability of getting a head after observing four consecutive heads <InlineMath math="P(H|HHHH)" /> should indeed be equal to the probability of getting a tail <InlineMath math="P(T|HHHH)" />, and this is indeed the case. Then, how can the gambler be so confident that the next coin is more likely to be a tail?
 
 The answer lies not in predicting the outcome of the coin flip but in predicting the universe the gambler finds himself in. If we consider each coin flip as independent, no predictive power about the next flip can be derived from previous ones. However, the gambler is actually making a prediction about the universe he is in, not the coin flip itself.
 
-Given a fixed universe, the outcomes of coin flips within that universe are indeed independent, and no previous flip has any bearing on the outcome of the next. The apparent paradox arises because we have defined each universe by a specific sequence of coin flips. Within any given universe, if a sequence is pre-determined (for example, HHHHH or HHHHT), the probability of adhering to that sequence is effectively 100%—because that's how we've defined each universe. Therefore, \(P(HHHHH|HHHHH) = 1\) is trivially true.
+Given a fixed universe, the outcomes of coin flips within that universe are indeed independent, and no previous flip has any bearing on the outcome of the next. The apparent paradox arises because we have defined each universe by a specific sequence of coin flips. Within any given universe, if a sequence is pre-determined (for example, <InlineMath math="HHHHH" /> or <InlineMath math="HHHHT" />), the probability of adhering to that sequence is effectively 100%—because that's how we've defined each universe. Therefore, <InlineMath math="P(HHHHH|HHHHH) = 1" /> is trivially true.
 
 This leads us to a two-step Bayesian approach: the gambler predicts the universe he is in based on his observations. Then, using the belief about which universe he is in, the probability of the next coin flip is considered deterministic within the context of that universe. Thus, while the coin flips themselves are independent, the gambler's belief about which universe he is in is what informs his expectations about future events.
 
 In essence, the gambler's prediction is not about the coin flip per se but about the overall sequence of flips, or the "universe" he believes he is experiencing. This nuanced understanding reconciles the independence of individual coin flips with the gambler's ability to make informed predictions based on the sequence of observed outcomes.
+
+<WrappedImage src={TeaFrog} alt="Independence is a state of mind, not a statement of financial status" /> 
 
 ## Conclusion
 
@@ -75,4 +85,4 @@ This thought experiment suggests that while the classical understanding of proba
 
 In essence, while the mathematical rigor of probability theory remains untouched, the philosophical implications of quantum mechanics and the multiverse theory add a fascinating layer to our understanding of chance, determinism, and the nature of reality itself. Gamblers in the physical realm can take a whimsical solace in the idea that their "sneaking suspicion" of being at the mercy of universal forces might not be entirely unfounded, albeit in a much more complex and nuanced way than traditional superstitions suggest.
 
-<WrappedImage src={CapitalistFrog} alt="I was right all along." />
+<WrappedImage src={CapitalistFrog} alt="I was right all along." /> 

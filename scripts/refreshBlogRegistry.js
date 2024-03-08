@@ -44,7 +44,7 @@ const fileNameToItem = async (fileName) => {
 const templateBlogRegistry = (items) => {
   const templateItem = (item) => `{
     slug: '${item.slug}', 
-    title: '${item.title}', 
+    title: '${item.title.replace("'", "\\'").trim()}', 
     component: React.lazy(() => import('${item.component}')), 
     date: '${moment(item.date).format('DD MMM YYYY')}', 
   }`;

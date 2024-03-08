@@ -2,6 +2,12 @@ import React from 'react';
 
 export const blogRegistry = [
   {
+    slug: 'debunking-gamblers-fallacy',
+    title: 'Debunking Gambler\'s Fallacy using Multiverse Theory',
+    component: React.lazy(() => import('../../blog/debunking-gamblers-fallacy/index.mdx')),
+    date: '06 Mar 2024',
+  },
+  {
     slug: 'cruel-irony-of-p-np-problem',
     title: 'On the cruel irony of the P-NP problem',
     component: React.lazy(() => import('../../blog/cruel-irony-of-p-np-problem/index.mdx')),
