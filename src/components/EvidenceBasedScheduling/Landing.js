@@ -2,7 +2,30 @@ import React, { useState, useEffect } from 'react';
 import WorkItem from './WorkItem';
 
 function Landing() {
-  const [workItems, setWorkItems] = useState([]);
+  const [workItems, setWorkItems] = useState(() => {
+    // Attempt to get saved work items from localStorage
+    const savedWorkItems = localStorage.getItem('workItems');
+    return savedWorkItems ? JSON.parse(savedWorkItems) : [];
+  });
+
+  useEffect(() => {
+    // Prepare workItems for saving: stop running items and update their elapsed time
+    const now = new Date().getTime();
+    const preparedWorkItems = workItems.map((item) => {
+      if (item.running) {
+        return {
+          ...item,
+          running: false,
+          elapsed: item.elapsed + (now - item.lastStart),
+          lastStart: now,
+        };
+      }
+      return item;
+    });
+
+    // Save preparedWorkItems to localStorage
+    localStorage.setItem('workItems', JSON.stringify(preparedWorkItems));
+  }, [workItems]);
 
   const handleStartStop = (id) => {
     const now = new Date().getTime();
@@ -55,10 +78,6 @@ function Landing() {
     ]);
   };
 
-  useEffect(() => {
-    addWorkItem();
-  }, []);
-
   const calculateAverageVelocity = () => {
     // Consider only items that are not currently running
     const validItems = workItems
@@ -71,6 +90,11 @@ function Landing() {
     return totalVelocity / validItems.length;
   };
 
+  const clearAllWorkItems = () => {
+    setWorkItems([]); // Clear work items from state
+    localStorage.removeItem('workItems'); // Clear work items from localStorage
+  };
+
   const totalEstimatedTime = workItems.reduce((acc, item) => acc + item.estimatedTime, 0);
   const totalElapsedTime = workItems.reduce((acc, item) => acc + item.elapsed, 0) / 60000;
   const averageVelocity = calculateAverageVelocity();
@@ -80,6 +104,7 @@ function Landing() {
   return (
     <div>
       <button type="button" onClick={addWorkItem}>Add Work Item</button>
+      <button type="button" color="red" onClick={clearAllWorkItems}>Clear All</button>
       <div>
         Average Velocity:
         {calculateAverageVelocity().toFixed(2)}
