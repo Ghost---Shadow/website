@@ -3,6 +3,7 @@ import { useColorScheme, useLocalStorage } from '@mantine/hooks';
 import { ColorSchemeProvider, MantineProvider } from '@mantine/core';
 import LandingPage from './pages/LandingPage';
 import BlogPage from './pages/BlogPage';
+import EbsPage from './pages/EbsPage';
 
 function App() {
   const preferredColorScheme = useColorScheme();
@@ -20,6 +21,7 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/blog" element={<BlogPage />} />
+            <Route path="/ebs" element={<EbsPage />} />
             <Route path="/blog/:slug" element={<BlogPage />} />
             <Route path="*" element={<LandingPage />} />
           </Routes>
