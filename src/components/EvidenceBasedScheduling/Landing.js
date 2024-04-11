@@ -4,7 +4,6 @@ import WorkItem from './WorkItem';
 function Landing() {
   const [workItems, setWorkItems] = useState([]);
 
-  // Function to handle start/stop
   const handleStartStop = (id) => {
     const now = new Date().getTime();
     setWorkItems((current) => current.map((item) => {
@@ -14,7 +13,7 @@ function Landing() {
             ...item,
             running: false,
             elapsed: item.elapsed + (now - item.lastStart),
-            lastStart: null,
+            lastStart: now,
           }
           : { ...item, running: true, lastStart: now };
       }
@@ -22,7 +21,6 @@ function Landing() {
     }));
   };
 
-  // Effect hook to update elapsed time every second for running tasks
   useEffect(() => {
     const interval = setInterval(() => {
       setWorkItems((current) => current.map((item) => {
@@ -33,9 +31,8 @@ function Landing() {
         }
         return item;
       }));
-    }, 1000); // Update every second
+    }, 1000);
 
-    // Cleanup interval on component unmount
     return () => clearInterval(interval);
   }, []);
 
@@ -62,9 +59,10 @@ function Landing() {
     addWorkItem();
   }, []);
 
-  // Calculate average velocity
   const calculateAverageVelocity = () => {
-    const validItems = workItems.filter((item) => item.estimatedTime > 0 && item.elapsed > 0);
+    // Consider only items that are not currently running
+    const validItems = workItems
+      .filter((item) => item.estimatedTime > 0 && item.elapsed > 0 && !item.running);
     if (validItems.length === 0) return 0;
 
     const totalVelocity = validItems
@@ -73,17 +71,10 @@ function Landing() {
     return totalVelocity / validItems.length;
   };
 
-  // Calculate total estimated time
   const totalEstimatedTime = workItems.reduce((acc, item) => acc + item.estimatedTime, 0);
-
-  // Calculate total elapsed time in minutes
   const totalElapsedTime = workItems.reduce((acc, item) => acc + item.elapsed, 0) / 60000;
-
-  // Calculate corrected estimated time
   const averageVelocity = calculateAverageVelocity();
   const correctedEstimatedTime = totalEstimatedTime * averageVelocity;
-
-  // Calculate time to completion in minutes
   const timeToCompletion = correctedEstimatedTime - totalElapsedTime;
 
   return (
