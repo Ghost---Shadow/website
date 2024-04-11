@@ -5,7 +5,8 @@ import {
 import PropTypes from 'prop-types';
 
 function WorkItem({
-  id, title, elapsed, estimatedTime, running, onStartStop, onTitleChange, onEstimatedTimeChange,
+  id, title, elapsed, estimatedTime, running, onStartStop, onTitleChange,
+  onEstimatedTimeChange, onDelete,
 }) {
   const [editingTitle, setEditingTitle] = useState(false);
   const [editingEstimatedTime, setEditingEstimatedTime] = useState(false);
@@ -54,6 +55,7 @@ function WorkItem({
       <Button onClick={onStartStop}>
         {running ? 'Stop' : 'Start'}
       </Button>
+      <Button color="red" onClick={() => onDelete(id)}>Delete</Button>
     </Group>
   );
 }
@@ -67,6 +69,7 @@ WorkItem.propTypes = {
   onStartStop: PropTypes.func.isRequired,
   onTitleChange: PropTypes.func.isRequired,
   onEstimatedTimeChange: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
 };
 
 export default WorkItem;

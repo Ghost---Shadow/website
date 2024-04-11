@@ -95,6 +95,11 @@ function Landing() {
     localStorage.removeItem('workItems'); // Clear work items from localStorage
   };
 
+  const deleteWorkItem = (id) => {
+    const updatedWorkItems = workItems.filter((item) => item.id !== id);
+    setWorkItems(updatedWorkItems);
+  };
+
   const totalEstimatedTime = workItems.reduce((acc, item) => acc + item.estimatedTime, 0);
   const totalElapsedTime = workItems.reduce((acc, item) => acc + item.elapsed, 0) / 60000;
   const averageVelocity = calculateAverageVelocity();
@@ -144,6 +149,7 @@ function Landing() {
           onStartStop={() => handleStartStop(item.id)}
           onTitleChange={(newTitle) => handleTitleChange(item.id, newTitle)}
           onEstimatedTimeChange={(newTime) => handleEstimatedTimeChange(item.id, newTime)}
+          onDelete={deleteWorkItem}
         />
       ))}
     </div>
