@@ -8,6 +8,8 @@ import {
   IconClock, IconPlayerPlay,
   IconPlayerStop, IconTrash, IconHourglass, IconSpeedboat,
   IconFileText,
+  IconCheck,
+  IconArrowBack,
 } from '@tabler/icons';
 import PropTypes from 'prop-types';
 import EditableText from './EditableText';
@@ -16,8 +18,17 @@ import EditableText from './EditableText';
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 function WorkItem({
-  id, title, elapsed, estimatedTime, running, onStartStop, onTitleChange,
-  onEstimatedTimeChange, onDelete,
+  id,
+  title,
+  elapsed,
+  estimatedTime,
+  running,
+  onStartStop,
+  onTitleChange,
+  onEstimatedTimeChange,
+  onDelete,
+  onToggleDone,
+  isDone,
 }) {
   const formatTime = (time) => (time / 60000).toFixed(2);
 
@@ -60,6 +71,11 @@ function WorkItem({
           </Tooltip>
         </Group>
         <Group noWrap>
+          <Tooltip label={isDone ? 'Un-done' : 'Done'} position="bottom" withArrow>
+            <Button onClick={() => onToggleDone(id)} size="xs" color={isDone ? 'red' : 'green'}>
+              {isDone ? <IconArrowBack size={14} /> : <IconCheck size={14} />}
+            </Button>
+          </Tooltip>
           <Tooltip label={running ? 'Stop' : 'Start'} position="bottom" withArrow>
             <Button onClick={onStartStop} size="xs">
               {running ? <IconPlayerStop size={14} /> : <IconPlayerPlay size={14} />}
@@ -84,6 +100,8 @@ WorkItem.propTypes = {
   onTitleChange: PropTypes.func.isRequired,
   onEstimatedTimeChange: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
+  onToggleDone: PropTypes.func.isRequired,
+  isDone: PropTypes.bool.isRequired,
 };
 
 export default WorkItem;

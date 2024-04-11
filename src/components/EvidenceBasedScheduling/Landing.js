@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Group, Button, Stack } from '@mantine/core';
+import {
+  Group, Button, Stack, Switch,
+} from '@mantine/core';
+import { IconCheck } from '@tabler/icons';
 import WorkItem from './WorkItem';
 import StatisticsTable from './StatisticsTable';
 
 function Landing() {
+  const [showDone, setShowDone] = useState(false);
   const [workItems, setWorkItems] = useState(() => {
     // Attempt to get saved work items from localStorage
     const savedWorkItems = localStorage.getItem('workItems');
@@ -102,6 +106,15 @@ function Landing() {
     setWorkItems(updatedWorkItems);
   };
 
+  const handleToggleDone = (id) => {
+    setWorkItems((current) => current.map((item) => {
+      if (item.id === id) {
+        return { ...item, isDone: !item.isDone };
+      }
+      return item;
+    }));
+  };
+
   const totalEstimatedTime = workItems.reduce((acc, item) => acc + item.estimatedTime, 0);
   const totalElapsedTime = workItems.reduce((acc, item) => acc + item.elapsed, 0) / 60000;
   const averageVelocity = calculateAverageVelocity();
@@ -113,24 +126,33 @@ function Landing() {
       <Group>
         <Button onClick={addWorkItem}>Add Work Item</Button>
         <Button color="red" onClick={clearAllWorkItems}>Clear All</Button>
+        <Switch
+          checked={showDone}
+          onChange={(event) => setShowDone(event.currentTarget.checked)}
+          label={<IconCheck />}
+        />
       </Group>
 
       <Group style={{ flex: 1, alignItems: 'start' }}>
         <Stack spacing="md" sx={{ flex: 2 }}>
-          {workItems.map((item) => (
-            <WorkItem
-              key={item.id}
-              id={item.id}
-              title={item.title}
-              elapsed={item.elapsed}
-              estimatedTime={item.estimatedTime}
-              running={item.running}
-              onStartStop={() => handleStartStop(item.id)}
-              onTitleChange={(newTitle) => handleTitleChange(item.id, newTitle)}
-              onEstimatedTimeChange={(newTime) => handleEstimatedTimeChange(item.id, newTime)}
-              onDelete={deleteWorkItem}
-            />
-          ))}
+          {workItems
+            .filter((item) => showDone || !item.isDone)
+            .map((item) => (
+              <WorkItem
+                key={item.id}
+                id={item.id}
+                title={item.title}
+                elapsed={item.elapsed}
+                estimatedTime={item.estimatedTime}
+                running={item.running}
+                onStartStop={() => handleStartStop(item.id)}
+                onTitleChange={(newTitle) => handleTitleChange(item.id, newTitle)}
+                onEstimatedTimeChange={(newTime) => handleEstimatedTimeChange(item.id, newTime)}
+                onDelete={deleteWorkItem}
+                onToggleDone={handleToggleDone}
+                isDone={item.isDone}
+              />
+            ))}
         </Stack>
         <StatisticsTable
           calculateAverageVelocity={calculateAverageVelocity}
