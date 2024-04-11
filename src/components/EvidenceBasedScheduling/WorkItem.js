@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
-  Group, TextInput, Text, Button, Paper, Tooltip,
+  Group, Text, Button, Paper, Tooltip,
+  Box,
 } from '@mantine/core';
 
 import {
   IconClock, IconPlayerPlay,
-  IconPlayerStop, IconTrash, IconEdit, IconFileText, IconHourglass, IconSpeedboat,
+  IconPlayerStop, IconTrash, IconHourglass, IconSpeedboat,
+  IconFileText,
 } from '@tabler/icons';
-
 import PropTypes from 'prop-types';
+import EditableText from './EditableText';
 
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
@@ -17,9 +19,6 @@ function WorkItem({
   id, title, elapsed, estimatedTime, running, onStartStop, onTitleChange,
   onEstimatedTimeChange, onDelete,
 }) {
-  const [editingTitle, setEditingTitle] = useState(false);
-  const [editingEstimatedTime, setEditingEstimatedTime] = useState(false);
-
   const formatTime = (time) => (time / 60000).toFixed(2);
 
   const velocity = estimatedTime > 0 ? ((elapsed / 60000) / estimatedTime).toFixed(2) : 'N/A';
@@ -29,49 +28,22 @@ function WorkItem({
       <Group position="apart" style={{ alignItems: 'center', flex: 1 }}>
         {/* <Text>{id + 1}</Text> */}
         <Group spacing="xs" style={{ flex: 1 }}>
-          {editingTitle ? (
-            <TextInput
-              icon={<IconEdit size={14} />}
-              value={title}
-              onChange={(event) => onTitleChange(event.target.value)}
-              onBlur={() => setEditingTitle(false)}
-              autoFocus
-              size="xs"
-            />
-          ) : (
-            <Tooltip label="Edit title" position="bottom" withArrow>
-              <div
-                style={{
-                  display: 'flex', alignItems: 'center', cursor: 'pointer', flex: 1,
-                }}
-                onClick={() => setEditingTitle(true)}
-              >
-                <IconFileText size={16} />
-                <Text style={{ marginLeft: 5 }}>{title}</Text>
-              </div>
-            </Tooltip>
-          )}
-
-          {editingEstimatedTime ? (
-            <TextInput
-              icon={<IconEdit size={14} />}
+          <EditableText
+            text={title}
+            tooltipLabel="Edit task title"
+            type="text"
+            onTextChange={onTitleChange}
+            IconComponent={IconFileText}
+          />
+          <Box style={{ minWidth: '3rem' }}>
+            <EditableText
+              text={estimatedTime.toString()}
+              tooltipLabel="Edit estimated time"
               type="number"
-              value={estimatedTime.toString()}
-              onChange={(event) => onEstimatedTimeChange(Number(event.target.value))}
-              onBlur={() => setEditingEstimatedTime(false)}
-              autoFocus
-              size="xs"
+              onTextChange={onEstimatedTimeChange}
+              IconComponent={IconHourglass}
             />
-          ) : (
-            <Tooltip label="Edit estimated time" position="bottom" withArrow>
-              <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => setEditingEstimatedTime(true)}>
-                <IconHourglass size={16} />
-                <Text size="sm" style={{ marginLeft: 5 }}>
-                  {estimatedTime}
-                </Text>
-              </div>
-            </Tooltip>
-          )}
+          </Box>
           <Tooltip label="Elapsed Time" position="bottom" withArrow>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <IconClock size={16} />
