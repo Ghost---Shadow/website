@@ -4,6 +4,7 @@ import WorkItem from './WorkItem';
 function Landing() {
   const [workItems, setWorkItems] = useState([]);
 
+  // Function to handle start/stop
   const handleStartStop = (id) => {
     const now = new Date().getTime();
     setWorkItems((current) => current.map((item) => {
@@ -20,6 +21,23 @@ function Landing() {
       return item;
     }));
   };
+
+  // Effect hook to update elapsed time every second for running tasks
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setWorkItems((current) => current.map((item) => {
+        if (item.running) {
+          const now = new Date().getTime();
+          const additionalTime = now - item.lastStart;
+          return { ...item, elapsed: item.elapsed + additionalTime, lastStart: now };
+        }
+        return item;
+      }));
+    }, 1000); // Update every second
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
 
   const handleTitleChange = (id, newTitle) => {
     setWorkItems((current) => current

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { TextInput, Button, Text } from '@mantine/core';
+import {
+  TextInput, Button, Text, Group,
+} from '@mantine/core';
 import PropTypes from 'prop-types';
 
 function WorkItem({
@@ -8,15 +10,10 @@ function WorkItem({
   const [editingTitle, setEditingTitle] = useState(false);
   const [editingEstimatedTime, setEditingEstimatedTime] = useState(false);
 
-  const formatTime = (time) => {
-    const seconds = Math.floor(time / 1000) % 60;
-    const minutes = Math.floor(time / 60000) % 60;
-    const hours = Math.floor(time / 3600000);
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  };
+  const formatTime = (time) => (time / 60000).toFixed(2);
 
   return (
-    <div style={{ marginBottom: '20px' }}>
+    <Group style={{ marginBottom: '20px' }}>
       {id}
       {' '}
       {editingTitle ? (
@@ -53,7 +50,7 @@ function WorkItem({
       <Button onClick={onStartStop}>
         {running ? 'Stop' : 'Start'}
       </Button>
-    </div>
+    </Group>
   );
 }
 
