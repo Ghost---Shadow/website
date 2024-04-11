@@ -47,6 +47,10 @@ function WorkItem({
           minutes
         </Text>
       )}
+      <Text>
+        Velocity:
+        {(elapsed / 60000) / estimatedTime}
+      </Text>
       <Button onClick={onStartStop}>
         {running ? 'Stop' : 'Start'}
       </Button>
