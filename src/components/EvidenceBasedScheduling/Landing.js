@@ -73,12 +73,49 @@ function Landing() {
     return totalVelocity / validItems.length;
   };
 
+  // Calculate total estimated time
+  const totalEstimatedTime = workItems.reduce((acc, item) => acc + item.estimatedTime, 0);
+
+  // Calculate total elapsed time in minutes
+  const totalElapsedTime = workItems.reduce((acc, item) => acc + item.elapsed, 0) / 60000;
+
+  // Calculate corrected estimated time
+  const averageVelocity = calculateAverageVelocity();
+  const correctedEstimatedTime = totalEstimatedTime * averageVelocity;
+
+  // Calculate time to completion in minutes
+  const timeToCompletion = correctedEstimatedTime - totalElapsedTime;
+
   return (
     <div>
       <button type="button" onClick={addWorkItem}>Add Work Item</button>
       <div>
         Average Velocity:
         {calculateAverageVelocity().toFixed(2)}
+      </div>
+      <div>
+        Total Estimated Time:
+        {totalEstimatedTime.toFixed(2)}
+        {' '}
+        minutes
+      </div>
+      <div>
+        Total Elapsed Time:
+        {totalElapsedTime.toFixed(2)}
+        {' '}
+        minutes
+      </div>
+      <div>
+        Corrected Estimated Time:
+        {correctedEstimatedTime.toFixed(2)}
+        {' '}
+        minutes
+      </div>
+      <div>
+        Time to Completion:
+        {timeToCompletion.toFixed(2)}
+        {' '}
+        minutes
       </div>
       {workItems.map((item) => (
         <WorkItem
