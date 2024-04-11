@@ -25,9 +25,9 @@ function WorkItem({
   const velocity = estimatedTime > 0 ? ((elapsed / 60000) / estimatedTime).toFixed(2) : 'N/A';
 
   return (
-    <Paper withBorder shadow="sm" p="md" radius="md" style={{ marginBottom: 20 }}>
-      <Group position="apart" style={{ alignItems: 'center', width: '100%' }}>
-        <Text>{id + 1}</Text>
+    <Paper withBorder shadow="sm" p="md" radius="md" style={{ flex: 1 }}>
+      <Group position="apart" style={{ alignItems: 'center', flex: 1 }}>
+        {/* <Text>{id + 1}</Text> */}
         <Group spacing="xs" style={{ flex: 1 }}>
           {editingTitle ? (
             <TextInput
@@ -40,7 +40,12 @@ function WorkItem({
             />
           ) : (
             <Tooltip label="Edit title" position="bottom" withArrow>
-              <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => setEditingTitle(true)}>
+              <div
+                style={{
+                  display: 'flex', alignItems: 'center', cursor: 'pointer', flex: 1,
+                }}
+                onClick={() => setEditingTitle(true)}
+              >
                 <IconFileText size={16} />
                 <Text style={{ marginLeft: 5 }}>{title}</Text>
               </div>

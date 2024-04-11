@@ -1,5 +1,73 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Group, Button, Paper, Stack, Table,
+} from '@mantine/core';
+import PropTypes from 'prop-types';
 import WorkItem from './WorkItem';
+
+function StatisticsTable({
+  calculateAverageVelocity,
+  totalEstimatedTime, totalElapsedTime, correctedEstimatedTime, timeToCompletion,
+}) {
+  return (
+    <Paper style={{ flex: 1 }} withBorder shadow="sm" p="md" radius="md">
+      <Table>
+        <thead>
+          <tr>
+            <th>Statistic</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Average Velocity</td>
+            <td>{calculateAverageVelocity().toFixed(2)}</td>
+          </tr>
+          <tr>
+            <td>Total Estimated Time</td>
+            <td>
+              {totalEstimatedTime.toFixed(2)}
+              {' '}
+              minutes
+            </td>
+          </tr>
+          <tr>
+            <td>Total Elapsed Time</td>
+            <td>
+              {totalElapsedTime.toFixed(2)}
+              {' '}
+              minutes
+            </td>
+          </tr>
+          <tr>
+            <td>Corrected Estimated Time</td>
+            <td>
+              {correctedEstimatedTime.toFixed(2)}
+              {' '}
+              minutes
+            </td>
+          </tr>
+          <tr>
+            <td>Time to Completion</td>
+            <td>
+              {timeToCompletion.toFixed(2)}
+              {' '}
+              minutes
+            </td>
+          </tr>
+        </tbody>
+      </Table>
+    </Paper>
+  );
+}
+
+StatisticsTable.propTypes = {
+  calculateAverageVelocity: PropTypes.func.isRequired,
+  totalEstimatedTime: PropTypes.number.isRequired,
+  totalElapsedTime: PropTypes.number.isRequired,
+  correctedEstimatedTime: PropTypes.number.isRequired,
+  timeToCompletion: PropTypes.number.isRequired,
+};
 
 function Landing() {
   const [workItems, setWorkItems] = useState(() => {
@@ -107,52 +175,38 @@ function Landing() {
   const timeToCompletion = correctedEstimatedTime - totalElapsedTime;
 
   return (
-    <div>
-      <button type="button" onClick={addWorkItem}>Add Work Item</button>
-      <button type="button" color="red" onClick={clearAllWorkItems}>Clear All</button>
-      <div>
-        Average Velocity:
-        {calculateAverageVelocity().toFixed(2)}
-      </div>
-      <div>
-        Total Estimated Time:
-        {totalEstimatedTime.toFixed(2)}
-        {' '}
-        minutes
-      </div>
-      <div>
-        Total Elapsed Time:
-        {totalElapsedTime.toFixed(2)}
-        {' '}
-        minutes
-      </div>
-      <div>
-        Corrected Estimated Time:
-        {correctedEstimatedTime.toFixed(2)}
-        {' '}
-        minutes
-      </div>
-      <div>
-        Time to Completion:
-        {timeToCompletion.toFixed(2)}
-        {' '}
-        minutes
-      </div>
-      {workItems.map((item) => (
-        <WorkItem
-          key={item.id}
-          id={item.id}
-          title={item.title}
-          elapsed={item.elapsed}
-          estimatedTime={item.estimatedTime}
-          running={item.running}
-          onStartStop={() => handleStartStop(item.id)}
-          onTitleChange={(newTitle) => handleTitleChange(item.id, newTitle)}
-          onEstimatedTimeChange={(newTime) => handleEstimatedTimeChange(item.id, newTime)}
-          onDelete={deleteWorkItem}
+    <Stack style={{ padding: '2% 12.5%' }}>
+      <Group>
+        <Button onClick={addWorkItem}>Add Work Item</Button>
+        <Button color="red" onClick={clearAllWorkItems}>Clear All</Button>
+      </Group>
+
+      <Group style={{ flex: 1, alignItems: 'start' }}>
+        <Stack spacing="md" sx={{ flex: 2 }}>
+          {workItems.map((item) => (
+            <WorkItem
+              key={item.id}
+              id={item.id}
+              title={item.title}
+              elapsed={item.elapsed}
+              estimatedTime={item.estimatedTime}
+              running={item.running}
+              onStartStop={() => handleStartStop(item.id)}
+              onTitleChange={(newTitle) => handleTitleChange(item.id, newTitle)}
+              onEstimatedTimeChange={(newTime) => handleEstimatedTimeChange(item.id, newTime)}
+              onDelete={deleteWorkItem}
+            />
+          ))}
+        </Stack>
+        <StatisticsTable
+          calculateAverageVelocity={calculateAverageVelocity}
+          totalEstimatedTime={totalEstimatedTime}
+          totalElapsedTime={totalElapsedTime}
+          correctedEstimatedTime={correctedEstimatedTime}
+          timeToCompletion={timeToCompletion}
         />
-      ))}
-    </div>
+      </Group>
+    </Stack>
   );
 }
 
