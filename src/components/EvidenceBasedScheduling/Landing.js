@@ -62,9 +62,24 @@ function Landing() {
     addWorkItem();
   }, []);
 
+  // Calculate average velocity
+  const calculateAverageVelocity = () => {
+    const validItems = workItems.filter((item) => item.estimatedTime > 0 && item.elapsed > 0);
+    if (validItems.length === 0) return 0;
+
+    const totalVelocity = validItems
+      .reduce((acc, item) => acc + (item.elapsed / 60000) / item.estimatedTime, 0);
+
+    return totalVelocity / validItems.length;
+  };
+
   return (
     <div>
       <button type="button" onClick={addWorkItem}>Add Work Item</button>
+      <div>
+        Average Velocity:
+        {calculateAverageVelocity().toFixed(2)}
+      </div>
       {workItems.map((item) => (
         <WorkItem
           key={item.id}
