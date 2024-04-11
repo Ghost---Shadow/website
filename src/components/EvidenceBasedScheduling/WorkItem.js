@@ -1,8 +1,17 @@
 import React, { useState } from 'react';
 import {
-  TextInput, Button, Text, Group,
+  Group, TextInput, Text, Button, Paper, Tooltip,
 } from '@mantine/core';
+
+import {
+  IconClock, IconPlayerPlay,
+  IconPlayerStop, IconTrash, IconEdit, IconFileText, IconHourglass, IconSpeedboat,
+} from '@tabler/icons';
+
 import PropTypes from 'prop-types';
+
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 
 function WorkItem({
   id, title, elapsed, estimatedTime, running, onStartStop, onTitleChange,
@@ -13,50 +22,78 @@ function WorkItem({
 
   const formatTime = (time) => (time / 60000).toFixed(2);
 
+  const velocity = estimatedTime > 0 ? ((elapsed / 60000) / estimatedTime).toFixed(2) : 'N/A';
+
   return (
-    <Group style={{ marginBottom: '20px' }}>
-      {id}
-      {' '}
-      {editingTitle ? (
-        <TextInput
-          value={title}
-          onChange={(event) => onTitleChange(event.target.value)}
-          onBlur={() => setEditingTitle(false)}
-          autoFocus
-        />
-      ) : (
-        <Text onClick={() => setEditingTitle(true)} style={{ cursor: 'pointer', marginBottom: '10px' }}>{title}</Text>
-      )}
-      <Text>
-        Elapsed Time:
-        {formatTime(elapsed)}
-      </Text>
-      {editingEstimatedTime ? (
-        <TextInput
-          type="number"
-          value={estimatedTime.toString()}
-          onChange={(event) => onEstimatedTimeChange(Number(event.target.value))}
-          onBlur={() => setEditingEstimatedTime(false)}
-          autoFocus
-        />
-      ) : (
-        <Text onClick={() => setEditingEstimatedTime(true)} style={{ cursor: 'pointer', marginBottom: '10px' }}>
-          Estimated Time:
-          {' '}
-          {estimatedTime}
-          {' '}
-          minutes
-        </Text>
-      )}
-      <Text>
-        Velocity:
-        {(elapsed / 60000) / estimatedTime}
-      </Text>
-      <Button onClick={onStartStop}>
-        {running ? 'Stop' : 'Start'}
-      </Button>
-      <Button color="red" onClick={() => onDelete(id)}>Delete</Button>
-    </Group>
+    <Paper withBorder shadow="sm" p="md" radius="md" style={{ marginBottom: 20 }}>
+      <Group position="apart" style={{ alignItems: 'center', width: '100%' }}>
+        <Text>{id + 1}</Text>
+        <Group spacing="xs" style={{ flex: 1 }}>
+          {editingTitle ? (
+            <TextInput
+              icon={<IconEdit size={14} />}
+              value={title}
+              onChange={(event) => onTitleChange(event.target.value)}
+              onBlur={() => setEditingTitle(false)}
+              autoFocus
+              size="xs"
+            />
+          ) : (
+            <Tooltip label="Edit title" position="bottom" withArrow>
+              <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => setEditingTitle(true)}>
+                <IconFileText size={16} />
+                <Text style={{ marginLeft: 5 }}>{title}</Text>
+              </div>
+            </Tooltip>
+          )}
+
+          {editingEstimatedTime ? (
+            <TextInput
+              icon={<IconEdit size={14} />}
+              type="number"
+              value={estimatedTime.toString()}
+              onChange={(event) => onEstimatedTimeChange(Number(event.target.value))}
+              onBlur={() => setEditingEstimatedTime(false)}
+              autoFocus
+              size="xs"
+            />
+          ) : (
+            <Tooltip label="Edit estimated time" position="bottom" withArrow>
+              <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => setEditingEstimatedTime(true)}>
+                <IconHourglass size={16} />
+                <Text size="sm" style={{ marginLeft: 5 }}>
+                  {estimatedTime}
+                </Text>
+              </div>
+            </Tooltip>
+          )}
+          <Tooltip label="Elapsed Time" position="bottom" withArrow>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <IconClock size={16} />
+              <Text size="sm" style={{ marginLeft: 5 }}>{formatTime(elapsed)}</Text>
+            </div>
+          </Tooltip>
+          <Tooltip label="Velocity" position="bottom" withArrow>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <IconSpeedboat size={16} />
+              <Text size="sm" style={{ marginLeft: 5 }}>
+                {velocity}
+              </Text>
+            </div>
+          </Tooltip>
+        </Group>
+        <Group noWrap>
+          <Tooltip label={running ? 'Stop' : 'Start'} position="bottom" withArrow>
+            <Button onClick={onStartStop} size="xs">
+              {running ? <IconPlayerStop size={14} /> : <IconPlayerPlay size={14} />}
+            </Button>
+          </Tooltip>
+          <Tooltip label="Delete" position="bottom" withArrow>
+            <Button color="red" onClick={() => onDelete(id)} size="xs"><IconTrash size={14} /></Button>
+          </Tooltip>
+        </Group>
+      </Group>
+    </Paper>
   );
 }
 
