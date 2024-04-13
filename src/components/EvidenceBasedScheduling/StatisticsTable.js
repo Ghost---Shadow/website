@@ -22,7 +22,7 @@ function StatisticsTable({
         <tbody>
           <tr>
             <td>Average Velocity</td>
-            <td>{(calculateAverageVelocity() / 60).toFixed(2)}</td>
+            <td>{(calculateAverageVelocity()).toFixed(2)}</td>
           </tr>
           <tr>
             <td>Total Estimated Time</td>
