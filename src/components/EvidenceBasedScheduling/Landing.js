@@ -85,9 +85,8 @@ function Landing() {
   };
 
   const calculateAverageVelocity = () => {
-    // Consider only items that are not currently running
-    const validItems = workItems
-      .filter((item) => item.estimatedTime > 0 && item.elapsed > 0 && !item.running);
+    // Consider only items that are done
+    const validItems = workItems.filter((item) => item.isDone);
     if (validItems.length === 0) return 0;
 
     const totalVelocity = validItems
@@ -96,10 +95,10 @@ function Landing() {
     return totalVelocity / validItems.length;
   };
 
-  const clearAllWorkItems = () => {
-    setWorkItems([]); // Clear work items from state
-    localStorage.removeItem('workItems'); // Clear work items from localStorage
-  };
+  // const clearAllWorkItems = () => {
+  //   setWorkItems([]); // Clear work items from state
+  //   localStorage.removeItem('workItems'); // Clear work items from localStorage
+  // };
 
   const deleteWorkItem = (id) => {
     const updatedWorkItems = workItems.filter((item) => item.id !== id);
@@ -125,7 +124,7 @@ function Landing() {
     <Stack style={{ padding: '2% 12.5%' }}>
       <Group>
         <Button onClick={addWorkItem}>Add Work Item</Button>
-        <Button color="red" onClick={clearAllWorkItems}>Clear All</Button>
+        {/* <Button color="red" onClick={clearAllWorkItems}>Clear All</Button> */ }
         <Switch
           checked={showDone}
           onChange={(event) => setShowDone(event.currentTarget.checked)}
