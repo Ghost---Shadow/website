@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   Group, Button, Stack, Switch,
 } from '@mantine/core';
-import { IconCheck } from '@tabler/icons';
 import WorkItem from './WorkItem';
 import StatisticsTable from './StatisticsTable';
 
@@ -128,7 +127,6 @@ function Landing() {
         <Switch
           checked={showDone}
           onChange={(event) => setShowDone(event.currentTarget.checked)}
-          label={<IconCheck />}
         />
       </Group>
 
