@@ -5,7 +5,10 @@ import PropTypes from 'prop-types';
 
 function StatisticsTable({
   calculateAverageVelocity,
-  totalEstimatedTime, totalElapsedTime, correctedEstimatedTime, timeToCompletion,
+  totalEstimatedTime,
+  totalElapsedTime,
+  correctedEstimatedTime,
+  timeToCompletion,
 }) {
   return (
     <Paper style={{ flex: 1 }} withBorder shadow="sm" p="md" radius="md">
@@ -19,38 +22,38 @@ function StatisticsTable({
         <tbody>
           <tr>
             <td>Average Velocity</td>
-            <td>{calculateAverageVelocity().toFixed(2)}</td>
+            <td>{(calculateAverageVelocity() / 60).toFixed(2)}</td>
           </tr>
           <tr>
             <td>Total Estimated Time</td>
             <td>
-              {totalEstimatedTime.toFixed(2)}
+              {(totalEstimatedTime / 60).toFixed(2)}
               {' '}
-              minutes
+              hours
             </td>
           </tr>
           <tr>
             <td>Total Elapsed Time</td>
             <td>
-              {totalElapsedTime.toFixed(2)}
+              {(totalElapsedTime / 60).toFixed(2)}
               {' '}
-              minutes
+              hours
             </td>
           </tr>
           <tr>
             <td>Corrected Estimated Time</td>
             <td>
-              {correctedEstimatedTime.toFixed(2)}
+              {(correctedEstimatedTime / 60).toFixed(2)}
               {' '}
-              minutes
+              hours
             </td>
           </tr>
           <tr>
             <td>Time to Completion</td>
             <td>
-              {timeToCompletion.toFixed(2)}
+              {(timeToCompletion / 60).toFixed(2)}
               {' '}
-              minutes
+              hours
             </td>
           </tr>
         </tbody>
