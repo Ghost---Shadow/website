@@ -115,9 +115,12 @@ function Landing() {
 
   const totalEstimatedTime = workItems.reduce((acc, item) => acc + item.estimatedTime, 0);
   const totalElapsedTime = workItems.reduce((acc, item) => acc + item.elapsed, 0) / 60000;
+  const estimatedRemainingTime = workItems
+    .filter((item) => !item.isDone)
+    .reduce((acc, item) => acc + item.estimatedTime, 0);
   const averageVelocity = calculateAverageVelocity();
   const correctedEstimatedTime = totalEstimatedTime * averageVelocity;
-  const timeToCompletion = correctedEstimatedTime - totalElapsedTime;
+  const timeToCompletion = estimatedRemainingTime * averageVelocity;
 
   return (
     <Stack style={{ padding: '2% 12.5%' }}>
