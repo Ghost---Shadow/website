@@ -5,6 +5,7 @@ import {
 import {
   IconFilePlus, IconFileImport, IconFileExport,
   IconEyeOff,
+  IconEye,
 } from '@tabler/icons';
 import WorkItem from './WorkItem';
 import StatisticsTable from './StatisticsTable';
@@ -174,7 +175,10 @@ function Landing() {
           {(props) => <Button {...props} variant="outline"><IconFileImport /></Button>}
         </FileButton>
         <Switch
-          label={<IconEyeOff />}
+          size="md"
+          color="dark.4"
+          onLabel={<IconEyeOff />}
+          offLabel={<IconEye />}
           checked={showDone}
           onChange={(event) => setShowDone(event.currentTarget.checked)}
         />
