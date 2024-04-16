@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Group, Button, Stack, Switch, FileInput,
+  Group, Button, Stack, Switch, FileButton,
 } from '@mantine/core';
+import {
+  IconFilePlus, IconFileImport, IconFileExport,
+  IconEyeOff,
+} from '@tabler/icons';
 import WorkItem from './WorkItem';
 import StatisticsTable from './StatisticsTable';
 
@@ -12,7 +16,6 @@ function Landing() {
     const savedWorkItems = localStorage.getItem('workItems');
     return savedWorkItems ? JSON.parse(savedWorkItems) : [];
   });
-  const [file, setFile] = useState(null);
 
   const exportToJsonFile = () => {
     const fileName = 'workItems.json';
@@ -32,7 +35,7 @@ function Landing() {
     URL.revokeObjectURL(href);
   };
 
-  const importFromJsonFile = () => {
+  const importFromJsonFile = (file) => {
     if (!file) return;
 
     const fileReader = new FileReader();
@@ -161,18 +164,17 @@ function Landing() {
   return (
     <Stack style={{ padding: '2% 12.5%' }}>
       <Group>
-        <Button onClick={addWorkItem}>Add Work Item</Button>
-        <Button onClick={exportToJsonFile}>Export</Button>
-        <Button onClick={importFromJsonFile} disabled={!file}>
-          Import
-        </Button>
-        <FileInput
-          placeholder="Upload"
+        <Button onClick={addWorkItem} variant="outline"><IconFilePlus /></Button>
+        <Button onClick={exportToJsonFile} variant="outline"><IconFileExport /></Button>
+        <FileButton
           accept=".json"
-          onChange={setFile}
-          value={file}
-        />
+          onChange={importFromJsonFile}
+        >
+          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+          {(props) => <Button {...props} variant="outline"><IconFileImport /></Button>}
+        </FileButton>
         <Switch
+          label={<IconEyeOff />}
           checked={showDone}
           onChange={(event) => setShowDone(event.currentTarget.checked)}
         />
