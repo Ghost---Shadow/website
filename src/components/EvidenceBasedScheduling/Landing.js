@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Group, Button, Stack, Switch,
+  Group, Button, Stack, Switch, FileInput,
 } from '@mantine/core';
 import WorkItem from './WorkItem';
 import StatisticsTable from './StatisticsTable';
@@ -12,6 +12,42 @@ function Landing() {
     const savedWorkItems = localStorage.getItem('workItems');
     return savedWorkItems ? JSON.parse(savedWorkItems) : [];
   });
+  const [file, setFile] = useState(null);
+
+  const exportToJsonFile = () => {
+    const fileName = 'workItems.json';
+    const json = JSON.stringify(workItems);
+    const blob = new Blob([json], { type: 'application/json' });
+    const href = URL.createObjectURL(blob);
+
+    // Create a link and trigger download
+    const link = document.createElement('a');
+    link.href = href;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+
+    // Clean up
+    document.body.removeChild(link);
+    URL.revokeObjectURL(href);
+  };
+
+  const importFromJsonFile = () => {
+    if (!file) return;
+
+    const fileReader = new FileReader();
+    fileReader.onload = (e) => {
+      try {
+        const json = JSON.parse(e.target.result);
+        setWorkItems(json);
+        localStorage.setItem('workItems', JSON.stringify(json));
+      } catch (error) {
+        console.error('Error importing the JSON file:', error);
+      }
+    };
+
+    fileReader.readAsText(file);
+  };
 
   useEffect(() => {
     // Prepare workItems for saving: stop running items and update their elapsed time
@@ -126,7 +162,16 @@ function Landing() {
     <Stack style={{ padding: '2% 12.5%' }}>
       <Group>
         <Button onClick={addWorkItem}>Add Work Item</Button>
-        {/* <Button color="red" onClick={clearAllWorkItems}>Clear All</Button> */ }
+        <Button onClick={exportToJsonFile}>Export</Button>
+        <Button onClick={importFromJsonFile} disabled={!file}>
+          Import
+        </Button>
+        <FileInput
+          placeholder="Upload"
+          accept=".json"
+          onChange={setFile}
+          value={file}
+        />
         <Switch
           checked={showDone}
           onChange={(event) => setShowDone(event.currentTarget.checked)}
