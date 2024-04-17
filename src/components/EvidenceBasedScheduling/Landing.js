@@ -46,7 +46,8 @@ function Landing() {
         setWorkItems(json);
         localStorage.setItem('workItems', JSON.stringify(json));
       } catch (error) {
-        console.error('Error importing the JSON file:', error);
+        // console.error('Error importing the JSON file:', error);
+        // TODO: Modal
       }
     };
 
