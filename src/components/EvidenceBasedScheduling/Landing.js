@@ -115,11 +115,19 @@ function Landing() {
       .map((item) => (item.id === id ? { ...item, estimatedTime: newEstimatedTime } : item)));
   };
 
+  const findNewestId = (items) => Math.max(...items.map((item) => item.id), -1);
+
   const addWorkItem = () => {
     setWorkItems((current) => [
       ...current,
       {
-        id: current.length, title: `Task ${current.length + 1}`, elapsed: 0, estimatedTime: 0, running: false, lastStart: null,
+        id: findNewestId(current) + 1,
+        title: `Task ${findNewestId(current) + 1}`,
+        elapsed: 0,
+        estimatedTime: 0,
+        running: false,
+        lastStart: null,
+        isDone: false,
       },
     ]);
   };
