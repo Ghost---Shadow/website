@@ -1,14 +1,13 @@
-import { Stack, Image } from '@mantine/core';
 import PropTypes from 'prop-types';
 
 function WrappedImage({ src, alt, width }) {
   return (
-    <Stack sx={{ flex: 1, alignItems: 'center' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
       <div style={{ width }}>
-        <Image src={src} alt={alt} />
+        <img src={src} alt={alt} style={{ width: '100%', height: 'auto' }} />
       </div>
       <p>{alt}</p>
-    </Stack>
+    </div>
   );
 }
 

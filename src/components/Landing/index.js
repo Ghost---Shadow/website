@@ -1,100 +1,90 @@
-import {
-  Title,
-  Stack,
-  Text,
-  Image,
-  Button,
-  Group,
-  useMantineTheme,
-  useMantineColorScheme,
-} from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
-import { Suspense } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import IllustrationSvg from '../../assets/illustration.svg';
 import SocialMediaLinks from '../common/SocialMediaLinks';
-import Illustration from './illustration';
-import BellAudio from '../../assets/bell.mp3';
-
-const preloadAudio = () => {
-  const audio = new Audio();
-  audio.src = BellAudio;
-  return audio;
-};
 
 function ButtonGroup() {
-  preloadAudio();
-  const { colorScheme } = useMantineColorScheme();
-  const onBellClick = () => {
-    const audio = new Audio(BellAudio);
-    audio.currentTime = 0.1;
-    audio.play();
-  };
-
-  const buttonColor = colorScheme === 'light' ? 'dark' : 'gray';
-
   return (
-    <>
-      <Button
-        variant="outline"
-        color={buttonColor}
-        radius="xs"
-        component={Link}
-        to="/blog"
-      >
-        Blog
-      </Button>
-      <Button
-        variant="outline"
-        color={buttonColor}
-        radius="xs"
-        component="a"
-        href="#bio"
-      >
-        Bio
-      </Button>
-      <Button variant="outline" color={buttonColor} radius="xs" onClick={onBellClick}>
-        Bell
-      </Button>
-    </>
+    <div style={{ display: 'flex', gap: '1rem' }}>
+      <Link href="/blog" style={{ textDecoration: 'none' }}>
+        <button
+          style={{
+            border: '1px solid #333',
+            color: '#333',
+            backgroundColor: 'transparent',
+            padding: '0.5rem 1rem',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Blog
+        </button>
+      </Link>
+      <a href="#bio" style={{ textDecoration: 'none' }}>
+        <button
+          style={{
+            border: '1px solid #333',
+            color: '#333',
+            backgroundColor: 'transparent',
+            padding: '0.5rem 1rem',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Bio
+        </button>
+      </a>
+    </div>
   );
 }
 
 function Landing() {
-  const theme = useMantineTheme();
-  const isMd = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
   return (
-    <Stack sx={{
-      flex: 1, height: '100vh', margin: '5rem', boxSizing: 'border-box',
-    }}
-    >
-      <Group sx={{ marginBottom: '2rem' }}>
-        <Stack sx={{ flex: 1 }}>
-          <Title order={2}>Souradeep Nanda</Title>
-          <Text order={6}>
+    <div style={{
+      flex: 1, 
+      height: '100vh', 
+      margin: '5rem', 
+      boxSizing: 'border-box',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center',
+        marginBottom: '2rem' 
+      }}>
+        <div style={{ flex: 1 }}>
+          <h2 style={{ fontSize: '2rem', margin: '0 0 1rem 0' }}>Souradeep Nanda</h2>
+          <p style={{ fontSize: '1.1rem', color: '#666', margin: 0 }}>
             Tech Generalist - Full stack developer, devops, ML engineer, data analyst
-          </Text>
-        </Stack>
-        <Group>
+          </p>
+        </div>
+        <div>
           <SocialMediaLinks />
-        </Group>
-      </Group>
-      <Group sx={{ flex: 0.5 }}>
-        <Stack sx={{
-          flex: 1, display: isMd ? 'none' : 'inherit', width: '400px', height: '300px',
-        }}
-        >
-          <Suspense fallback={<Image src={IllustrationSvg} alt="stacks" />}>
-            <Illustration scale={3} />
-          </Suspense>
-        </Stack>
-        <Group sx={{ flex: 1, justifyContent: 'flex-end' }}>
-          <Stack sx={{ flex: isMd ? 1 : 0.5 }}>
+        </div>
+      </div>
+      <div style={{ 
+        flex: 0.5, 
+        display: 'flex', 
+        alignItems: 'center' 
+      }}>
+        <div style={{
+          flex: 1, 
+          width: '400px', 
+          height: '300px'
+        }}>
+          <img src={IllustrationSvg} alt="stacks" style={{ width: '100%', height: 'auto' }} />
+        </div>
+        <div style={{ 
+          flex: 1, 
+          display: 'flex', 
+          justifyContent: 'flex-end' 
+        }}>
+          <div style={{ flex: 0.5 }}>
             <ButtonGroup />
-          </Stack>
-        </Group>
-      </Group>
-    </Stack>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

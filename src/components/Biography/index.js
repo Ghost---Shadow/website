@@ -1,12 +1,3 @@
-import {
-  Title, Stack, Text, Button,
-  Timeline,
-  Anchor,
-} from '@mantine/core';
-import {
-  IconBriefcase,
-} from '@tabler/icons';
-
 const timelineData = [
   {
     company: 'University of Texas at Dallas',
@@ -29,73 +20,93 @@ const timelineData = [
 ];
 
 function ProfessionalTimeline() {
-  const timelineDom = timelineData.map((job) => (
-    <Timeline.Item
-      key={`${job.company} - ${job.role}`}
-      bullet={<IconBriefcase size={12} />}
-      title={(
-        <Anchor
-          component="a"
-          type="button"
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://www.linkedin.com/in/souradeep-nanda/"
-        >
-          {`${job.company} - ${job.role}`}
-        </Anchor>
-      )}
-      sx={{ color: 'white' }}
-    >
-      <Text color="dimmed" size="sm">
-        {job.tenure}
-      </Text>
-      <Text size="xs" mt={4} color="dimmed">{job.description}</Text>
-    </Timeline.Item>
-  ));
-
   return (
-    <Stack sx={{ margin: '1rem 0px' }}>
-      <Timeline bulletSize={24} lineWidth={2}>
-        {timelineDom}
-      </Timeline>
-    </Stack>
+    <div style={{ margin: '1rem 0px' }}>
+      <div style={{ position: 'relative', paddingLeft: '2rem' }}>
+        {timelineData.map((job, index) => (
+          <div 
+            key={`${job.company} - ${job.role}`} 
+            style={{ 
+              position: 'relative', 
+              paddingBottom: '2rem',
+              borderLeft: index < timelineData.length - 1 ? '2px solid #666' : 'none'
+            }}
+          >
+            <div 
+              style={{
+                position: 'absolute',
+                left: '-8px',
+                top: '0',
+                width: '14px',
+                height: '14px',
+                backgroundColor: '#666',
+                borderRadius: '50%'
+              }}
+            />
+            <div style={{ paddingLeft: '1rem' }}>
+              <a
+                href="https://www.linkedin.com/in/souradeep-nanda/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: 'white', textDecoration: 'underline' }}
+              >
+                {`${job.company} - ${job.role}`}
+              </a>
+              <div style={{ color: '#aaa', fontSize: '0.9rem', marginTop: '0.25rem' }}>
+                {job.tenure}
+              </div>
+              <div style={{ color: '#aaa', fontSize: '0.8rem', marginTop: '0.25rem' }}>
+                {job.description}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
 function Biography() {
   return (
-    <Stack
+    <div
       id="bio"
-      sx={{
+      style={{
         flex: 1,
-        height: '100vh',
+        minHeight: '100vh',
         backgroundColor: 'black',
+        display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         padding: '5rem',
         boxSizing: 'border-box',
       }}
     >
-      <Stack sx={{ alignItems: 'center' }}>
-        <Title variant="h2" color="white">About me</Title>
-        <Text color="white">
+      <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <h2 style={{ color: 'white', fontSize: '2rem', marginBottom: '1rem' }}>About me</h2>
+        <p style={{ color: 'white', fontSize: '1.1rem', lineHeight: '1.6', maxWidth: '600px' }}>
           I am someone who can wear a lot of hats.
           I feel validated when I see people using my creations.
           I like playing video games, reading Wikipedia at 3 AM and watching anime.
           I have more ideas than time.
-        </Text>
-      </Stack>
+        </p>
+      </div>
       <ProfessionalTimeline />
-      <Button
-        variant="outline"
-        radius="xs"
-        component="a"
+      <a
+        href="https://github.com/Ghost---Shadow/"
         target="_blank"
         rel="noopener noreferrer"
-        href="https://github.com/Ghost---Shadow/"
+        style={{
+          border: '1px solid white',
+          color: 'white',
+          padding: '0.5rem 1rem',
+          textDecoration: 'none',
+          borderRadius: '4px',
+          marginTop: '2rem'
+        }}
       >
         Personal Projects
-      </Button>
-    </Stack>
+      </a>
+    </div>
   );
 }
 

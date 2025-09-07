@@ -1,14 +1,12 @@
-import { Center, Loader } from '@mantine/core';
-import React, { Suspense } from 'react';
+import PropTypes from 'prop-types';
+import BlogShell from '../components/BlogShell';
 
-const BlogShell = React.lazy(() => import('../components/BlogShell'));
-
-function BlogPage() {
-  return (
-    <Suspense fallback={<Center sx={{ margin: '30vh 0' }}><Loader /></Center>}>
-      <BlogShell />
-    </Suspense>
-  );
+function BlogPage({ slug }) {
+  return <BlogShell slug={slug} />;
 }
+
+BlogPage.propTypes = {
+  slug: PropTypes.string.isRequired,
+};
 
 export default BlogPage;

@@ -12,11 +12,17 @@ import StatisticsTable from './StatisticsTable';
 
 function Landing() {
   const [showDone, setShowDone] = useState(false);
-  const [workItems, setWorkItems] = useState(() => {
-    // Attempt to get saved work items from localStorage
-    const savedWorkItems = localStorage.getItem('workItems');
-    return savedWorkItems ? JSON.parse(savedWorkItems) : [];
-  });
+  const [workItems, setWorkItems] = useState([]);
+
+  useEffect(() => {
+    // Only access localStorage on the client side
+    if (typeof window !== 'undefined') {
+      const savedWorkItems = localStorage.getItem('workItems');
+      if (savedWorkItems) {
+        setWorkItems(JSON.parse(savedWorkItems));
+      }
+    }
+  }, []);
 
   const exportToJsonFile = () => {
     const fileName = 'workItems.json';
