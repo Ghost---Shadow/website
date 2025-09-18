@@ -2,6 +2,12 @@ import React from 'react';
 
 export const blogRegistry = [
   {
+    slug: 'fractional-gamma-function',
+    title: 'Fractional Gamma Function via Fractional Derivatives',
+    component: React.lazy(() => import('../../blog/fractional-gamma-function/index.mdx')),
+    date: '18 Sep 2025',
+  },
+  {
     slug: 'cruel-irony-of-p-np-problem',
     title: 'On the cruel irony of the P-NP problem',
     component: React.lazy(() => import('../../blog/cruel-irony-of-p-np-problem/index.mdx')),
