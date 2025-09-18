@@ -7,119 +7,130 @@ import { InlineMath, BlockMath } from 'react-katex';
 
 ## Introduction
 
-The classical gamma function $\Gamma(z)$ is one of the most important special functions in mathematics, serving as a continuous extension of the factorial function. It satisfies the fundamental recurrence relation $\Gamma(z+1) = z \cdot \Gamma(z)$, which represents a "unit step" in the argument.
+The classical gamma function <InlineMath math="\Gamma(z)"/> is one of the most important special functions in mathematics, serving as a continuous extension of the factorial function. It satisfies the fundamental recurrence relation <InlineMath math="\Gamma(z+1) = z \cdot \Gamma(z)"/>, which represents a "unit step" in the argument.
 
-But what if we could generalize this to fractional steps? What if instead of moving from $z$ to $z+1$, we could move in increments of $\alpha$, where $\alpha$ is any positive real number? This question leads us into the fascinating world of fractional calculus and opens up new mathematical structures with applications ranging from fractional differential equations to mathematical physics.
+But what if we could generalize this to fractional steps? What if instead of moving from <InlineMath math="z"/> to <InlineMath math="z+1"/>, we could move in increments of <InlineMath math="\alpha"/>, where <InlineMath math="\alpha"/> is any positive real number? This question leads us into the fascinating world of fractional calculus and opens up new mathematical structures with applications ranging from fractional differential equations to mathematical physics.
 
 In this post, we'll explore how fractional derivatives naturally give rise to a generalized gamma function with fractional step sizes. This isn't just a mathematical curiosity – these functions appear naturally in solutions to fractional differential equations and systems with memory effects or fractional dimensionality.
 
-The key insight is that just as the classical gamma function emerges from integer-order derivatives of $x^n e^{-x}$, we can use fractional derivatives to create a new family of functions that satisfy fractional recurrence relations of the form $\Gamma_{\alpha}(z+\alpha) = z \cdot \Gamma_{\alpha}(z)$.
+The key insight is that just as the classical gamma function emerges from integer-order derivatives of <InlineMath math="x^n e^{-x}"/>, we can use fractional derivatives to create a new family of functions that satisfy fractional recurrence relations of the form <InlineMath math="\Gamma_{\alpha}(z+\alpha) = z \cdot \Gamma_{\alpha}(z)"/>.
+
+## Recommended Watching
+
+<div style={{display: 'flex', gap: '20px', flexWrap: 'wrap', justifyContent: 'center'}}>
+  <iframe width="400" height="225" src="https://www.youtube.com/embed/Nf4fQNNrWAk?si=KiezVAwlgcsDNjtu" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+  <iframe width="400" height="225" src="https://www.youtube.com/embed/UuqwDQfg0GE?si=HnhA1xjNRyhtRYBv" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+</div>
 
 ## Classical Setup
 
 Starting with the function family:
-$$g_n(x) = x^n e^{-x}$$
+<BlockMath math="g_n(x) = x^n e^{-x}"/>
 
 The classical gamma function arises from:
-$$\Gamma(n+1) = \int_0^{\infty} x^n e^{-x} \, dx = \int_0^{\infty} g_n(x) \, dx$$
+<BlockMath math="\Gamma(n+1) = \int_0^{\infty} x^n e^{-x} \, dx = \int_0^{\infty} g_n(x) \, dx"/>
 
 With the recurrence relation:
-$$\Gamma(n+1) = n \cdot \Gamma(n)$$
+<BlockMath math="\Gamma(n+1) = n \cdot \Gamma(n)"/>
 
 ## Fractional Derivative Foundation
 
 ### Riemann-Liouville Fractional Derivative
 
-For a function $f(x)$ and fractional order $\alpha > 0$, the Riemann-Liouville fractional derivative is:
+For a function <InlineMath math="f(x)"/> and fractional order <InlineMath math="\alpha > 0"/>, the Riemann-Liouville fractional derivative is:
 
-$$D^{\alpha} f(x) = \frac{1}{\Gamma(n-\alpha)} \frac{d^n}{dx^n} \int_0^x (x-t)^{n-\alpha-1} f(t) \, dt$$
+<BlockMath math="D^{\alpha} f(x) = \frac{1}{\Gamma(n-\alpha)} \frac{d^n}{dx^n} \int_0^x (x-t)^{n-\alpha-1} f(t) \, dt"/>
 
-where $n = \lceil \alpha \rceil$.
+where <InlineMath math="n = \lceil \alpha \rceil"/>.
 
 ### Fractional Derivative of Power Functions
 
-For $f(x) = x^{\beta}$ with $\beta > -1$:
-$$D^{\alpha} x^{\beta} = \frac{\Gamma(\beta+1)}{\Gamma(\beta+1-\alpha)} x^{\beta-\alpha}$$
+For <InlineMath math="f(x) = x^{\beta}"/> with <InlineMath math="\beta > -1"/>:
+<BlockMath math="D^{\alpha} x^{\beta} = \frac{\Gamma(\beta+1)}{\Gamma(\beta+1-\alpha)} x^{\beta-\alpha}"/>
 
 ## Fractional Extension of $g_n(x)$
 
 ### Step 1: Define Fractional Order Functions
 
-For any real $\nu \geq 0$, define:
-$$g_{\nu}(x) = x^{\nu} e^{-x}$$
+For any real <InlineMath math="\nu \geq 0"/>, define:
+<BlockMath math="g_{\nu}(x) = x^{\nu} e^{-x}"/>
 
 ### Step 2: Fractional Derivative Relation
 
-The fractional derivative of order $\alpha$ gives us:
-$$D^{\alpha} g_{\nu}(x) = D^{\alpha}[x^{\nu} e^{-x}]$$
+The fractional derivative of order <InlineMath math="\alpha"/> gives us:
+<BlockMath math="D^{\alpha} g_{\nu}(x) = D^{\alpha}[x^{\nu} e^{-x}]"/>
 
 Using the fractional product rule (generalized Leibniz rule):
-$$D^{\alpha}[x^{\nu} e^{-x}] = \sum_{k=0}^{\infty} \binom{\alpha}{k} D^k[x^{\nu}] \cdot D^{\alpha-k}[e^{-x}]$$
+<BlockMath math="D^{\alpha}[x^{\nu} e^{-x}] = \sum_{k=0}^{\infty} \binom{\alpha}{k} D^k[x^{\nu}] \cdot D^{\alpha-k}[e^{-x}]"/>
 
-For $\nu > \alpha$, the fractional derivative gives:
-$D^{\alpha} g_{\nu}(x) = \frac{\Gamma(\nu+1)}{\Gamma(\nu+1-\alpha)} x^{\nu-\alpha} e^{-x} = \frac{\Gamma(\nu+1)}{\Gamma(\nu+1-\alpha)} g_{\nu-\alpha}(x)$
+For <InlineMath math="\nu > \alpha"/>, the fractional derivative gives:
+<BlockMath math="D^{\alpha} g_{\nu}(x) = \frac{\Gamma(\nu+1)}{\Gamma(\nu+1-\alpha)} x^{\nu-\alpha} e^{-x} = \frac{\Gamma(\nu+1)}{\Gamma(\nu+1-\alpha)} g_{\nu-\alpha}(x)"/>
 
 ## Fractional Gamma Function Definition
 
 ### Definition 1: Direct Fractional Integration
 
-$$\Gamma_{\alpha}(z) = \int_0^{\infty} x^{z-1} e^{-x^{\alpha}} \, dx$$
+<BlockMath math="\Gamma_{\alpha}(z) = \int_0^{\infty} x^{z-1} e^{-x^{\alpha}} \, dx"/>
 
-This reduces to the classical gamma function when $\alpha = 1$.
+This reduces to the classical gamma function when <InlineMath math="\alpha = 1"/>.
 
 ### Definition 2: Fractional Step Recurrence
 
 Define the fractional gamma function via:
-$$\Gamma_{\alpha}(z+\alpha) = \frac{\Gamma(z+\alpha)}{\Gamma(z)} \cdot \Gamma_{\alpha}(z)$$
+<BlockMath math="\Gamma_{\alpha}(z+\alpha) = \frac{\Gamma(z+\alpha)}{\Gamma(z)} \cdot \Gamma_{\alpha}(z)"/>
 
 More explicitly:
-$$\Gamma_{\alpha}(z) = \frac{\Gamma(z)}{\Gamma(z-\alpha)} \quad \text{for } z > \alpha$$
+<BlockMath math="\Gamma_{\alpha}(z) = \frac{\Gamma(z)}{\Gamma(z-\alpha)} \quad \text{for } z > \alpha"/>
 
 ### Definition 3: Integral Transform Approach
 
-$$\Gamma_{\alpha}(z) = \frac{1}{\alpha} \int_0^{\infty} t^{z/\alpha - 1} e^{-t} \, dt$$
+<BlockMath math="\Gamma_{\alpha}(z) = \frac{1}{\alpha} \int_0^{\infty} t^{z/\alpha - 1} e^{-t} \, dt"/>
 
 ## Properties of the Fractional Gamma Function
 
 ### Fractional Recurrence Relation
 
-$$\Gamma_{\alpha}(z+\alpha) = z \cdot \Gamma_{\alpha}(z)$$
+<BlockMath math="\Gamma_{\alpha}(z+\alpha) = z \cdot \Gamma_{\alpha}(z)"/>
 
-This is the key property - instead of unit steps, we have fractional steps of size $\alpha$.
+This is the key property - instead of unit steps, we have fractional steps of size <InlineMath math="\alpha"/>.
 
 ### Relationship to Classical Gamma
 
-$$\Gamma_1(z) = \Gamma(z)$$
+<BlockMath math="\Gamma_1(z) = \Gamma(z)"/>
 
-$$\Gamma_{\alpha}(z) = \frac{\Gamma(z)}{\Gamma(z-\alpha)} \quad \text{when well-defined}$$
+<BlockMath math="\Gamma_{\alpha}(z) = \frac{\Gamma(z)}{\Gamma(z-\alpha)} \quad \text{when well-defined}"/>
 
 ### Functional Equation
 
-For positive integer $n$:
-$$\Gamma_{\alpha}(z+n\alpha) = z(z+\alpha)(z+2\alpha)\cdots(z+(n-1)\alpha) \cdot \Gamma_{\alpha}(z)$$
+For positive integer <InlineMath math="n"/>:
+<BlockMath math="\Gamma_{\alpha}(z+n\alpha) = z(z+\alpha)(z+2\alpha)\cdots(z+(n-1)\alpha) \cdot \Gamma_{\alpha}(z)"/>
 
 ## Special Values
 
 ### At Integer Multiples
-For integer $n \geq 1$:
-$\Gamma_{\alpha}(n\alpha) = \frac{\Gamma(n\alpha)}{\Gamma((n-1)\alpha)} \cdot \frac{\Gamma((n-1)\alpha)}{\Gamma((n-2)\alpha)} \cdots \frac{\Gamma(\alpha)}{\Gamma(0)}$
+For integer <InlineMath math="n \geq 1"/>:
+<BlockMath math="\Gamma_{\alpha}(n\alpha) = \frac{\Gamma(n\alpha)}{\Gamma((n-1)\alpha)} \cdot \frac{\Gamma((n-1)\alpha)}{\Gamma((n-2)\alpha)} \cdots \frac{\Gamma(\alpha)}{\Gamma(0)}"/>
 
 This telescopes to:
-$\Gamma_{\alpha}(n\alpha) = \frac{\Gamma(n\alpha)}{\Gamma(0)}$
+<BlockMath math="\Gamma_{\alpha}(n\alpha) = \frac{\Gamma(n\alpha)}{\Gamma(0)}"/>
 
-However, since $\Gamma(0)$ is undefined, we use the recurrence relation instead.
+However, since <InlineMath math="\Gamma(0)"/> is undefined, we use the recurrence relation instead.
 
-### Half-Integer Case ($\alpha = 1/2$)
-$\Gamma_{1/2}(z) = \frac{\Gamma(z)}{\Gamma(z-1/2)}$
+### Half-Integer Case (<InlineMath math="\alpha = 1/2"/>)
+<BlockMath math="\Gamma_{1/2}(z) = \frac{\Gamma(z)}{\Gamma(z-1/2)}"/>
 
-For $z = 3/2$:
-$\Gamma_{1/2}(3/2) = \frac{\Gamma(3/2)}{\Gamma(1)} = \frac{\sqrt{\pi}/2}{1} = \frac{\sqrt{\pi}}{2}$
+For <InlineMath math="z = 3/2"/>:
+<BlockMath math="\Gamma_{1/2}(3/2) = \frac{\Gamma(3/2)}{\Gamma(1)} = \frac{\sqrt{\pi}/2}{1} = \frac{\sqrt{\pi}}{2}"/>
 
 ## Applications
 
 This fractional gamma function naturally appears in:
 
-1. **Fractional Differential Equations**: Solutions to $D^{\alpha} u + \lambda u = 0$
+1. **Fractional Differential Equations**: Solutions to <InlineMath math="D^{\alpha} u + \lambda u = 0"/>
 2. **Fractional Probability Distributions**: Generalizations of gamma and beta distributions  
 3. **Special Functions**: Connections to Mittag-Leffler functions and Fox H-functions
 4. **Mathematical Physics**: Systems with fractional dimensionality or memory effects
+
+## Acknowledgements
+
+Here is the [chat link](https://claude.ai/share/d0e1b180-6538-4be3-9f97-177125590eb1)
