@@ -2,6 +2,12 @@ import React from 'react';
 
 export const blogRegistry = [
   {
+    slug: 'the-power-law-illusion',
+    title: 'The Power Law Illusion: A Measurement Artifact Hypothesis',
+    component: React.lazy(() => import('../../blog/the-power-law-illusion/index.mdx')),
+    date: '11 Oct 2025',
+  },
+  {
     slug: 'fractional-gamma-function',
     title: 'Fractional Gamma Function via Fractional Derivatives',
     component: React.lazy(() => import('../../blog/fractional-gamma-function/index.mdx')),
