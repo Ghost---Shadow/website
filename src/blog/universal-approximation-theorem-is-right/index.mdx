@@ -1,7 +1,5 @@
 # The Universal Approximation Theorem Is Right. You're Using It Wrong.
 
-<date>19 Oct 2025</date>
-
 *How a misunderstood theorem and a poorly formulated problem created one of machine learning's most persistent myths*
 
 ---
@@ -248,23 +246,144 @@ These aren't theorem failures - they're **implementation challenges**.
 
 None of these invalidate the UAT. They're just practical obstacles.
 
+## Alternative Formulation: 4 Inputs → 2 Outputs
+
+There's another way to represent XOR that also works with a single layer: **expand the input space**.
+
+Instead of 2 inputs (the actual binary values), use **4 inputs** (one-hot encoding of the four possible states):
+
+```python
+import numpy as np
+
+np.random.seed(42)
+
+def softmax(x):
+    """Compute softmax values"""
+    exp_x = np.exp(x - np.max(x, axis=1, keepdims=True))
+    return exp_x / np.sum(exp_x, axis=1, keepdims=True)
+
+def cross_entropy_loss(y_pred, y_true):
+    """Cross entropy loss"""
+    n = y_true.shape[0]
+    log_likelihood = -np.log(y_pred[range(n), y_true])
+    return np.sum(log_likelihood) / n
+
+# XOR with 4 INPUTS → 2 OUTPUTS
+# Each of the 4 binary combinations becomes a separate input feature
+X = np.array([[1, 0, 0, 0],  # (0,0) as one-hot
+              [0, 1, 0, 0],  # (0,1) as one-hot
+              [0, 0, 1, 0],  # (1,0) as one-hot
+              [0, 0, 0, 1]], # (1,1) as one-hot
+             dtype=np.float32)
+
+# Binary XOR outputs: (0,0)→0, (0,1)→1, (1,0)→1, (1,1)→0
+y = np.array([0, 1, 1, 0], dtype=np.int32)
+
+# Single layer: 4 inputs → 2 outputs
+W = np.random.randn(4, 2) * 0.1
+b = np.zeros(2)
+
+learning_rate = 0.1
+epochs = 5000
+
+print("Training single-layer: 4 inputs → 2 outputs")
+for epoch in range(epochs):
+    # Forward pass
+    logits = X @ W + b
+    probs = softmax(logits)
+    loss = cross_entropy_loss(probs, y)
+    
+    # Backward pass
+    grad_logits = probs.copy()
+    grad_logits[range(len(y)), y] -= 1
+    grad_logits /= len(y)
+    
+    grad_W = X.T @ grad_logits
+    grad_b = np.sum(grad_logits, axis=0)
+    
+    # Update weights
+    W -= learning_rate * grad_W
+    b -= learning_rate * grad_b
+    
+    if (epoch + 1) % 1000 == 0:
+        print(f'Epoch [{epoch+1}/{epochs}], Loss: {loss:.4f}')
+
+# Evaluate
+logits = X @ W + b
+probs = softmax(logits)
+predictions = np.argmax(probs, axis=1)
+
+print("\nResults:")
+input_labels = ["(0,0)", "(0,1)", "(1,0)", "(1,1)"]
+for i in range(len(X)):
+    print(f"{input_labels[i]}: True={y[i]}, Pred={predictions[i]}, "
+          f"Probs=[0: {probs[i][0]:.3f}, 1: {probs[i][1]:.3f}]")
+
+accuracy = np.mean(predictions == y)
+print(f"\nAccuracy: {accuracy * 100:.0f}%")
+```
+
+### Results
+
+```
+Training single-layer: 4 inputs → 2 outputs
+Epoch [1000/5000], Loss: 0.0209
+Epoch [2000/5000], Loss: 0.0103
+Epoch [3000/5000], Loss: 0.0068
+Epoch [4000/5000], Loss: 0.0051
+Epoch [5000/5000], Loss: 0.0041
+
+Results:
+(0,0): True=0, Pred=0, Probs=[0: 0.996, 1: 0.004]
+(0,1): True=1, Pred=1, Probs=[0: 0.004, 1: 0.996]
+(1,0): True=1, Pred=1, Probs=[0: 0.004, 1: 0.996]
+(1,1): True=0, Pred=0, Probs=[0: 0.996, 1: 0.004]
+
+Accuracy: 100%
+```
+
+**Again, 100% accuracy with a single layer!**
+
+### What's Happening Here?
+
+By expanding from 2D to 4D input space (one-hot encoding), we've transformed the problem:
+
+- **Before (2D):** Points at (0,1) and (1,0) need the same label, but they're on opposite corners
+- **After (4D):** Each point has its own dimension, trivially separable
+
+The network learns simple weights:
+- Input dimension 0 (for 0,0) → push toward class 0
+- Input dimension 1 (for 0,1) → push toward class 1  
+- Input dimension 2 (for 1,0) → push toward class 1
+- Input dimension 3 (for 1,1) → push toward class 0
+
+**This is exactly what hidden layers do implicitly** - they transform the representation into a space where linear separation becomes possible!
+
 ## The Lesson
 
 The Universal Approximation Theorem is **correct**. When you can't reach arbitrarily small error, ask:
 
 1. **Is my problem formulation correct?** (Don't artificially constrain it)
-2. **Is my model capacity sufficient?** (Maybe you need more outputs, wider layers, etc.)
-3. **Is optimization working?** (Check gradients, learning rate, convergence)
-4. **Am I hitting computational limits?** (Precision, stability, convergence criteria)
+2. **Is my representation appropriate?** (Sometimes changing input/output encoding solves everything)
+3. **Is my model capacity sufficient?** (Maybe you need more outputs, wider layers, etc.)
+4. **Is optimization working?** (Check gradients, learning rate, convergence)
+5. **Am I hitting computational limits?** (Precision, stability, convergence criteria)
 
 The "XOR is impossible" myth exists because people:
-- Used the **wrong formulation** (binary when it should be 4-class)
+- Used the **wrong formulation** (binary outputs with 2D inputs)
 - Blamed the **theorem** instead of their setup
 - Never questioned the **artificial constraints**
+- Never tried alternative representations
+
+We've shown **two** ways to solve XOR with a single layer:
+1. **4 outputs** (4-class classification) - each input-output pair is unique
+2. **4 inputs** (one-hot encoding) - expand the representation space
+
+Both work perfectly. Both prove the same point.
 
 ## Try It Yourself
 
-Run the code above. You'll see a single-layer network solve XOR perfectly. Then ask yourself: 
+Run the code above. You'll see a single-layer network solve XOR perfectly in multiple formulations. Then ask yourself: 
 
 **Why did we ever think this was impossible?**
 
@@ -276,4 +395,4 @@ It's time to update the textbooks.
 
 ---
 
-*Code is provided for you to verify these results yourself. The "impossible" problem turns out to be quite simple when you formulate it correctly.*
+*Complete code is provided for you to verify these results yourself. The "impossible" problem turns out to be quite simple when you formulate it correctly.*
