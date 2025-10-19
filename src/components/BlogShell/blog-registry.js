@@ -2,6 +2,12 @@ import React from 'react';
 
 export const blogRegistry = [
   {
+    slug: 'universal-approximation-theorem-is-right',
+    title: 'The Universal Approximation Theorem Is Right. You\'re Using It Wrong.',
+    component: React.lazy(() => import('../../blog/universal-approximation-theorem-is-right/index.mdx')),
+    date: '19 Oct 2025',
+  },
+  {
     slug: 'the-power-law-illusion',
     title: 'The Power Law Illusion: A Measurement Artifact Hypothesis',
     component: React.lazy(() => import('../../blog/the-power-law-illusion/index.mdx')),
