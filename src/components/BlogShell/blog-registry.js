@@ -2,6 +2,12 @@ import React from 'react';
 
 export const blogRegistry = [
   {
+    slug: 'boron-nitrogen-catastrophe',
+    title: 'The Boron-Nitrogen Catastrophe: A Critical Gap in Beta Decay Verification',
+    component: React.lazy(() => import('../../blog/boron-nitrogen-catastrophe/index.mdx')),
+    date: '28 Oct 2025',
+  },
+  {
     slug: 'x-ray-data-pipelines',
     title: 'X-Ray Data Pipeline: Ultra-High-Speed Communication Through Limestone Tubes',
     component: React.lazy(() => import('../../blog/x-ray-data-pipelines/x-ray-data-pipelines.mdx')),
