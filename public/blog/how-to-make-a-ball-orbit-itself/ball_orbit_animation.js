@@ -1,15 +1,20 @@
+// Matter.js module aliases
+const {
+  Engine, World, Bodies, Body, Constraint,
+} = Matter;
+
 // Constants
 const COLORS = {
   ball1: '#ff6b6b',
   ball2: '#4ecdc4',
   pin: '#ffd700',
   string: 'rgba(255, 255, 255, 0.3)',
-  momentumExchange: '#90EE90',
-  momentumNet: '#FF69B4',
+  velocity: 'rgba(255, 255, 255, 0.5)',
   barycenter: 'rgba(255, 215, 0, 0.8)',
-  velocity: 'rgba(255, 255, 255, 0.8)',
+  momentumNet: '#FF69B4',
   cut: '#ff0000',
   trail: '#0a0a0a',
+  selfOrbit: '#90EE90',
 };
 
 const SIZES = {
@@ -58,6 +63,16 @@ const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
 const radius = 150;
 
+// Panning state
+let isPanning = false;
+let panOffset = { x: 0, y: 0 };
+let lastMousePos = { x: 0, y: 0 };
+
+// Create Matter.js engine
+const engine = Engine.create({
+  gravity: { x: 0, y: 0 }, // No gravity for orbital mechanics
+});
+
 // Helper functions for drawing
 function drawCircle(x, y, r, fillStyle) {
   ctx.fillStyle = fillStyle;
@@ -81,30 +96,105 @@ function drawText(text, x, y, fillStyle, font = '12px Arial') {
   ctx.fillText(text, x, y);
 }
 
+// Calculate barycenter from two bodies
+function calculateBarycenter(body1, body2) {
+  const totalMass = body1.mass + body2.mass;
+  return {
+    x: (body1.position.x * body1.mass + body2.position.x * body2.mass) / totalMass,
+    y: (body1.position.y * body1.mass + body2.position.y * body2.mass) / totalMass,
+  };
+}
+
 class System {
   constructor() {
     this.reset();
   }
 
   reset() {
-    this.angle = 0;
-    this.ball1 = {
-      x: 0, y: 0, vx: 0, vy: 0,
-    };
-    this.ball2 = {
-      x: 0, y: 0, vx: 0, vy: 0,
-    };
-    this.pin = {
-      x: centerX, y: centerY, mass: 1, vx: 0, vy: 0,
-    };
+    // Clear the world
+    World.clear(engine.world);
+    Engine.clear(engine);
+
+    // Reset state
     this.stringCut = false;
     this.cutTime = 0;
+    this.rotationAngle = 0;
     this.barycenter = { x: centerX, y: centerY };
-    this.initialDist = 0;
-    this.initialAngle = 0;
+
+    // Create physics bodies
+    this.createBodies();
+    this.createConstraints();
+  }
+
+  createBodies() {
+    const ballMass = 1;
+    const pinMass = 0.001; // Very light initially
+
+    // Create balls at starting positions
+    this.ball1 = Bodies.circle(centerX + radius, centerY, SIZES.ball, {
+      mass: ballMass,
+      frictionAir: 0,
+      friction: 0,
+      restitution: 1,
+      render: { fillStyle: COLORS.ball1 },
+    });
+
+    this.ball2 = Bodies.circle(centerX - radius, centerY, SIZES.ball, {
+      mass: ballMass,
+      frictionAir: 0,
+      friction: 0,
+      restitution: 1,
+      render: { fillStyle: COLORS.ball2 },
+    });
+
+    this.pin = Bodies.circle(centerX, centerY, SIZES.pinDefault, {
+      mass: pinMass,
+      frictionAir: 0,
+      friction: 0,
+      restitution: 1,
+      render: { fillStyle: COLORS.pin },
+    });
+
+    // Set initial velocities for circular motion
+    const speed = 1.5 * animationSpeed;
+    Body.setVelocity(this.ball1, { x: 0, y: speed });
+    Body.setVelocity(this.ball2, { x: 0, y: -speed });
+
+    // Add bodies to world
+    World.add(engine.world, [this.ball1, this.ball2, this.pin]);
+  }
+
+  createConstraints() {
+    // String from ball1 to pin
+    this.constraint1 = Constraint.create({
+      bodyA: this.ball1,
+      bodyB: this.pin,
+      length: radius,
+      stiffness: 1,
+      damping: 0,
+      render: { strokeStyle: COLORS.string },
+    });
+
+    // String from ball2 to pin
+    this.constraint2 = Constraint.create({
+      bodyA: this.ball2,
+      bodyB: this.pin,
+      length: radius,
+      stiffness: 1,
+      damping: 0,
+      render: { strokeStyle: COLORS.string },
+    });
+
+    World.add(engine.world, [this.constraint1, this.constraint2]);
   }
 
   update(scenario, dt) {
+    if (isPaused) return;
+
+    // Update physics engine
+    Engine.update(engine, 16.67 * animationSpeed);
+
+    // Handle scenario-specific updates
     const updateMethods = {
       1: () => this.updateTwoBalls(dt),
       2: () => this.updateLightPin(dt),
@@ -116,151 +206,89 @@ class System {
     updateMethods[scenario]?.();
   }
 
-  updateTwoBalls(dt) {
-    this.angle += dt * animationSpeed;
-    const cos = Math.cos(this.angle);
-    const sin = Math.sin(this.angle);
-
-    this.ball1.x = centerX + radius * cos;
-    this.ball1.y = centerY + radius * sin;
-    this.ball2.x = centerX - radius * cos;
-    this.ball2.y = centerY - radius * sin;
-
-    const speed = radius * animationSpeed;
-    this.ball1.vx = -speed * sin;
-    this.ball1.vy = speed * cos;
-    this.ball2.vx = speed * sin;
-    this.ball2.vy = -speed * cos;
-  }
-
-  handleStringCut(cutAngleThreshold, pinMass) {
-    if (!this.stringCut && this.angle > cutAngleThreshold) {
-      this.stringCut = true;
-      this.cutTime = time;
-      this.pin.mass = pinMass;
-      return true;
-    }
-    return false;
+  updateTwoBalls() {
+    // Calculate barycenter
+    this.barycenter = calculateBarycenter(this.ball1, this.ball2);
   }
 
   updateLightPin(dt) {
-    if (!this.stringCut) {
-      this.updateTwoBalls(dt);
-      if (this.handleStringCut(Math.PI / 2, 0.1)) {
-        // Store initial conditions at cut time
-        this.initialDist = radius;
-        this.initialAngle = Math.atan2(
-          this.ball1.y - this.pin.y,
-          this.ball1.x - this.pin.x,
-        );
-        // Calculate barycenter at cut time
-        const totalMass = 1 + this.pin.mass;
-        this.barycenter.x = (this.ball1.x + this.pin.x * this.pin.mass) / totalMass;
-        this.barycenter.y = (this.ball1.y + this.pin.y * this.pin.mass) / totalMass;
-      }
-    } else {
-      // Light pin system orbits barycenter while maintaining string length
-      const timeSinceCut = time - this.cutTime;
-      const orbitAngle = this.initialAngle + timeSinceCut * animationSpeed;
-      const totalMass = 1 + this.pin.mass;
+    this.rotationAngle += dt * animationSpeed;
 
-      // Calculate orbit radii based on masses
-      const ball1Radius = (this.initialDist * this.pin.mass) / totalMass;
-      const pinRadius = this.initialDist / totalMass;
+    if (!this.stringCut && this.rotationAngle > Math.PI / 2) {
+      this.stringCut = true;
+      this.cutTime = time;
 
-      // Both objects orbit the barycenter, maintaining string length
-      const cos = Math.cos(orbitAngle);
-      const sin = Math.sin(orbitAngle);
+      // Remove ball2 and its constraint
+      World.remove(engine.world, this.constraint2);
+      World.remove(engine.world, this.ball2);
 
-      this.ball1.x = this.barycenter.x + ball1Radius * cos;
-      this.ball1.y = this.barycenter.y + ball1Radius * sin;
-      this.pin.x = this.barycenter.x - pinRadius * cos;
-      this.pin.y = this.barycenter.y - pinRadius * sin;
+      // Set pin to light mass
+      Body.setMass(this.pin, 0.1);
+    }
+
+    if (this.stringCut) {
+      this.barycenter = calculateBarycenter(this.ball1, this.pin);
     }
   }
 
   updateMassivePin(dt) {
-    if (!this.stringCut) {
-      this.updateTwoBalls(dt);
-      if (this.handleStringCut(Math.PI / 2, 5)) {
-        this.initialDist = Math.hypot(
-          this.ball1.x - this.pin.x,
-          this.ball1.y - this.pin.y,
-        );
-        this.initialAngle = Math.atan2(
-          this.ball1.y - this.pin.y,
-          this.ball1.x - this.pin.x,
-        );
-      }
-    } else {
-      const timeSinceCut = time - this.cutTime;
-      const orbitAngle = this.initialAngle + timeSinceCut * animationSpeed;
-      const totalMass = 1 + this.pin.mass;
-      const ball1Radius = (this.initialDist * this.pin.mass) / totalMass;
-      const pinRadius = this.initialDist / totalMass;
+    this.rotationAngle += dt * animationSpeed;
 
-      if (timeSinceCut === 0) {
-        const barycenterX = (this.ball1.x * 1 + this.pin.x * this.pin.mass) / totalMass;
-        const barycenterY = (this.ball1.y * 1 + this.pin.y * this.pin.mass) / totalMass;
-        this.barycenter.x = barycenterX;
-        this.barycenter.y = barycenterY;
-      }
+    if (!this.stringCut && this.rotationAngle > Math.PI / 2) {
+      this.stringCut = true;
+      this.cutTime = time;
 
-      const cos = Math.cos(orbitAngle);
-      const sin = Math.sin(orbitAngle);
-      this.ball1.x = this.barycenter.x + ball1Radius * cos;
-      this.ball1.y = this.barycenter.y + ball1Radius * sin;
-      this.pin.x = this.barycenter.x - pinRadius * cos;
-      this.pin.y = this.barycenter.y - pinRadius * sin;
+      // Remove ball2 and its constraint
+      World.remove(engine.world, this.constraint2);
+      World.remove(engine.world, this.ball2);
+
+      // Set pin to massive
+      Body.setMass(this.pin, 5);
     }
 
-    this.updateBarycenter();
+    if (this.stringCut) {
+      this.barycenter = calculateBarycenter(this.ball1, this.pin);
+    }
   }
 
   updateFixedPin(dt) {
-    if (!this.stringCut) {
-      this.updateTwoBalls(dt);
-      this.handleStringCut(Math.PI / 2, Infinity);
-    } else {
-      const orbitAngle = this.angle + (time - this.cutTime) * animationSpeed;
-      this.ball1.x = centerX + radius * Math.cos(orbitAngle);
-      this.ball1.y = centerY + radius * Math.sin(orbitAngle);
-      this.barycenter.x = this.pin.x;
-      this.barycenter.y = this.pin.y;
+    this.rotationAngle += dt * animationSpeed;
+
+    if (!this.stringCut && this.rotationAngle > Math.PI / 2) {
+      this.stringCut = true;
+      this.cutTime = time;
+
+      // Remove ball2 and its constraint
+      World.remove(engine.world, this.constraint2);
+      World.remove(engine.world, this.ball2);
+
+      // Make pin static (infinite mass)
+      Body.setStatic(this.pin, true);
+    }
+
+    if (this.stringCut) {
+      this.barycenter = { x: this.pin.position.x, y: this.pin.position.y };
     }
   }
 
   updateZeroMassPin(dt) {
-    if (!this.stringCut) {
-      this.updateTwoBalls(dt);
-      if (this.handleStringCut(Math.PI / 2, 0)) {
-        // Store the initial angle between ball and pin
-        this.initialAngle = Math.atan2(
-          this.pin.y - this.ball1.y,
-          this.pin.x - this.ball1.x,
-        );
-      }
-    } else {
-      // Ball moves in straight line
-      this.ball1.x += this.ball1.vx * dt;
-      this.ball1.y += this.ball1.vy * dt;
+    this.rotationAngle += dt * animationSpeed;
 
-      // Pin maintains fixed distance (string length) from ball
-      // It stays on the opposite side of the ball's direction of motion
-      this.pin.x = this.ball1.x + radius * Math.cos(this.initialAngle);
-      this.pin.y = this.ball1.y + radius * Math.sin(this.initialAngle);
+    if (!this.stringCut && this.rotationAngle > Math.PI / 2) {
+      this.stringCut = true;
+      this.cutTime = time;
 
-      // Barycenter is at the ball (zero mass pin)
-      this.barycenter.x = this.ball1.x;
-      this.barycenter.y = this.ball1.y;
+      // Remove ball2 and its constraint
+      World.remove(engine.world, this.constraint2);
+      World.remove(engine.world, this.ball2);
+
+      // Set pin to nearly zero mass
+      Body.setMass(this.pin, 0.0001);
     }
-  }
 
-  updateBarycenter() {
     if (this.stringCut) {
-      const totalMass = 1 + this.pin.mass;
-      this.barycenter.x = (this.ball1.x + this.pin.x * this.pin.mass) / totalMass;
-      this.barycenter.y = (this.ball1.y + this.pin.y * this.pin.mass) / totalMass;
+      // Barycenter is essentially at the ball
+      this.barycenter = { x: this.ball1.position.x, y: this.ball1.position.y };
     }
   }
 
@@ -269,11 +297,18 @@ class System {
     ctx.fillStyle = COLORS.trail;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // Apply pan offset
+    ctx.save();
+    ctx.translate(panOffset.x, panOffset.y);
+
     this.drawBarycenter();
     this.drawStrings();
-    this.drawMomentumExchange();
     this.drawObjects();
     this.drawVelocityVectors();
+
+    ctx.restore();
+
+    // Draw UI elements without pan offset
     this.drawCutIndicator();
   }
 
@@ -293,8 +328,8 @@ class System {
     if (currentScenario === 5 && this.stringCut) {
       drawText(
         'Barycenter = Ball',
-        this.ball1.x + 20,
-        this.ball1.y - 20,
+        this.ball1.position.x + 20,
+        this.ball1.position.y - 20,
         COLORS.barycenter,
       );
     }
@@ -303,54 +338,37 @@ class System {
   drawStrings() {
     // String between Ball 1 and Ball 2 (cut after stringCut)
     if (currentScenario === 1 || (currentScenario > 1 && !this.stringCut)) {
-      drawLine(this.ball1.x, this.ball1.y, this.ball2.x, this.ball2.y, COLORS.string);
+      if (this.ball2) {
+        drawLine(
+          this.ball1.position.x,
+          this.ball1.position.y,
+          this.ball2.position.x,
+          this.ball2.position.y,
+          COLORS.string,
+        );
+      }
     }
 
     // String between Ball 1 and Pin (remains after cut in all scenarios)
-    drawLine(this.ball1.x, this.ball1.y, this.pin.x, this.pin.y, COLORS.string);
+    drawLine(
+      this.ball1.position.x,
+      this.ball1.position.y,
+      this.pin.position.x,
+      this.pin.position.y,
+      COLORS.string,
+    );
 
     // String between Ball 2 and Pin (cut after stringCut)
     if (currentScenario === 1 || (currentScenario > 1 && !this.stringCut)) {
-      drawLine(this.ball2.x, this.ball2.y, this.pin.x, this.pin.y, COLORS.string);
-    }
-  }
-
-  drawMomentumExchange() {
-    if (currentScenario === 1) {
-      const scale = 0.5;
-      const { angle } = this;
-
-      // Ball 1 radial direction (from center to ball1)
-      const radialX1 = Math.cos(angle);
-      const radialY1 = Math.sin(angle);
-
-      // Ball 2 radial direction (from center to ball2)
-      const radialX2 = Math.cos(angle + Math.PI);
-      const radialY2 = Math.sin(angle + Math.PI);
-
-      // Calculate radial momentum components being exchanged
-      const radialMomentum1 = this.ball1.vx * radialX1 + this.ball1.vy * radialY1;
-      const radialMomentum2 = this.ball2.vx * radialX2 + this.ball2.vy * radialY2;
-
-      // Draw momentum exchange from ball1 toward ball2 (giving)
-      drawLine(
-        this.ball1.x,
-        this.ball1.y,
-        this.ball1.x + radialX1 * radialMomentum1 * scale,
-        this.ball1.y + radialY1 * radialMomentum1 * scale,
-        COLORS.momentumNet,
-        3,
-      );
-
-      // Draw momentum exchange from ball2 toward ball1 (giving)
-      drawLine(
-        this.ball2.x,
-        this.ball2.y,
-        this.ball2.x + radialX2 * radialMomentum2 * scale,
-        this.ball2.y + radialY2 * radialMomentum2 * scale,
-        COLORS.momentumNet,
-        3,
-      );
+      if (this.ball2) {
+        drawLine(
+          this.ball2.position.x,
+          this.ball2.position.y,
+          this.pin.position.x,
+          this.pin.position.y,
+          COLORS.string,
+        );
+      }
     }
   }
 
@@ -361,132 +379,38 @@ class System {
       5: SIZES.pinZeroMass,
     }[currentScenario] || SIZES.pinDefault;
 
-    drawCircle(this.pin.x, this.pin.y, pinSize, COLORS.pin);
+    drawCircle(this.pin.position.x, this.pin.position.y, pinSize, COLORS.pin);
 
     // Draw balls
-    drawCircle(this.ball1.x, this.ball1.y, SIZES.ball, COLORS.ball1);
+    drawCircle(this.ball1.position.x, this.ball1.position.y, SIZES.ball, COLORS.ball1);
 
-    if (currentScenario === 1 || (currentScenario > 1 && !this.stringCut)) {
-      drawCircle(this.ball2.x, this.ball2.y, SIZES.ball, COLORS.ball2);
+    if (this.ball2 && (currentScenario === 1 || (currentScenario > 1 && !this.stringCut))) {
+      drawCircle(this.ball2.position.x, this.ball2.position.y, SIZES.ball, COLORS.ball2);
     }
   }
 
   drawVelocityVectors() {
-    if (currentScenario === 1 && !this.stringCut) {
-      this.drawDetailedVelocityDecomposition();
-    } else {
-      // Simple velocity vector
-      const scale = 0.3;
+    const scale = 30;
+
+    // Draw velocity vector for ball 1
+    drawLine(
+      this.ball1.position.x,
+      this.ball1.position.y,
+      this.ball1.position.x + this.ball1.velocity.x * scale,
+      this.ball1.position.y + this.ball1.velocity.y * scale,
+      COLORS.velocity,
+    );
+
+    // Draw velocity vector for ball 2 (if it exists)
+    if (this.ball2 && (currentScenario === 1 || (currentScenario > 1 && !this.stringCut))) {
       drawLine(
-        this.ball1.x,
-        this.ball1.y,
-        this.ball1.x + this.ball1.vx * scale,
-        this.ball1.y + this.ball1.vy * scale,
-        'rgba(255, 255, 255, 0.5)',
+        this.ball2.position.x,
+        this.ball2.position.y,
+        this.ball2.position.x + this.ball2.velocity.x * scale,
+        this.ball2.position.y + this.ball2.velocity.y * scale,
+        COLORS.velocity,
       );
     }
-  }
-
-  drawDetailedVelocityDecomposition() {
-    const { angle } = this;
-    const scale = 0.5;
-
-    // Ball 1 (red ball) - at angle
-    const radialX1 = Math.cos(angle);
-    const radialY1 = Math.sin(angle);
-    const tangentialX1 = -Math.sin(angle);
-    const tangentialY1 = Math.cos(angle);
-
-    const radialMagnitude1 = this.ball1.vx * radialX1 + this.ball1.vy * radialY1;
-    const tangentialMagnitude1 = this.ball1.vx * tangentialX1 + this.ball1.vy * tangentialY1;
-
-    // Ball 1 vectors
-    drawLine(
-      this.ball1.x,
-      this.ball1.y,
-      this.ball1.x + this.ball1.vx * scale,
-      this.ball1.y + this.ball1.vy * scale,
-      COLORS.velocity,
-      3,
-    );
-
-    drawLine(
-      this.ball1.x,
-      this.ball1.y,
-      this.ball1.x + tangentialX1 * tangentialMagnitude1 * scale,
-      this.ball1.y + tangentialY1 * tangentialMagnitude1 * scale,
-      COLORS.momentumExchange,
-      2,
-    );
-
-    drawLine(
-      this.ball1.x,
-      this.ball1.y,
-      this.ball1.x + radialX1 * radialMagnitude1 * scale,
-      this.ball1.y + radialY1 * radialMagnitude1 * scale,
-      COLORS.pin,
-      2,
-    );
-
-    // Ball 2 (blue ball) - at angle + π
-    const radialX2 = Math.cos(angle + Math.PI);
-    const radialY2 = Math.sin(angle + Math.PI);
-    const tangentialX2 = -Math.sin(angle + Math.PI);
-    const tangentialY2 = Math.cos(angle + Math.PI);
-
-    const radialMagnitude2 = this.ball2.vx * radialX2 + this.ball2.vy * radialY2;
-    const tangentialMagnitude2 = this.ball2.vx * tangentialX2 + this.ball2.vy * tangentialY2;
-
-    // Ball 2 vectors
-    drawLine(
-      this.ball2.x,
-      this.ball2.y,
-      this.ball2.x + this.ball2.vx * scale,
-      this.ball2.y + this.ball2.vy * scale,
-      COLORS.velocity,
-      3,
-    );
-
-    drawLine(
-      this.ball2.x,
-      this.ball2.y,
-      this.ball2.x + tangentialX2 * tangentialMagnitude2 * scale,
-      this.ball2.y + tangentialY2 * tangentialMagnitude2 * scale,
-      COLORS.momentumExchange,
-      2,
-    );
-
-    drawLine(
-      this.ball2.x,
-      this.ball2.y,
-      this.ball2.x + radialX2 * radialMagnitude2 * scale,
-      this.ball2.y + radialY2 * radialMagnitude2 * scale,
-      COLORS.pin,
-      2,
-    );
-
-    // Labels (only show once)
-    drawText(
-      'v_tangential (retained)',
-      this.ball1.x + 30,
-      this.ball1.y - 45,
-      COLORS.momentumExchange,
-      '14px Arial',
-    );
-    drawText(
-      'v_radial (exchanged)',
-      this.ball1.x + 30,
-      this.ball1.y - 30,
-      COLORS.pin,
-      '14px Arial',
-    );
-    drawText(
-      'p_exchanged (momentum)',
-      this.ball1.x + 30,
-      this.ball1.y - 15,
-      COLORS.momentumNet,
-      '14px Arial',
-    );
   }
 
   drawCutIndicator() {
@@ -499,14 +423,14 @@ class System {
         'BALL ORBITING ITSELF!',
         centerX - 120,
         50,
-        COLORS.momentumExchange,
+        COLORS.selfOrbit,
         'bold 24px Arial',
       );
       drawText(
         '(Straight line = orbit with R=0)',
         centerX - 110,
         80,
-        COLORS.momentumExchange,
+        COLORS.selfOrbit,
         '18px Arial',
       );
     }
@@ -516,13 +440,11 @@ class System {
 const system = new System();
 
 function animate() {
-  if (!isPaused) {
-    const dt = 0.016 * animationSpeed;
-    time += dt;
+  const dt = 0.016 * animationSpeed;
+  time += dt;
 
-    system.update(currentScenario, dt);
-    system.draw();
-  }
+  system.update(currentScenario, dt);
+  system.draw();
 
   requestAnimationFrame(animate);
 }
@@ -531,6 +453,7 @@ function setScenario(scenario) {
   currentScenario = scenario;
   system.reset();
   time = 0;
+  panOffset = { x: 0, y: 0 };
 
   document.querySelectorAll('button').forEach((btn) => btn.classList.remove('active'));
   document.getElementById(`scenario${scenario}`).classList.add('active');
@@ -546,6 +469,7 @@ function togglePause() {
 function reset() {
   system.reset();
   time = 0;
+  panOffset = { x: 0, y: 0 };
 }
 
 function updateSpeed(value) {
@@ -568,6 +492,36 @@ function initEventListeners() {
     'input',
     (e) => updateSpeed(e.target.value),
   );
+
+  // Mouse panning
+  canvas.addEventListener('mousedown', (e) => {
+    isPanning = true;
+    lastMousePos = { x: e.clientX, y: e.clientY };
+    canvas.style.cursor = 'grabbing';
+  });
+
+  canvas.addEventListener('mousemove', (e) => {
+    if (isPanning) {
+      const dx = e.clientX - lastMousePos.x;
+      const dy = e.clientY - lastMousePos.y;
+      panOffset.x += dx;
+      panOffset.y += dy;
+      lastMousePos = { x: e.clientX, y: e.clientY };
+    }
+  });
+
+  canvas.addEventListener('mouseup', () => {
+    isPanning = false;
+    canvas.style.cursor = 'grab';
+  });
+
+  canvas.addEventListener('mouseleave', () => {
+    isPanning = false;
+    canvas.style.cursor = 'grab';
+  });
+
+  // Set initial cursor
+  canvas.style.cursor = 'grab';
 }
 
 // Start the animation

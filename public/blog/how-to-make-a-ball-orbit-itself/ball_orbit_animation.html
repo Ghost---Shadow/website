@@ -44,6 +44,12 @@
             border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 10px;
             background: #0a0a0a;
+            cursor: grab;
+            user-select: none;
+        }
+
+        canvas:active {
+            cursor: grabbing;
         }
         
         .controls {
@@ -172,12 +178,13 @@
                 <span>String</span>
             </div>
             <div class="legend-item">
-                <div class="legend-color" style="background: #90EE90;"></div>
-                <span>Momentum Exchange</span>
+                <div class="legend-color" style="background: rgba(255, 255, 255, 0.5);"></div>
+                <span>Velocity</span>
             </div>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
     <script src="ball_orbit_animation.js"></script>
 </body>
 </html>
