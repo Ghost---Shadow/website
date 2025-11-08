@@ -68,6 +68,11 @@ let isPanning = false;
 let panOffset = { x: 0, y: 0 };
 let lastMousePos = { x: 0, y: 0 };
 
+// Zoom state
+let zoomLevel = 1.0;
+const minZoom = 0.1;
+const maxZoom = 5.0;
+
 // Create Matter.js engine
 const engine = Engine.create({
   gravity: { x: 0, y: 0 }, // No gravity for orbital mechanics
@@ -120,6 +125,14 @@ class System {
     this.cutTime = 0;
     this.rotationAngle = 0;
     this.barycenter = { x: centerX, y: centerY };
+
+    // Reset trails
+    this.trails = {
+      ball1: [],
+      ball2: [],
+      pin: [],
+      barycenter: [],
+    };
 
     // Create physics bodies
     this.createBodies();
@@ -194,7 +207,7 @@ class System {
     // Update physics engine
     Engine.update(engine, 16.67 * animationSpeed);
 
-    // Handle scenario-specific updates
+    // Handle scenario-specific updates first to calculate barycenter
     const updateMethods = {
       1: () => this.updateTwoBalls(dt),
       2: () => this.updateLightPin(dt),
@@ -204,6 +217,38 @@ class System {
     };
 
     updateMethods[scenario]?.();
+
+    // Add trail points after barycenter is calculated
+    this.addTrailPoint('ball1', this.ball1.position.x, this.ball1.position.y);
+    if (this.ball2 && (currentScenario === 1 || (currentScenario > 1 && !this.stringCut))) {
+      this.addTrailPoint('ball2', this.ball2.position.x, this.ball2.position.y);
+    }
+    this.addTrailPoint('pin', this.pin.position.x, this.pin.position.y);
+
+    // Add barycenter trail when it's being drawn
+    const shouldDrawBarycenter = currentScenario === 1
+      || (currentScenario >= 2 && currentScenario <= 4 && this.stringCut);
+    if (shouldDrawBarycenter) {
+      this.addTrailPoint('barycenter', this.barycenter.x, this.barycenter.y);
+    }
+
+    // Remove old trail points (older than 5 seconds)
+    this.cleanupTrails();
+  }
+
+  addTrailPoint(object, x, y) {
+    this.trails[object].push({
+      x,
+      y,
+      time,
+    });
+  }
+
+  cleanupTrails() {
+    const maxAge = 5; // 5 seconds
+    ['ball1', 'ball2', 'pin', 'barycenter'].forEach((obj) => {
+      this.trails[obj] = this.trails[obj].filter((point) => time - point.time < maxAge);
+    });
   }
 
   updateTwoBalls() {
@@ -214,7 +259,7 @@ class System {
   updateLightPin(dt) {
     this.rotationAngle += dt * animationSpeed;
 
-    if (!this.stringCut && this.rotationAngle > Math.PI / 2) {
+    if (!this.stringCut && time > 4) {
       this.stringCut = true;
       this.cutTime = time;
 
@@ -223,7 +268,7 @@ class System {
       World.remove(engine.world, this.ball2);
 
       // Set pin to light mass
-      Body.setMass(this.pin, 0.1);
+      Body.setMass(this.pin, 0.2);
     }
 
     if (this.stringCut) {
@@ -234,7 +279,7 @@ class System {
   updateMassivePin(dt) {
     this.rotationAngle += dt * animationSpeed;
 
-    if (!this.stringCut && this.rotationAngle > Math.PI / 2) {
+    if (!this.stringCut && time > 4) {
       this.stringCut = true;
       this.cutTime = time;
 
@@ -254,7 +299,7 @@ class System {
   updateFixedPin(dt) {
     this.rotationAngle += dt * animationSpeed;
 
-    if (!this.stringCut && this.rotationAngle > Math.PI / 2) {
+    if (!this.stringCut && time > 4) {
       this.stringCut = true;
       this.cutTime = time;
 
@@ -274,7 +319,7 @@ class System {
   updateZeroMassPin(dt) {
     this.rotationAngle += dt * animationSpeed;
 
-    if (!this.stringCut && this.rotationAngle > Math.PI / 2) {
+    if (!this.stringCut && time > 4) {
       this.stringCut = true;
       this.cutTime = time;
 
@@ -293,14 +338,16 @@ class System {
   }
 
   draw() {
-    // Draw trail
+    // Clear canvas
     ctx.fillStyle = COLORS.trail;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Apply pan offset
+    // Apply pan offset and zoom
     ctx.save();
     ctx.translate(panOffset.x, panOffset.y);
+    ctx.scale(zoomLevel, zoomLevel);
 
+    this.drawTrails();
     this.drawBarycenter();
     this.drawStrings();
     this.drawObjects();
@@ -308,8 +355,58 @@ class System {
 
     ctx.restore();
 
-    // Draw UI elements without pan offset
+    // Draw UI elements without pan offset or zoom
     this.drawCutIndicator();
+  }
+
+  drawTrails() {
+    const maxAge = 5; // 5 seconds
+
+    // Draw trail for ball 1
+    this.trails.ball1.forEach((point) => {
+      const age = time - point.time;
+      const alpha = Math.max(0, 1 - age / maxAge);
+      ctx.fillStyle = COLORS.ball1;
+      ctx.globalAlpha = alpha * 0.5;
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 2, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // Draw trail for ball 2
+    this.trails.ball2.forEach((point) => {
+      const age = time - point.time;
+      const alpha = Math.max(0, 1 - age / maxAge);
+      ctx.fillStyle = COLORS.ball2;
+      ctx.globalAlpha = alpha * 0.5;
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 2, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // Draw trail for pin
+    this.trails.pin.forEach((point) => {
+      const age = time - point.time;
+      const alpha = Math.max(0, 1 - age / maxAge);
+      ctx.fillStyle = COLORS.pin;
+      ctx.globalAlpha = alpha * 0.5;
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 2, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // Draw trail for barycenter
+    this.trails.barycenter.forEach((point) => {
+      const age = time - point.time;
+      const alpha = Math.max(0, 1 - age / maxAge);
+      ctx.fillStyle = COLORS.barycenter;
+      ctx.globalAlpha = alpha * 0.5;
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 2, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    ctx.globalAlpha = 1.0;
   }
 
   drawBarycenter() {
@@ -454,6 +551,7 @@ function setScenario(scenario) {
   system.reset();
   time = 0;
   panOffset = { x: 0, y: 0 };
+  zoomLevel = 1.0;
 
   document.querySelectorAll('button').forEach((btn) => btn.classList.remove('active'));
   document.getElementById(`scenario${scenario}`).classList.add('active');
@@ -470,6 +568,7 @@ function reset() {
   system.reset();
   time = 0;
   panOffset = { x: 0, y: 0 };
+  zoomLevel = 1.0;
 }
 
 function updateSpeed(value) {
@@ -519,6 +618,30 @@ function initEventListeners() {
     isPanning = false;
     canvas.style.cursor = 'grab';
   });
+
+  // Mouse wheel zoom
+  canvas.addEventListener('wheel', (e) => {
+    e.preventDefault();
+
+    // Get mouse position relative to canvas
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    // Calculate world position before zoom
+    const worldX = (mouseX - panOffset.x) / zoomLevel;
+    const worldY = (mouseY - panOffset.y) / zoomLevel;
+
+    // Update zoom level
+    const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+    const newZoom = Math.max(minZoom, Math.min(maxZoom, zoomLevel * zoomFactor));
+
+    // Calculate new pan offset to zoom towards mouse
+    panOffset.x = mouseX - worldX * newZoom;
+    panOffset.y = mouseY - worldY * newZoom;
+
+    zoomLevel = newZoom;
+  }, { passive: false });
 
   // Set initial cursor
   canvas.style.cursor = 'grab';
