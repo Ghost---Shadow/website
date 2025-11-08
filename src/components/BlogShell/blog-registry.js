@@ -2,6 +2,12 @@ import React from 'react';
 
 export const blogRegistry = [
   {
+    slug: 'how-to-make-a-ball-orbit-itself',
+    title: 'How to Make a Ball Orbit Itself',
+    component: React.lazy(() => import('../../blog/how-to-make-a-ball-orbit-itself/index.mdx')),
+    date: '08 Nov 2025',
+  },
+  {
     slug: 'boron-nitrogen-catastrophe',
     title: 'The Boron-Nitrogen Catastrophe: A Critical Gap in Beta Decay Verification',
     component: React.lazy(() => import('../../blog/boron-nitrogen-catastrophe/index.mdx')),
