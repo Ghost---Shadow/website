@@ -252,23 +252,20 @@
                         this.cutTime = time;
                         // Light pin has very small mass
                         this.pin.mass = 0.1;
-                        // Calculate barycenter - very close to ball since pin is light
-                        this.barycenter.x = (this.ball1.x + this.pin.x * this.pin.mass) / (1 + this.pin.mass);
-                        this.barycenter.y = (this.ball1.y + this.pin.y * this.pin.mass) / (1 + this.pin.mass);
                     }
                 } else {
                     const timeSinceCut = time - this.cutTime;
                     this.ball1.x += this.ball1.vx * dt;
                     this.ball1.y += this.ball1.vy * dt;
-                    
-                    // Update barycenter as it moves with the ball
-                    this.barycenter.x += this.ball1.vx * dt;
-                    this.barycenter.y += this.ball1.vy * dt;
-                    
+
                     // Pin falls (topples)
                     this.pin.x += timeSinceCut * 20 * dt;
                     this.pin.y += timeSinceCut * timeSinceCut * 50 * dt;
                 }
+
+                // Compute barycenter dynamically each frame
+                this.barycenter.x = (this.ball1.x + this.pin.x * this.pin.mass) / (1 + this.pin.mass);
+                this.barycenter.y = (this.ball1.y + this.pin.y * this.pin.mass) / (1 + this.pin.mass);
             }
             
             updateMassivePin(dt) {
@@ -278,32 +275,47 @@
                         this.stringCut = true;
                         this.cutTime = time;
                         this.pin.mass = 5;
-                        
+
                         this.initialDist = Math.sqrt(
-                            Math.pow(this.ball1.x - this.pin.x, 2) + 
+                            Math.pow(this.ball1.x - this.pin.x, 2) +
                             Math.pow(this.ball1.y - this.pin.y, 2)
                         );
                         this.initialAngle = Math.atan2(
-                            this.ball1.y - this.pin.y, 
+                            this.ball1.y - this.pin.y,
                             this.ball1.x - this.pin.x
                         );
-                        
-                        this.barycenter.x = (this.ball1.x + this.pin.x * this.pin.mass) / (1 + this.pin.mass);
-                        this.barycenter.y = (this.ball1.y + this.pin.y * this.pin.mass) / (1 + this.pin.mass);
                     }
                 } else {
                     const timeSinceCut = time - this.cutTime;
                     const orbitAngle = this.initialAngle + timeSinceCut * animationSpeed;
-                    
+
                     const totalMass = 1 + this.pin.mass;
                     const ball1Radius = this.initialDist * this.pin.mass / totalMass;
                     const pinRadius = this.initialDist * 1 / totalMass;
-                    
+
+                    // Compute barycenter first (it's stationary in this scenario)
+                    const barycenterX = (this.ball1.x * 1 + this.pin.x * this.pin.mass) / totalMass;
+                    const barycenterY = (this.ball1.y * 1 + this.pin.y * this.pin.mass) / totalMass;
+
+                    // Calculate barycenter at cut time (stationary point)
+                    if (timeSinceCut === 0) {
+                        this.barycenter.x = barycenterX;
+                        this.barycenter.y = barycenterY;
+                    }
+
                     this.ball1.x = this.barycenter.x + ball1Radius * Math.cos(orbitAngle);
                     this.ball1.y = this.barycenter.y + ball1Radius * Math.sin(orbitAngle);
-                    
+
                     this.pin.x = this.barycenter.x - pinRadius * Math.cos(orbitAngle);
                     this.pin.y = this.barycenter.y - pinRadius * Math.sin(orbitAngle);
+                }
+
+                // Compute barycenter dynamically each frame
+                if (this.stringCut) {
+                    // After cut, barycenter is stationary but we recalculate from positions for consistency
+                    const totalMass = 1 + this.pin.mass;
+                    this.barycenter.x = (this.ball1.x * 1 + this.pin.x * this.pin.mass) / totalMass;
+                    this.barycenter.y = (this.ball1.y * 1 + this.pin.y * this.pin.mass) / totalMass;
                 }
             }
             
@@ -313,11 +325,19 @@
                     if (this.angle > Math.PI / 2) {
                         this.stringCut = true;
                         this.cutTime = time;
+                        this.pin.mass = Infinity; // Infinite mass for fixed pin
                     }
                 } else {
                     const orbitAngle = this.angle + (time - this.cutTime) * animationSpeed;
                     this.ball1.x = centerX + radius * Math.cos(orbitAngle);
                     this.ball1.y = centerY + radius * Math.sin(orbitAngle);
+                }
+
+                // Compute barycenter dynamically each frame
+                // For infinite mass pin, barycenter is at the pin
+                if (this.stringCut) {
+                    this.barycenter.x = this.pin.x;
+                    this.barycenter.y = this.pin.y;
                 }
             }
             
@@ -328,22 +348,22 @@
                         this.stringCut = true;
                         this.cutTime = time;
                         this.pin.mass = 0;
-                        // Barycenter is exactly at the ball for zero mass pin
-                        this.barycenter.x = this.ball1.x;
-                        this.barycenter.y = this.ball1.y;
                         this.pin.vx = this.ball1.vx;
                         this.pin.vy = this.ball1.vy;
                     }
                 } else {
                     this.ball1.x += this.ball1.vx * dt;
                     this.ball1.y += this.ball1.vy * dt;
-                    
-                    // Barycenter moves with the ball
-                    this.barycenter.x = this.ball1.x;
-                    this.barycenter.y = this.ball1.y;
-                    
+
                     this.pin.x += this.pin.vx * dt;
                     this.pin.y += this.pin.vy * dt;
+                }
+
+                // Compute barycenter dynamically each frame
+                // For zero mass pin, barycenter is exactly at the ball
+                if (this.stringCut) {
+                    this.barycenter.x = this.ball1.x;
+                    this.barycenter.y = this.ball1.y;
                 }
             }
             
@@ -394,15 +414,23 @@
                 // Draw strings
                 ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
                 ctx.lineWidth = 2;
-                
+
+                // String between Ball 1 and Ball 2 (cut after stringCut)
                 if (currentScenario === 1 || (currentScenario > 1 && !this.stringCut)) {
                     ctx.beginPath();
                     ctx.moveTo(this.ball1.x, this.ball1.y);
                     ctx.lineTo(this.ball2.x, this.ball2.y);
                     ctx.stroke();
                 }
-                
-                if (currentScenario !== 5 || !this.stringCut) {
+
+                // String between Ball 1 and Pin
+                // Remains visible for scenarios 3 and 4 after cut (orbital systems)
+                // Hidden for scenarios 2 and 5 after cut (disconnected systems)
+                const showBall1PinString = currentScenario === 1 ||
+                    !this.stringCut ||
+                    (this.stringCut && (currentScenario === 3 || currentScenario === 4));
+
+                if (showBall1PinString) {
                     ctx.beginPath();
                     ctx.moveTo(this.ball1.x, this.ball1.y);
                     ctx.lineTo(this.pin.x, this.pin.y);
@@ -455,14 +483,72 @@
                     ctx.fill();
                 }
                 
-                // Draw velocity vectors
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-                ctx.lineWidth = 2;
-                
-                ctx.beginPath();
-                ctx.moveTo(this.ball1.x, this.ball1.y);
-                ctx.lineTo(this.ball1.x + this.ball1.vx * 0.3, this.ball1.y + this.ball1.vy * 0.3);
-                ctx.stroke();
+                // Draw velocity vectors and decomposition
+                if (currentScenario === 1 && !this.stringCut) {
+                    // Calculate angle and velocity components
+                    const angle = this.angle;
+                    const vMagnitude = radius * animationSpeed;
+                    const scale = 0.5; // Scale for visualization
+
+                    // Radial direction (from center to ball)
+                    const radialX = Math.cos(angle);
+                    const radialY = Math.sin(angle);
+
+                    // Tangential direction (perpendicular to radial)
+                    const tangentialX = -Math.sin(angle);
+                    const tangentialY = Math.cos(angle);
+
+                    // Total velocity vector (white)
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(this.ball1.x, this.ball1.y);
+                    ctx.lineTo(this.ball1.x + this.ball1.vx * scale, this.ball1.y + this.ball1.vy * scale);
+                    ctx.stroke();
+
+                    // Draw angle arc
+                    const dt = 0.016 * animationSpeed;
+                    const dAngle = dt;
+
+                    // Tangential component v sin(dθ) (green) - retained
+                    ctx.strokeStyle = '#90EE90';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(this.ball1.x, this.ball1.y);
+                    const tangentialComponent = vMagnitude * Math.sin(dAngle) * scale;
+                    ctx.lineTo(
+                        this.ball1.x + tangentialX * tangentialComponent * 10,
+                        this.ball1.y + tangentialY * tangentialComponent * 10
+                    );
+                    ctx.stroke();
+
+                    // Radial component v cos(dθ) (yellow) - exchanged
+                    ctx.strokeStyle = '#FFD700';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(this.ball1.x, this.ball1.y);
+                    const radialComponent = vMagnitude * Math.cos(dAngle) * scale;
+                    ctx.lineTo(
+                        this.ball1.x + radialX * radialComponent,
+                        this.ball1.y + radialY * radialComponent
+                    );
+                    ctx.stroke();
+
+                    // Labels
+                    ctx.font = '14px Arial';
+                    ctx.fillStyle = '#90EE90';
+                    ctx.fillText('v sin θ (retained)', this.ball1.x + 30, this.ball1.y - 30);
+                    ctx.fillStyle = '#FFD700';
+                    ctx.fillText('v cos θ (exchanged)', this.ball1.x + 30, this.ball1.y - 15);
+                } else {
+                    // Simple velocity vector for other scenarios
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(this.ball1.x, this.ball1.y);
+                    ctx.lineTo(this.ball1.x + this.ball1.vx * 0.3, this.ball1.y + this.ball1.vy * 0.3);
+                    ctx.stroke();
+                }
                 
                 // Draw cut indicator
                 if (this.stringCut && currentScenario > 1) {
