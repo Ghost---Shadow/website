@@ -4,7 +4,7 @@ import { Table } from '@mantine/core';
 
 <date>8 November 2025</date>
 
-## A Momentum Exchange Theory of Rotation That Unifies Circular and Linear Motion
+## A Force Exchange Theory of Rotation That Unifies Circular and Linear Motion
 
 <iframe
   src="/blog/how-to-make-a-ball-orbit-itself/ball_orbit_animation.html"
@@ -21,60 +21,66 @@ Consider a simplified spinning top consisting of:
 - Two balls of mass m at distance R from the pin
 - A string of length 2R connecting the balls
 
-**The Key Insight**: Rather than viewing the string as merely providing centripetal force, we can understand rotation as a continuous momentum exchange between the balls.
+**The Key Insight**: The string provides tension that creates the centripetal force needed for circular motion. We can understand this system by examining how forces are exchanged between the two bodies through the pin, and what happens when we remove one of the balls.
 
-### The Exchange Mechanism
+### The Force Exchange and the Universal Principle
 
-When the system rotates by angle θ:
+When the system rotates at angular velocity ω:
 
-1. Each ball's velocity vector must rotate from **v** to **v'**
-2. We can decompose this change as:
-   - Component retained: **v sin θ** (tangential to new direction)
-   - Component exchanged: **v cos θ** (must be shed/acquired)
+1. Each ball experiences centripetal acceleration toward the barycenter
+2. This acceleration requires a centripetal force
+3. **The Beautiful Symmetry of Force Exchange**:
+   - Ball 1 pulls on the string with force F₁
+   - Ball 2 pulls on the string with equal force F₂ (in opposite direction)
+   - The string acts as a conduit for force exchange between the two balls
+   - These forces exchange through the pin (action-reaction pairs)
+   - Net force on pin: zero (forces perfectly exchanged)
 
-3. **The Beautiful Symmetry**:
-   - Ball 1 "donates" -v cos θ (a negative push = pull through the string)
-   - Ball 2 reciprocates with its own -v cos θ
-   - The string acts as a conduit for this exchange
-   - Net system momentum: conserved
-   - Net force on pin: zero
+The balancing of forces IS the mechanism of force exchange—each body provides the centripetal force the other needs to orbit the barycenter.
+
+**The Universal Principle**: In any two-body system, regardless of masses, both bodies orbit their common barycenter (center of mass). The barycenter location is determined by the mass ratio. What changes between configurations is not whether they orbit, but *where* the barycenter is located.
 
 ### The Critical Test: Cutting One Ball Free
 
 What happens when we cut Ball 2 free mid-rotation?
 
 #### Case 1: Light Pin (Original Configuration)
-- Ball 1 still needs to exchange momentum
-- No Ball 2 to provide counter-momentum
-- Pin cannot handle the unbalanced force
+- Ball 1 still needs to exchange forces with something to orbit the barycenter
+- No Ball 2 to exchange forces with
+- Pin cannot exchange sufficient force (too light)
 - **Result**: Pin topples over
 
 #### Case 2: Massive Pin
-- Ball 1 seeks new exchange partner
-- Massive pin can provide counter-momentum
-- System transitions to Ball 1 ↔ Pin exchange
-- **Result**: Binary rotation around common barycenter (like a twin star system)
+- Ball 1 now forms a two-body system with the pin
+- The massive pin can exchange forces with the ball
+- **Barycenter is near the pin** (but not exactly at it)
+- **Result**: Both ball and pin orbit their shared barycenter, exchanging forces through the string (like a twin star system)
 
 #### Case 3: Infinite Mass Pin (Nailed to Desk)
-- Pin provides perfect counter-momentum without moving
-- Barycenter at pin location
-- **Result**: Ball 1 orbits fixed pin (standard circular motion)
+- Pin exchanges force with the ball without moving
+- **Barycenter is exactly at the pin's location**
+- **Result**: Ball orbits the barycenter at the pin - standard circular motion
 
 #### Case 4: Zero Mass Pin
-- Pin has no capacity for momentum exchange
-- Barycenter collapses to Ball 1's location
-- Ball 1 must "exchange with itself"
-- **Result**: Ball orbits itself with radius = 0
+- System becomes a "two-body" system with one body having zero mass
+- No mass available to exchange forces with
+- **Barycenter is exactly at the ball's location**
+- Ball "exchanges forces with itself" (no exchange partner)
+- Orbital radius from barycenter = 0, meaning no curvature
+- **Result**: The ball "orbits itself" - which manifests as straight-line motion
 
 ### The Profound Conclusion
 
-**A ball orbiting itself is simply straight-line motion!**
+**A ball "orbiting itself" is simply straight-line motion!**
 
-This isn't a failure of the model—it's a feature. The momentum exchange framework reveals that:
+This reveals a beautiful truth about the two-body problem: **In every case, both bodies orbit their common barycenter.** What changes is where that barycenter is located:
 
-1. **Circular motion**: Active exchange with a massive partner
-2. **Straight motion**: Self-exchange (or exchange with zero-mass partner)
-3. **Everything between**: Determined by mass ratio of partners
+1. **Two equal masses**: Barycenter at midpoint → Both orbit the center visibly
+2. **Massive partner**: Barycenter near massive object → Visible circular motion
+3. **Infinitely massive partner**: Barycenter exactly at massive object → Standard circular orbit
+4. **Zero mass partner**: Barycenter exactly at the remaining object → **The object orbits itself** (radius = 0 from barycenter) → Straight-line motion
+
+The mass ratio determines the barycenter location, which in turn determines the curvature of the motion.
 
 ### The Unified Picture
 
@@ -83,7 +89,7 @@ This isn't a failure of the model—it's a feature. The momentum exchange framew
     <tr>
       <th>Configuration</th>
       <th>Barycenter Location</th>
-      <th>Orbital Radius</th>
+      <th>Radius from Barycenter</th>
       <th>Motion Type</th>
     </tr>
   </thead>
@@ -91,20 +97,20 @@ This isn't a failure of the model—it's a feature. The momentum exchange framew
     <tr>
       <td>Two equal balls</td>
       <td>Center point</td>
-      <td>R</td>
-      <td>Both orbit center</td>
+      <td>R (for each ball)</td>
+      <td>Both orbit barycenter</td>
     </tr>
     <tr>
-      <td>Ball + massive pin</td>
+      <td>Ball + massive pin (m_pin >> m_ball)</td>
       <td>Near pin</td>
-      <td>Small</td>
-      <td>Tight orbit around pin</td>
+      <td>≈ R (ball), ≈ 0 (pin)</td>
+      <td>Both orbit barycenter; ball circles, pin wobbles</td>
     </tr>
     <tr>
       <td>Ball + infinite mass pin</td>
       <td>At pin</td>
-      <td>R</td>
-      <td>Perfect circle around pin</td>
+      <td>R (ball), 0 (pin)</td>
+      <td>Both orbit barycenter; ball circles, pin fixed</td>
     </tr>
     <tr>
       <td>Ball + zero mass pin</td>
@@ -123,32 +129,34 @@ This isn't a failure of the model—it's a feature. The momentum exchange framew
 
 ### The Philosophical Beauty
 
-Newton's first law (objects move straight unless acted upon) and circular motion are not opposites—they're the same phenomenon viewed through the lens of momentum exchange:
+Newton's first law (objects move straight unless acted upon) and circular motion can be viewed as limiting cases within the same mathematical framework of the two-body problem:
 
-- **Has exchange partner** → Circular motion
-- **No exchange partner** → "Orbits itself" → Straight motion
+- **Has massive partner** → Barycenter away from the object → Circular motion (radius > 0 from barycenter)
+- **Zero-mass partner** → Barycenter at the object → "Orbits itself" → Straight motion (radius = 0 from barycenter)
 
-The ball always orbits. Sometimes it orbits a partner, sometimes it orbits itself. The mathematics seamlessly transitions between these cases based on the partner's mass.
+The universal principle remains: **both bodies always orbit their barycenter.** As the partner's mass approaches zero, the barycenter moves to the object's location, and the orbital radius from the barycenter shrinks to zero. The object still "orbits," but with zero curvature—which we perceive as straight-line motion.
 
 ### Key Insights
 
-1. **Rotation requires partnership**: You can't have circular motion without something to exchange momentum with
+1. **Universal orbital principle**: In any two-body system, both bodies orbit their common barycenter—always
 
-2. **String as conduit**: The string doesn't create force—it transmits the momentum exchange between partners
+2. **Force exchange requires partnership**: Circular motion requires a partner to exchange forces with. Each body provides the centripetal force the other needs to orbit the barycenter
 
-3. **Continuity of motion**: When partners change (cutting string), the exchange mechanism persists but finds new configurations
+3. **Mass ratio determines everything**: The partner's mass determines where the barycenter is located, which determines the orbital radius and curvature
 
-4. **Unity of motion**: All motion is momentum exchange; the partner's mass determines the curvature
+4. **String as force exchange conduit**: The string doesn't create force—it acts as a conduit for force exchange between partners, transmitting tension that provides the centripetal force needed for circular motion around the barycenter
+
+5. **Continuity through limits**: When the partner's mass goes to zero, there's no one to exchange forces with. The barycenter moves to the remaining object, and "orbiting the barycenter" becomes "orbiting itself"—straight-line motion with zero curvature
 
 ### The Koan
 
 *"What does a ball orbit when it has no partner?"*
 
-*"Itself—and thus flies straight and true."*
+*"Itself—for the barycenter lies within it, and thus it flies straight and true."*
 
 ---
 
-**Behold**: We have made a ball orbit itself, and in doing so, revealed that straight lines are simply circles of infinite radius, viewed from the perspective of momentum exchange.
+**Behold**: We have made a ball orbit itself, and in doing so, revealed that straight lines are simply circles of zero radius from the barycenter—or equivalently, circles of infinite radius in space. All motion is orbital motion around the barycenter through force exchange; the mass ratio determines where that center lies and who exchanges forces with whom.
 
 ---
 
