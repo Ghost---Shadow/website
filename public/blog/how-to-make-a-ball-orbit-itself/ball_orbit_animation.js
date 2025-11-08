@@ -8,7 +8,7 @@ const COLORS = {
   ball1: '#ff6b6b',
   ball2: '#4ecdc4',
   ball3: '#9b59b6',
-  pin: '#ffd700',
+  pin: '#00ff00',
   string: 'rgba(255, 255, 255, 0.3)',
   velocity: 'rgba(255, 255, 255, 0.5)',
   barycenter: 'rgba(255, 215, 0, 0.8)',
@@ -51,6 +51,10 @@ const SCENARIO_INFO = {
   6: {
     title: 'Three Balls System',
     text: 'Three balls connected to a central pin. When one ball (Ball 3) is cut free, the remaining two balls continue to exchange forces and orbit their barycenter with the pin!',
+  },
+  7: {
+    title: 'Equal Mass Pin - Triple System',
+    text: 'When Ball 2 is cut free, Ball 1 and the equal-mass pin form a balanced binary system. The pin has the same mass as the ball, so both orbit their barycenter equally - a perfectly symmetric dance!',
   },
 };
 
@@ -290,6 +294,7 @@ class System {
       4: () => this.updateFixedPin(dt),
       5: () => this.updateZeroMassPin(dt),
       6: () => this.updateThreeBalls(dt),
+      7: () => this.updateEqualMassPin(dt),
     };
 
     updateMethods[scenario]?.();
@@ -307,7 +312,8 @@ class System {
     // Add barycenter trail when it's being drawn
     const shouldDrawBarycenter = currentScenario === 1
       || (currentScenario >= 2 && currentScenario <= 4 && this.stringCut)
-      || currentScenario === 6;
+      || currentScenario === 6
+      || (currentScenario === 7 && this.stringCut);
     if (shouldDrawBarycenter) {
       this.addTrailPoint('barycenter', this.barycenter.x, this.barycenter.y);
     }
@@ -457,6 +463,26 @@ class System {
     }
   }
 
+  updateEqualMassPin(dt) {
+    this.rotationAngle += dt * animationSpeed;
+
+    if (!this.stringCut && time > 4) {
+      this.stringCut = true;
+      this.cutTime = time;
+
+      // Remove ball2 and its constraint
+      World.remove(engine.world, this.constraint2);
+      World.remove(engine.world, this.ball2);
+
+      // Set pin to equal mass as ball
+      Body.setMass(this.pin, 1);
+    }
+
+    if (this.stringCut) {
+      this.barycenter = calculateBarycenter(this.ball1, this.pin);
+    }
+  }
+
   draw() {
     // Clear canvas
     ctx.fillStyle = COLORS.trail;
@@ -543,14 +569,18 @@ class System {
   drawBarycenter() {
     const shouldDrawStandard = currentScenario === 1
             || (currentScenario >= 2 && currentScenario <= 4 && this.stringCut)
-            || currentScenario === 6;
+            || currentScenario === 6
+            || (currentScenario === 7 && this.stringCut);
 
     if (shouldDrawStandard) {
       drawCircle(this.barycenter.x, this.barycenter.y, SIZES.barycenterDot, COLORS.barycenter);
 
-      const label = (currentScenario === 2 && this.stringCut)
-        ? 'Barycenter (near ball)'
-        : 'Barycenter';
+      let label = 'Barycenter';
+      if (currentScenario === 2 && this.stringCut) {
+        label = 'Barycenter (near ball)';
+      } else if (currentScenario === 7 && this.stringCut) {
+        label = 'Barycenter (midpoint)';
+      }
       drawText(label, this.barycenter.x + 10, this.barycenter.y - 10, COLORS.barycenter);
     }
 
@@ -764,7 +794,7 @@ function updateSpeed(value) {
 // Initialize event listeners
 function initEventListeners() {
   // Scenario buttons
-  for (let i = 1; i <= 6; i += 1) {
+  for (let i = 1; i <= 7; i += 1) {
     document.getElementById(`scenario${i}`)
       .addEventListener('click', () => setScenario(i));
   }
