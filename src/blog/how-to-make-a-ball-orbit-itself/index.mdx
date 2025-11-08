@@ -1,3 +1,5 @@
+import { Table } from '@mantine/core';
+
 # How to Make a Ball Orbit Itself
 
 <date>8 November 2025</date>
@@ -68,14 +70,42 @@ This isn't a failure of the model—it's a feature. The momentum exchange framew
 
 ### The Unified Picture
 
-```
-| Configuration            | Barycenter Location | Orbital Radius | Motion Type                  |
-|--------------------------|---------------------|----------------|------------------------------|
-| Two equal balls          | Center point        | R              | Both orbit center            |
-| Ball + massive pin       | Near pin            | Small          | Tight orbit around pin       |
-| Ball + infinite mass pin | At pin              | R              | Perfect circle around pin    |
-| Ball + zero mass pin     | At ball             | 0 (or ∞)       | Straight line ("self-orbit") |
-```
+<Table striped highlightOnHover withBorder withColumnBorders>
+  <thead>
+    <tr>
+      <th>Configuration</th>
+      <th>Barycenter Location</th>
+      <th>Orbital Radius</th>
+      <th>Motion Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Two equal balls</td>
+      <td>Center point</td>
+      <td>R</td>
+      <td>Both orbit center</td>
+    </tr>
+    <tr>
+      <td>Ball + massive pin</td>
+      <td>Near pin</td>
+      <td>Small</td>
+      <td>Tight orbit around pin</td>
+    </tr>
+    <tr>
+      <td>Ball + infinite mass pin</td>
+      <td>At pin</td>
+      <td>R</td>
+      <td>Perfect circle around pin</td>
+    </tr>
+    <tr>
+      <td>Ball + zero mass pin</td>
+      <td>At ball</td>
+      <td>0 (or ∞)</td>
+      <td>Straight line ("self-orbit")</td>
+    </tr>
+  </tbody>
+</Table>
 
 ### The Philosophical Beauty
 
