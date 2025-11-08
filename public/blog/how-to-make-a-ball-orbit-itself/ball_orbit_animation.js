@@ -7,6 +7,7 @@ const {
 const COLORS = {
   ball1: '#ff6b6b',
   ball2: '#4ecdc4',
+  ball3: '#9b59b6',
   pin: '#ffd700',
   string: 'rgba(255, 255, 255, 0.3)',
   velocity: 'rgba(255, 255, 255, 0.5)',
@@ -46,6 +47,10 @@ const SCENARIO_INFO = {
   5: {
     title: 'Zero Mass Pin - Self Orbit!',
     text: "With zero mass, the pin cannot exchange momentum. Ball 1 moves in a straight line while the massless pin trails behind at a fixed distance. The ball is 'orbiting itself' with the barycenter at the ball!",
+  },
+  6: {
+    title: 'Three Balls System',
+    text: 'Three balls connected to a central pin. When one ball (Ball 3) is cut free, the remaining two balls continue to exchange forces and orbit their barycenter with the pin!',
   },
 };
 
@@ -130,6 +135,7 @@ class System {
     this.trails = {
       ball1: [],
       ball2: [],
+      ball3: [],
       pin: [],
       barycenter: [],
     };
@@ -143,23 +149,7 @@ class System {
     const ballMass = 1;
     const pinMass = 0.001; // Very light initially
 
-    // Create balls at starting positions
-    this.ball1 = Bodies.circle(centerX + radius, centerY, SIZES.ball, {
-      mass: ballMass,
-      frictionAir: 0,
-      friction: 0,
-      restitution: 1,
-      render: { fillStyle: COLORS.ball1 },
-    });
-
-    this.ball2 = Bodies.circle(centerX - radius, centerY, SIZES.ball, {
-      mass: ballMass,
-      frictionAir: 0,
-      friction: 0,
-      restitution: 1,
-      render: { fillStyle: COLORS.ball2 },
-    });
-
+    // Create pin first
     this.pin = Bodies.circle(centerX, centerY, SIZES.pinDefault, {
       mass: pinMass,
       frictionAir: 0,
@@ -168,13 +158,84 @@ class System {
       render: { fillStyle: COLORS.pin },
     });
 
-    // Set initial velocities for circular motion
-    const speed = 1.5 * animationSpeed;
-    Body.setVelocity(this.ball1, { x: 0, y: speed });
-    Body.setVelocity(this.ball2, { x: 0, y: -speed });
+    // For 3 ball system, position balls at 120 degrees apart
+    if (currentScenario === 6) {
+      const angle1 = 0;
+      const angle2 = (2 * Math.PI) / 3; // 120 degrees
+      const angle3 = (4 * Math.PI) / 3; // 240 degrees
 
-    // Add bodies to world
-    World.add(engine.world, [this.ball1, this.ball2, this.pin]);
+      this.ball1 = Bodies.circle(
+        centerX + radius * Math.cos(angle1),
+        centerY + radius * Math.sin(angle1),
+        SIZES.ball,
+        {
+          mass: ballMass,
+          frictionAir: 0,
+          friction: 0,
+          restitution: 1,
+          render: { fillStyle: COLORS.ball1 },
+        },
+      );
+
+      this.ball2 = Bodies.circle(
+        centerX + radius * Math.cos(angle2),
+        centerY + radius * Math.sin(angle2),
+        SIZES.ball,
+        {
+          mass: ballMass,
+          frictionAir: 0,
+          friction: 0,
+          restitution: 1,
+          render: { fillStyle: COLORS.ball2 },
+        },
+      );
+
+      this.ball3 = Bodies.circle(
+        centerX + radius * Math.cos(angle3),
+        centerY + radius * Math.sin(angle3),
+        SIZES.ball,
+        {
+          mass: ballMass,
+          frictionAir: 0,
+          friction: 0,
+          restitution: 1,
+          render: { fillStyle: COLORS.ball3 },
+        },
+      );
+
+      // Set initial velocities for circular motion (tangent to radius)
+      const speed = 1.5 * animationSpeed;
+      Body.setVelocity(this.ball1, { x: -speed * Math.sin(angle1), y: speed * Math.cos(angle1) });
+      Body.setVelocity(this.ball2, { x: -speed * Math.sin(angle2), y: speed * Math.cos(angle2) });
+      Body.setVelocity(this.ball3, { x: -speed * Math.sin(angle3), y: speed * Math.cos(angle3) });
+
+      World.add(engine.world, [this.ball1, this.ball2, this.ball3, this.pin]);
+    } else {
+      // Create balls at starting positions (2 ball system)
+      this.ball1 = Bodies.circle(centerX + radius, centerY, SIZES.ball, {
+        mass: ballMass,
+        frictionAir: 0,
+        friction: 0,
+        restitution: 1,
+        render: { fillStyle: COLORS.ball1 },
+      });
+
+      this.ball2 = Bodies.circle(centerX - radius, centerY, SIZES.ball, {
+        mass: ballMass,
+        frictionAir: 0,
+        friction: 0,
+        restitution: 1,
+        render: { fillStyle: COLORS.ball2 },
+      });
+
+      // Set initial velocities for circular motion
+      const speed = 1.5 * animationSpeed;
+      Body.setVelocity(this.ball1, { x: 0, y: speed });
+      Body.setVelocity(this.ball2, { x: 0, y: -speed });
+
+      // Add bodies to world
+      World.add(engine.world, [this.ball1, this.ball2, this.pin]);
+    }
   }
 
   createConstraints() {
@@ -198,7 +259,21 @@ class System {
       render: { strokeStyle: COLORS.string },
     });
 
-    World.add(engine.world, [this.constraint1, this.constraint2]);
+    if (currentScenario === 6) {
+      // String from ball3 to pin
+      this.constraint3 = Constraint.create({
+        bodyA: this.ball3,
+        bodyB: this.pin,
+        length: radius,
+        stiffness: 1,
+        damping: 0,
+        render: { strokeStyle: COLORS.string },
+      });
+
+      World.add(engine.world, [this.constraint1, this.constraint2, this.constraint3]);
+    } else {
+      World.add(engine.world, [this.constraint1, this.constraint2]);
+    }
   }
 
   update(scenario, dt) {
@@ -214,6 +289,7 @@ class System {
       3: () => this.updateMassivePin(dt),
       4: () => this.updateFixedPin(dt),
       5: () => this.updateZeroMassPin(dt),
+      6: () => this.updateThreeBalls(dt),
     };
 
     updateMethods[scenario]?.();
@@ -223,11 +299,15 @@ class System {
     if (this.ball2 && (currentScenario === 1 || (currentScenario > 1 && !this.stringCut))) {
       this.addTrailPoint('ball2', this.ball2.position.x, this.ball2.position.y);
     }
+    if (this.ball3 && (currentScenario === 6 && !this.stringCut)) {
+      this.addTrailPoint('ball3', this.ball3.position.x, this.ball3.position.y);
+    }
     this.addTrailPoint('pin', this.pin.position.x, this.pin.position.y);
 
     // Add barycenter trail when it's being drawn
     const shouldDrawBarycenter = currentScenario === 1
-      || (currentScenario >= 2 && currentScenario <= 4 && this.stringCut);
+      || (currentScenario >= 2 && currentScenario <= 4 && this.stringCut)
+      || currentScenario === 6;
     if (shouldDrawBarycenter) {
       this.addTrailPoint('barycenter', this.barycenter.x, this.barycenter.y);
     }
@@ -246,7 +326,7 @@ class System {
 
   cleanupTrails() {
     const maxAge = 5; // 5 seconds
-    ['ball1', 'ball2', 'pin', 'barycenter'].forEach((obj) => {
+    ['ball1', 'ball2', 'ball3', 'pin', 'barycenter'].forEach((obj) => {
       this.trails[obj] = this.trails[obj].filter((point) => time - point.time < maxAge);
     });
   }
@@ -337,6 +417,46 @@ class System {
     }
   }
 
+  updateThreeBalls(dt) {
+    this.rotationAngle += dt * animationSpeed;
+
+    if (!this.stringCut && time > 4) {
+      this.stringCut = true;
+      this.cutTime = time;
+
+      // Remove ball3 and its constraint
+      World.remove(engine.world, this.constraint3);
+      World.remove(engine.world, this.ball3);
+    }
+
+    // Calculate barycenter of remaining bodies
+    if (this.stringCut) {
+      // After cut: ball1, ball2, and pin
+      const totalMass = this.ball1.mass + this.ball2.mass + this.pin.mass;
+      this.barycenter = {
+        x: (this.ball1.position.x * this.ball1.mass
+          + this.ball2.position.x * this.ball2.mass
+          + this.pin.position.x * this.pin.mass) / totalMass,
+        y: (this.ball1.position.y * this.ball1.mass
+          + this.ball2.position.y * this.ball2.mass
+          + this.pin.position.y * this.pin.mass) / totalMass,
+      };
+    } else {
+      // Before cut: all three balls and pin
+      const totalMass = this.ball1.mass + this.ball2.mass + this.ball3.mass + this.pin.mass;
+      this.barycenter = {
+        x: (this.ball1.position.x * this.ball1.mass
+          + this.ball2.position.x * this.ball2.mass
+          + this.ball3.position.x * this.ball3.mass
+          + this.pin.position.x * this.pin.mass) / totalMass,
+        y: (this.ball1.position.y * this.ball1.mass
+          + this.ball2.position.y * this.ball2.mass
+          + this.ball3.position.y * this.ball3.mass
+          + this.pin.position.y * this.pin.mass) / totalMass,
+      };
+    }
+  }
+
   draw() {
     // Clear canvas
     ctx.fillStyle = COLORS.trail;
@@ -384,6 +504,17 @@ class System {
       ctx.fill();
     });
 
+    // Draw trail for ball 3
+    this.trails.ball3.forEach((point) => {
+      const age = time - point.time;
+      const alpha = Math.max(0, 1 - age / maxAge);
+      ctx.fillStyle = COLORS.ball3;
+      ctx.globalAlpha = alpha * 0.5;
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 2, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
     // Draw trail for pin
     this.trails.pin.forEach((point) => {
       const age = time - point.time;
@@ -411,7 +542,8 @@ class System {
 
   drawBarycenter() {
     const shouldDrawStandard = currentScenario === 1
-            || (currentScenario >= 2 && currentScenario <= 4 && this.stringCut);
+            || (currentScenario >= 2 && currentScenario <= 4 && this.stringCut)
+            || currentScenario === 6;
 
     if (shouldDrawStandard) {
       drawCircle(this.barycenter.x, this.barycenter.y, SIZES.barycenterDot, COLORS.barycenter);
@@ -433,30 +565,18 @@ class System {
   }
 
   drawStrings() {
-    // String between Ball 1 and Ball 2 (cut after stringCut)
-    if (currentScenario === 1 || (currentScenario > 1 && !this.stringCut)) {
-      if (this.ball2) {
-        drawLine(
-          this.ball1.position.x,
-          this.ball1.position.y,
-          this.ball2.position.x,
-          this.ball2.position.y,
-          COLORS.string,
-        );
-      }
-    }
+    // For 3 ball system
+    if (currentScenario === 6) {
+      // Ball 1 to Pin
+      drawLine(
+        this.ball1.position.x,
+        this.ball1.position.y,
+        this.pin.position.x,
+        this.pin.position.y,
+        COLORS.string,
+      );
 
-    // String between Ball 1 and Pin (remains after cut in all scenarios)
-    drawLine(
-      this.ball1.position.x,
-      this.ball1.position.y,
-      this.pin.position.x,
-      this.pin.position.y,
-      COLORS.string,
-    );
-
-    // String between Ball 2 and Pin (cut after stringCut)
-    if (currentScenario === 1 || (currentScenario > 1 && !this.stringCut)) {
+      // Ball 2 to Pin
       if (this.ball2) {
         drawLine(
           this.ball2.position.x,
@@ -465,6 +585,53 @@ class System {
           this.pin.position.y,
           COLORS.string,
         );
+      }
+
+      // Ball 3 to Pin (only before cut)
+      if (this.ball3 && !this.stringCut) {
+        drawLine(
+          this.ball3.position.x,
+          this.ball3.position.y,
+          this.pin.position.x,
+          this.pin.position.y,
+          COLORS.string,
+        );
+      }
+    } else {
+      // For 2 ball system
+      // String between Ball 1 and Ball 2 (cut after stringCut)
+      if (currentScenario === 1 || (currentScenario > 1 && !this.stringCut)) {
+        if (this.ball2) {
+          drawLine(
+            this.ball1.position.x,
+            this.ball1.position.y,
+            this.ball2.position.x,
+            this.ball2.position.y,
+            COLORS.string,
+          );
+        }
+      }
+
+      // String between Ball 1 and Pin (remains after cut in all scenarios)
+      drawLine(
+        this.ball1.position.x,
+        this.ball1.position.y,
+        this.pin.position.x,
+        this.pin.position.y,
+        COLORS.string,
+      );
+
+      // String between Ball 2 and Pin (cut after stringCut)
+      if (currentScenario === 1 || (currentScenario > 1 && !this.stringCut)) {
+        if (this.ball2) {
+          drawLine(
+            this.ball2.position.x,
+            this.ball2.position.y,
+            this.pin.position.x,
+            this.pin.position.y,
+            COLORS.string,
+          );
+        }
       }
     }
   }
@@ -481,8 +648,13 @@ class System {
     // Draw balls
     drawCircle(this.ball1.position.x, this.ball1.position.y, SIZES.ball, COLORS.ball1);
 
-    if (this.ball2 && (currentScenario === 1 || (currentScenario > 1 && !this.stringCut))) {
+    if (this.ball2 && (currentScenario === 1
+       || (currentScenario > 1 && !this.stringCut) || currentScenario === 6)) {
       drawCircle(this.ball2.position.x, this.ball2.position.y, SIZES.ball, COLORS.ball2);
+    }
+
+    if (this.ball3 && currentScenario === 6 && !this.stringCut) {
+      drawCircle(this.ball3.position.x, this.ball3.position.y, SIZES.ball, COLORS.ball3);
     }
   }
 
@@ -499,7 +671,8 @@ class System {
     );
 
     // Draw velocity vector for ball 2 (if it exists)
-    if (this.ball2 && (currentScenario === 1 || (currentScenario > 1 && !this.stringCut))) {
+    if (this.ball2 && (currentScenario === 1
+      || (currentScenario > 1 && !this.stringCut) || currentScenario === 6)) {
       drawLine(
         this.ball2.position.x,
         this.ball2.position.y,
@@ -508,11 +681,23 @@ class System {
         COLORS.velocity,
       );
     }
+
+    // Draw velocity vector for ball 3 (if it exists)
+    if (this.ball3 && currentScenario === 6 && !this.stringCut) {
+      drawLine(
+        this.ball3.position.x,
+        this.ball3.position.y,
+        this.ball3.position.x + this.ball3.velocity.x * scale,
+        this.ball3.position.y + this.ball3.velocity.y * scale,
+        COLORS.velocity,
+      );
+    }
   }
 
   drawCutIndicator() {
     if (this.stringCut && currentScenario > 1) {
-      drawText('✂ STRING CUT', 20, 40, COLORS.cut, 'bold 20px Arial');
+      const message = currentScenario === 6 ? '✂ BALL 3 CUT FREE' : '✂ STRING CUT';
+      drawText(message, 20, 40, COLORS.cut, 'bold 20px Arial');
     }
 
     if (currentScenario === 5 && this.stringCut) {
@@ -579,7 +764,7 @@ function updateSpeed(value) {
 // Initialize event listeners
 function initEventListeners() {
   // Scenario buttons
-  for (let i = 1; i <= 5; i += 1) {
+  for (let i = 1; i <= 6; i += 1) {
     document.getElementById(`scenario${i}`)
       .addEventListener('click', () => setScenario(i));
   }
