@@ -8,7 +8,7 @@ const COLORS = {
     barycenter: 'rgba(255, 215, 0, 0.8)',
     velocity: 'rgba(255, 255, 255, 0.8)',
     cut: '#ff0000',
-    trail: 'rgba(10, 10, 10, 0.2)'
+    trail: '#0a0a0a'
 };
 
 const SIZES = {
@@ -26,8 +26,8 @@ const SCENARIO_INFO = {
         text: "Two balls exchange momentum through the string. Each ball 'donates' v cos θ and receives the same from its partner. The pin experiences zero net force."
     },
     2: {
-        title: "Light Pin Falls",
-        text: "When Ball 2 is cut free, Ball 1 still needs to exchange momentum but has no partner. The light pin cannot handle the unbalanced force and topples over."
+        title: "Light Pin - Small Binary System",
+        text: "When Ball 2 is cut free, the remaining string keeps Ball 1 connected to the light pin. They form a small binary system orbiting their barycenter (very close to the ball due to mass difference)."
     },
     3: {
         title: "Massive Pin - Binary System",
@@ -39,7 +39,7 @@ const SCENARIO_INFO = {
     },
     5: {
         title: "Zero Mass Pin - Self Orbit!",
-        text: "With zero mass, the pin cannot exchange momentum. Ball 1 must 'orbit itself' - which is just straight-line motion! The orbit radius collapses to zero."
+        text: "With zero mass, the pin cannot exchange momentum. Ball 1 moves in a straight line while the massless pin trails behind at a fixed distance. The ball is 'orbiting itself' with the barycenter at the ball!"
     }
 };
 
@@ -150,18 +150,37 @@ class System {
     updateLightPin(dt) {
         if (!this.stringCut) {
             this.updateTwoBalls(dt);
-            this.handleStringCut(Math.PI / 2, 0.1);
+            if (this.handleStringCut(Math.PI / 2, 0.1)) {
+                // Store initial conditions at cut time
+                this.initialDist = radius;
+                this.initialAngle = Math.atan2(
+                    this.ball1.y - this.pin.y,
+                    this.ball1.x - this.pin.x
+                );
+                // Calculate barycenter at cut time
+                const totalMass = 1 + this.pin.mass;
+                this.barycenter.x = (this.ball1.x + this.pin.x * this.pin.mass) / totalMass;
+                this.barycenter.y = (this.ball1.y + this.pin.y * this.pin.mass) / totalMass;
+            }
         } else {
+            // Light pin system orbits barycenter while maintaining string length
             const timeSinceCut = time - this.cutTime;
-            this.ball1.x += this.ball1.vx * dt;
-            this.ball1.y += this.ball1.vy * dt;
+            const orbitAngle = this.initialAngle + timeSinceCut * animationSpeed;
+            const totalMass = 1 + this.pin.mass;
 
-            // Pin falls (topples)
-            this.pin.x += timeSinceCut * 20 * dt;
-            this.pin.y += timeSinceCut * timeSinceCut * 50 * dt;
+            // Calculate orbit radii based on masses
+            const ball1Radius = this.initialDist * this.pin.mass / totalMass;
+            const pinRadius = this.initialDist * 1 / totalMass;
+
+            // Both objects orbit the barycenter, maintaining string length
+            const cos = Math.cos(orbitAngle);
+            const sin = Math.sin(orbitAngle);
+
+            this.ball1.x = this.barycenter.x + ball1Radius * cos;
+            this.ball1.y = this.barycenter.y + ball1Radius * sin;
+            this.pin.x = this.barycenter.x - pinRadius * cos;
+            this.pin.y = this.barycenter.y - pinRadius * sin;
         }
-
-        this.updateBarycenter();
     }
 
     updateMassivePin(dt) {
@@ -219,14 +238,23 @@ class System {
         if (!this.stringCut) {
             this.updateTwoBalls(dt);
             if (this.handleStringCut(Math.PI / 2, 0)) {
-                this.pin.vx = this.ball1.vx;
-                this.pin.vy = this.ball1.vy;
+                // Store the initial angle between ball and pin
+                this.initialAngle = Math.atan2(
+                    this.pin.y - this.ball1.y,
+                    this.pin.x - this.ball1.x
+                );
             }
         } else {
+            // Ball moves in straight line
             this.ball1.x += this.ball1.vx * dt;
             this.ball1.y += this.ball1.vy * dt;
-            this.pin.x += this.pin.vx * dt;
-            this.pin.y += this.pin.vy * dt;
+
+            // Pin maintains fixed distance (string length) from ball
+            // It stays on the opposite side of the ball's direction of motion
+            this.pin.x = this.ball1.x + radius * Math.cos(this.initialAngle);
+            this.pin.y = this.ball1.y + radius * Math.sin(this.initialAngle);
+
+            // Barycenter is at the ball (zero mass pin)
             this.barycenter.x = this.ball1.x;
             this.barycenter.y = this.ball1.y;
         }
@@ -258,8 +286,6 @@ class System {
             (currentScenario >= 2 && currentScenario <= 4 && this.stringCut);
 
         if (shouldDrawStandard) {
-            drawArc(this.barycenter.x, this.barycenter.y, SIZES.barycenterRadius,
-                'rgba(255, 215, 0, 0.5)', 2, true);
             drawCircle(this.barycenter.x, this.barycenter.y, SIZES.barycenterDot, COLORS.barycenter);
 
             const label = (currentScenario === 2 && this.stringCut)
@@ -269,27 +295,21 @@ class System {
         }
 
         if (currentScenario === 5 && this.stringCut) {
-            drawArc(this.ball1.x, this.ball1.y, 25, 'rgba(255, 100, 100, 0.5)', 2, true);
-            drawText('Barycenter = Ball (mass = 0)', this.ball1.x + 20,
-                this.ball1.y - 20, 'rgba(255, 100, 100, 0.8)');
+            drawText('Barycenter = Ball', this.ball1.x + 20,
+                this.ball1.y - 20, COLORS.barycenter);
         }
     }
 
     drawStrings() {
-        // String between Ball 1 and Ball 2
+        // String between Ball 1 and Ball 2 (cut after stringCut)
         if (currentScenario === 1 || (currentScenario > 1 && !this.stringCut)) {
             drawLine(this.ball1.x, this.ball1.y, this.ball2.x, this.ball2.y, COLORS.string);
         }
 
-        // String between Ball 1 and Pin
-        const showBall1PinString = currentScenario === 1 || !this.stringCut ||
-            (this.stringCut && (currentScenario === 3 || currentScenario === 4));
+        // String between Ball 1 and Pin (remains after cut in all scenarios)
+        drawLine(this.ball1.x, this.ball1.y, this.pin.x, this.pin.y, COLORS.string);
 
-        if (showBall1PinString) {
-            drawLine(this.ball1.x, this.ball1.y, this.pin.x, this.pin.y, COLORS.string);
-        }
-
-        // String between Ball 2 and Pin
+        // String between Ball 2 and Pin (cut after stringCut)
         if (currentScenario === 1 || (currentScenario > 1 && !this.stringCut)) {
             drawLine(this.ball2.x, this.ball2.y, this.pin.x, this.pin.y, COLORS.string);
         }
