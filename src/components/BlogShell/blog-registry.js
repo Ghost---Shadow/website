@@ -2,6 +2,12 @@ import React from 'react';
 
 export const blogRegistry = [
   {
+    slug: 'sort-of-perpetual-motion-machine',
+    title: 'The Scalable Quasi-Perpetual Photonic Machine',
+    component: React.lazy(() => import('../../blog/sort-of-perpetual-motion-machine/index.mdx')),
+    date: '17 Nov 2025',
+  },
+  {
     slug: 'how-to-make-a-ball-orbit-itself',
     title: 'How to Make a Ball Orbit Itself',
     component: React.lazy(() => import('../../blog/how-to-make-a-ball-orbit-itself/index.mdx')),
