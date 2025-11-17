@@ -27,3 +27,8 @@ scratch
 *.blend1
 firebase-debug.log
 .firebase
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
