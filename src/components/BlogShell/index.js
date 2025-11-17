@@ -8,6 +8,7 @@ import {
   Stack,
   Center,
   Loader,
+  ScrollArea,
   useMantineColorScheme,
 } from '@mantine/core';
 import { Suspense, useState, useEffect } from 'react';
@@ -143,9 +144,11 @@ function BlogShell() {
         onClose={() => setDrawerOpen(false)}
         position="right"
       >
-        <Container>
-          {blogDoms}
-        </Container>
+        <ScrollArea style={{ height: 'calc(100vh - 60px)' }}>
+          <Container>
+            {blogDoms}
+          </Container>
+        </ScrollArea>
       </Drawer>
     </>
   );
