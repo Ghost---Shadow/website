@@ -2,6 +2,12 @@ import React from 'react';
 
 export const blogRegistry = [
   {
+    slug: 'photonic-transformer-hypothesis',
+    title: 'The Photonic Transformer Hypothesis: Rethinking Photosynthesis and Methane Consumption in Plants',
+    component: React.lazy(() => import('../../blog/photonic-transformer-hypothesis/index.mdx')),
+    date: '19 Nov 2025',
+  },
+  {
     slug: 'sort-of-perpetual-motion-machine',
     title: 'The Scalable Quasi-Perpetual Photonic Machine',
     component: React.lazy(() => import('../../blog/sort-of-perpetual-motion-machine/index.mdx')),
