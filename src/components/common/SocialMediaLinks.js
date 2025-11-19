@@ -2,7 +2,7 @@ import {
   ActionIcon, useMantineColorScheme,
 } from '@mantine/core';
 import {
-  IconBrandLinkedin, IconBrandGithub, IconBrandStackoverflow, IconSun, IconMoon,
+  IconBrandLinkedin, IconBrandGithub, IconBrandStackoverflow, IconSun, IconMoon, IconRss,
 } from '@tabler/icons';
 
 function SocialMediaLinks() {
@@ -51,6 +51,18 @@ function SocialMediaLinks() {
         href="https://stackoverflow.com/users/1217998/souradeep-nanda"
       >
         <IconBrandStackoverflow />
+      </ActionIcon>
+      <ActionIcon
+        variant="subtle"
+        color="dark"
+        radius="xs"
+        component="a"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="/rss.xml"
+        title="RSS Feed"
+      >
+        <IconRss />
       </ActionIcon>
     </>
   );
