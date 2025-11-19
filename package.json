@@ -34,7 +34,6 @@
     "test": "craco test",
     "refresh-registry": "node scripts/refreshBlogRegistry.js",
     "generate-rss": "node scripts/generateRssFeed.js",
-    "prebuild": "npm run refresh-registry && npm run generate-rss",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
     "analyze": "source-map-explorer 'build/static/js/*.js'"
