@@ -5,9 +5,16 @@
     <link>https://ad-absurdum.me</link>
     <description>So many ideas so little time</description>
     <language>en-us</language>
-    <lastBuildDate>Wed, 19 Nov 2025 12:59:58 +0530</lastBuildDate>
+    <lastBuildDate>Fri, 21 Nov 2025 19:56:33 +0530</lastBuildDate>
     <ttl>1440</ttl>
     <atom:link href="https://ad-absurdum.me/rss.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Theorem: Equivalence of -arccoth and tan Functions</title>
+      <link>https://ad-absurdum.me/blog/infinitely-fat-tan-conjecture</link>
+      <guid>https://ad-absurdum.me/blog/infinitely-fat-tan-conjecture</guid>
+      <pubDate>Fri, 21 Nov 2025 00:00:00 +0530</pubDate>
+      <description>Imagine you could take the most repetitive, oscillating function in mathematics—the tangent function—and transform it into something that never repeats. It sounds impossible, but that&apos;s exactly what we&apos;ve discovered. By stretching tan&apos;s period to infinity and shifting it by half-infinity, we can ...</description>
+    </item>
     <item>
       <title>The Photonic Transformer Hypothesis: Rethinking Photosynthesis and Methane Consumption in Plants</title>
       <link>https://ad-absurdum.me/blog/photonic-transformer-hypothesis</link>
