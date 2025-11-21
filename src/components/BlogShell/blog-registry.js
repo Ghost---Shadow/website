@@ -2,6 +2,12 @@ import React from 'react';
 
 export const blogRegistry = [
   {
+    slug: 'infinitely-fat-tan-conjecture',
+    title: 'Theorem: Equivalence of -arccoth and tan Functions',
+    component: React.lazy(() => import('../../blog/infinitely-fat-tan-conjecture/index.mdx')),
+    date: '21 Nov 2025',
+  },
+  {
     slug: 'photonic-transformer-hypothesis',
     title: 'The Photonic Transformer Hypothesis: Rethinking Photosynthesis and Methane Consumption in Plants',
     component: React.lazy(() => import('../../blog/photonic-transformer-hypothesis/index.mdx')),
