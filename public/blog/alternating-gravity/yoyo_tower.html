@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yoyo Tower - AC Gravity Harvesting</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #0a0a1a;
+            color: #eee;
+            min-height: 100vh;
+        }
+        h1 {
+            text-align: center;
+            color: #00d9ff;
+            margin-bottom: 20px;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .viz-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .viz-panel h2 {
+            color: #00d9ff;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+        canvas {
+            border: 2px solid #333;
+            border-radius: 10px;
+            background: linear-gradient(to bottom, #0a0a2a 0%, #1a1a3a 100%);
+        }
+        .controls {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .controls-row {
+            display: flex;
+            gap: 20px;
+        }
+        .controls-col {
+            flex: 1;
+            min-width: 200px;
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        .control-group label {
+            display: block;
+            font-size: 0.85em;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        .control-group input[type="range"] {
+            width: 100%;
+        }
+        .control-group .value {
+            text-align: right;
+            font-family: monospace;
+            color: #00ff88;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 8px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .btn-primary {
+            background: #00d9ff;
+            color: #000;
+        }
+        .btn-danger {
+            background: #ff6b6b;
+            color: #000;
+        }
+        .btn-success {
+            background: #00ff88;
+            color: #000;
+        }
+        .toggle-btn {
+            background: #333;
+            color: #888;
+        }
+        .toggle-btn.active {
+            background: #00ff88;
+            color: #000;
+        }
+        .stats {
+            background: #0f3460;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        .stats h3 {
+            margin: 0 0 10px 0;
+            color: #00d9ff;
+            font-size: 0.9em;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 0.8em;
+        }
+        .stat-label {
+            color: #aaa;
+        }
+        .stat-value {
+            color: #00ff88;
+            font-family: monospace;
+        }
+        .stat-value.highlight {
+            color: #ffff00;
+            font-weight: bold;
+        }
+        .stat-value.energy {
+            color: #ff6b6b;
+        }
+        .energy-bar {
+            margin-top: 15px;
+            padding: 10px;
+            background: #1a1a3a;
+            border-radius: 5px;
+        }
+        .energy-bar h3 {
+            margin: 0 0 8px 0;
+            color: #ff6b6b;
+            font-size: 0.85em;
+        }
+        .bar-container {
+            height: 20px;
+            background: #333;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+        .bar-fill {
+            height: 100%;
+            transition: width 0.1s;
+        }
+        .bar-label {
+            font-size: 0.75em;
+            color: #888;
+            display: flex;
+            justify-content: space-between;
+        }
+        .graphs {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .graph-label {
+            font-size: 0.7em;
+            color: #888;
+            text-align: center;
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🪀 Yoyo Tower - AC Gravity Harvesting</h1>
+    
+    <div class="container">
+        <div class="viz-panel">
+            <h2>Without Harvesters</h2>
+            <canvas id="canvas1" width="350" height="550"></canvas>
+            <div class="graphs">
+                <canvas id="graph1" width="350" height="80"></canvas>
+                <div class="graph-label">Banana on Scale Over Time</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="controls-row">
+                <div class="controls-col">
+                    <div class="control-group">
+                        <label>Ball Effective Mass (kg) - magically dense</label>
+                        <input type="range" id="ballMass" min="1e12" max="1e15" value="5e13" step="1e12">
+                        <div class="value" id="ballMassValue">5.0e13 kg</div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Spring Constant k (N/m)</label>
+                        <input type="range" id="springK" min="100" max="5000" value="1000" step="100">
+                        <div class="value" id="springKValue">1000 N/m</div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Initial Displacement (m)</label>
+                        <input type="range" id="initDisp" min="1" max="15" value="8" step="1">
+                        <div class="value" id="initDispValue">8 m</div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Natural Damping γ₀</label>
+                        <input type="range" id="naturalDamping" min="0.001" max="0.1" value="0.02" step="0.001">
+                        <div class="value" id="naturalDampingValue">0.020</div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Harvester Damping γ (per floor)</label>
+                        <input type="range" id="harvesterDamping" min="0.01" max="0.2" value="0.05" step="0.01">
+                        <div class="value" id="harvesterDampingValue">0.050</div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Time Scale</label>
+                        <input type="range" id="timeScale" min="0.5" max="5" value="2" step="0.5">
+                        <div class="value" id="timeScaleValue">2x</div>
+                    </div>
+                    
+                    <button class="btn btn-danger" id="resetBtn" onclick="resetSimulation()">
+                        🔄 Reset & Release Ball
+                    </button>
+                    
+                    <button class="btn btn-success" id="solveBtn" onclick="solveFor1mN()">
+                        🎯 Solve for 1 mN² Variance Reduction
+                    </button>
+                </div>
+                
+                <div class="controls-col">
+                    <button class="btn btn-primary" id="playBtn" onclick="togglePlay()">
+                        ⏸ Pause
+                    </button>
+                    
+                    <button class="btn toggle-btn active" id="togglePlatforms" onclick="togglePlatforms()">
+                        Harvesters: ON
+                    </button>
+                    
+                    <div class="stats">
+                        <h3>📊 System State</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Time Elapsed</span>
+                            <span class="stat-value" id="timeStat">0.0 s</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Ball Amplitude</span>
+                            <span class="stat-value" id="ampStat">0.0 m</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Ball Velocity</span>
+                            <span class="stat-value" id="velStat">0.0 m/s</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Oscillation Freq</span>
+                            <span class="stat-value" id="freqStat">0.0 Hz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stats">
+                        <h3>🍌 Banana on Scale</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Without Harvesters</span>
+                            <span class="stat-value" id="weightNoHarv">0.000 mN</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">With Harvesters</span>
+                            <span class="stat-value" id="weightWithHarv">0.000 mN</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Variance (no harv.)</span>
+                            <span class="stat-value" id="varianceNoHarv">0.000 mN²</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Variance (with harv.)</span>
+                            <span class="stat-value" id="varianceWithHarv">0.000 mN²</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Variance Reduction</span>
+                            <span class="stat-value highlight" id="varianceDiff">0.000 mN²</span>
+                        </div>
+                    </div>
+                    
+                    <div class="energy-bar">
+                        <h3>⚡ Energy Budget</h3>
+                        
+                        <div style="font-size: 0.75em; color: #aaa; margin-bottom: 5px;">Initial Energy</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" id="initialEnergyBar" style="width: 100%; background: #444;"></div>
+                        </div>
+                        
+                        <div style="font-size: 0.75em; color: #aaa; margin-bottom: 5px;">Remaining in Ball</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" id="remainingEnergyBar" style="width: 100%; background: #00d9ff;"></div>
+                        </div>
+                        
+                        <div style="font-size: 0.75em; color: #aaa; margin-bottom: 5px;">Harvested (5th floor)</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" id="harvested5Bar" style="width: 0%; background: #00ff88;"></div>
+                        </div>
+                        
+                        <div style="font-size: 0.75em; color: #aaa; margin-bottom: 5px;">Harvested (4th floor)</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" id="harvested4Bar" style="width: 0%; background: #88ff00;"></div>
+                        </div>
+                        
+                        <div style="font-size: 0.75em; color: #aaa; margin-bottom: 5px;">Lost to Natural Damping</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" id="lostEnergyBar" style="width: 0%; background: #ff6b6b;"></div>
+                        </div>
+                        
+                        <div class="bar-label" style="margin-top: 10px;">
+                            <span>Harvested: <span id="totalHarvested">0</span> J</span>
+                            <span>Lost: <span id="totalLost">0</span> J</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="viz-panel">
+            <h2>With Harvesters</h2>
+            <canvas id="canvas2" width="350" height="550"></canvas>
+            <div class="graphs">
+                <canvas id="graph2" width="350" height="80"></canvas>
+                <div class="graph-label">Banana on Scale Over Time</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Canvases
+        const canvas1 = document.getElementById('canvas1');
+        const canvas2 = document.getElementById('canvas2');
+        const ctx1 = canvas1.getContext('2d');
+        const ctx2 = canvas2.getContext('2d');
+        
+        const graph1 = document.getElementById('graph1');
+        const graph2 = document.getElementById('graph2');
+        const gctx1 = graph1.getContext('2d');
+        const gctx2 = graph2.getContext('2d');
+
+        // Simulation state
+        let simTime = 0;
+        let playing = true;
+        let platformsEnabled = true;
+        
+        // Ball states (two independent simulations)
+        let ball1 = { y: 0, vy: 0 }; // Without harvesters
+        let ball2 = { y: 0, vy: 0 }; // With harvesters
+        
+        // Energy tracking
+        let initialEnergy = 0;
+        let harvested5 = 0;
+        let harvested4 = 0;
+        let lostToNaturalDamping = 0;
+        
+        // Weight history
+        const weightHistory1 = [];
+        const weightHistory2 = [];
+        const maxHistory = 350;
+        
+        // Variance tracking (running calculation)
+        let sumWeight1 = 0, sumWeight1Sq = 0, countWeight1 = 0;
+        let sumWeight2 = 0, sumWeight2Sq = 0, countWeight2 = 0;
+        
+        // EMA smoothed weights for display
+        let emaWeight1 = null;
+        let emaWeight2 = null;
+        const emaAlpha = 0.1; // Smoothing factor (lower = smoother)
+        
+        // Physical parameters
+        let params = {
+            ballMass: 5e13,  // Effective mass in kg (magically dense)
+            springK: 1000,
+            initialDisplacement: 8,
+            naturalDamping: 0.02,
+            harvesterDamping: 0.05,
+            timeScale: 2,
+            
+            towerHeight: 70,
+            equilibriumHeight: 50,
+            
+            floor5: 15,
+            floor4: 12,
+            floor3: 9,
+            
+            platformMass: 100,
+            bananaMass: 0.15,
+            planetoidG: 1
+        };
+        
+        // Derived
+        function getGM() {
+            return 6.67e-11 * params.ballMass;
+        }
+        
+        // For spring physics, use a "mechanical mass" that's reasonable
+        // Otherwise the spring would be insanely stiff or the ball wouldn't move
+        const mechanicalMass = 10000; // kg - the mass the spring "feels"
+        
+        function getOmega() {
+            return Math.sqrt(params.springK / mechanicalMass);
+        }
+        
+        // Scale
+        const scale = 7;
+        const groundY = 500;
+        
+        function mToPixel(meters) {
+            return groundY - meters * scale;
+        }
+
+        function resetSimulation() {
+            simTime = 0;
+            
+            // Ball starts displaced downward from equilibrium
+            ball1 = { 
+                y: params.equilibriumHeight - params.initialDisplacement, 
+                vy: 0 
+            };
+            ball2 = { 
+                y: params.equilibriumHeight - params.initialDisplacement, 
+                vy: 0 
+            };
+            
+            // Calculate initial energy: E = 0.5 * k * x^2
+            initialEnergy = 0.5 * params.springK * params.initialDisplacement * params.initialDisplacement;
+            harvested5 = 0;
+            harvested4 = 0;
+            lostToNaturalDamping = 0;
+            
+            weightHistory1.length = 0;
+            weightHistory2.length = 0;
+            
+            // Reset variance tracking
+            sumWeight1 = 0; sumWeight1Sq = 0; countWeight1 = 0;
+            sumWeight2 = 0; sumWeight2Sq = 0; countWeight2 = 0;
+            
+            // Reset EMA
+            emaWeight1 = null;
+            emaWeight2 = null;
+        }
+        
+        function updateControls() {
+            params.ballMass = parseFloat(document.getElementById('ballMass').value);
+            params.springK = parseFloat(document.getElementById('springK').value);
+            params.initialDisplacement = parseFloat(document.getElementById('initDisp').value);
+            params.naturalDamping = parseFloat(document.getElementById('naturalDamping').value);
+            params.harvesterDamping = parseFloat(document.getElementById('harvesterDamping').value);
+            params.timeScale = parseFloat(document.getElementById('timeScale').value);
+            
+            document.getElementById('ballMassValue').textContent = params.ballMass.toExponential(1) + ' kg';
+            document.getElementById('springKValue').textContent = params.springK + ' N/m';
+            document.getElementById('initDispValue').textContent = params.initialDisplacement + ' m';
+            document.getElementById('naturalDampingValue').textContent = params.naturalDamping.toFixed(3);
+            document.getElementById('harvesterDampingValue').textContent = params.harvesterDamping.toFixed(3);
+            document.getElementById('timeScaleValue').textContent = params.timeScale + 'x';
+        }
+        
+        function togglePlay() {
+            playing = !playing;
+            document.getElementById('playBtn').textContent = playing ? '⏸ Pause' : '▶ Play';
+        }
+        
+        function togglePlatforms() {
+            platformsEnabled = !platformsEnabled;
+            const btn = document.getElementById('togglePlatforms');
+            btn.textContent = 'Harvesters: ' + (platformsEnabled ? 'ON' : 'OFF');
+            btn.className = 'btn toggle-btn ' + (platformsEnabled ? 'active' : '');
+        }
+        
+        function simulateBall(ball, dt, withHarvesters) {
+            // Damped harmonic oscillator
+            // m * a = -k * x - gamma * v
+            // where x is displacement from equilibrium
+            
+            const displacement = ball.y - params.equilibriumHeight;
+            const omega = getOmega();
+            
+            // Total damping
+            let gamma = params.naturalDamping;
+            if (withHarvesters && platformsEnabled) {
+                gamma += params.harvesterDamping * 2; // Two floors
+            }
+            
+            // Spring force + damping
+            const springForce = -params.springK * displacement;
+            const dampingForce = -gamma * mechanicalMass * ball.vy;
+            
+            const acceleration = (springForce + dampingForce) / mechanicalMass;
+            
+            // Track energy dissipation
+            const powerDissipated = Math.abs(dampingForce * ball.vy);
+            
+            if (withHarvesters && platformsEnabled) {
+                const naturalPortion = params.naturalDamping / gamma;
+                const harvesterPortion = (params.harvesterDamping * 2) / gamma;
+                
+                lostToNaturalDamping += powerDissipated * naturalPortion * dt;
+                
+                // Split between floors (5th gets more since it sees larger amplitude)
+                harvested5 += powerDissipated * harvesterPortion * 0.6 * dt;
+                harvested4 += powerDissipated * harvesterPortion * 0.4 * dt;
+            } else {
+                lostToNaturalDamping += powerDissipated * dt;
+            }
+            
+            // Euler integration
+            ball.vy += acceleration * dt;
+            ball.y += ball.vy * dt;
+            
+            return ball;
+        }
+        
+        function getGravityForce(GM, mass, distance) {
+            if (distance <= 0) return 0;
+            return GM * mass / (distance * distance);
+        }
+        
+        function getBananaWeight(ballHeight) {
+            const distance = ballHeight - params.floor3;
+            if (distance <= 0) return params.bananaMass * params.planetoidG;
+            
+            const GM = getGM();
+            const upwardForce = getGravityForce(GM, params.bananaMass, distance);
+            return params.bananaMass * params.planetoidG - upwardForce;
+        }
+        
+        function solveFor1mN() {
+            // Target: 1 mN² variance reduction
+            // Variance of weight comes from oscillation amplitude
+            // Weight = m*g - GM*m/r², so variance comes from variance of 1/r²
+            
+            const targetVarianceReduction = 1.0; // 1 mN²
+            
+            const r0 = params.equilibriumHeight - params.floor3; // Mean distance to banana
+            const A_full = params.initialDisplacement; // Full amplitude (no harvesters)
+            
+            // With harvesters, amplitude decays faster
+            // Approximate: after some time, harvester case has ~64% of the amplitude
+            const dampingFactor = 0.64; // (1-0.2)^2
+            const A_damped = A_full * dampingFactor;
+            
+            // Calculate variance of weight for a given GM and amplitude
+            // Weight(t) = m*g - GM*m/r(t)² where r(t) = r0 + A*sin(ωt)
+            // Var(Weight) = (GM*m)² * Var(1/r²)
+            
+            function varianceInvSq(r0, A) {
+                const samples = 1000;
+                let sum = 0, sumSq = 0;
+                for (let i = 0; i < samples; i++) {
+                    const theta = (2 * Math.PI * i) / samples;
+                    const r = r0 + A * Math.sin(theta);
+                    if (r > 0) {
+                        const val = 1 / (r * r);
+                        sum += val;
+                        sumSq += val * val;
+                    }
+                }
+                const mean = sum / samples;
+                return (sumSq / samples) - (mean * mean);
+            }
+            
+            const varInvSq_full = varianceInvSq(r0, A_full);
+            const varInvSq_damped = varianceInvSq(r0, A_damped);
+            const deltaVarInvSq = varInvSq_full - varInvSq_damped;
+            
+            // Var(Weight) in mN² = (GM * bananaMass * 1000)² * Var(1/r²)
+            // targetVarianceReduction = (GM * bananaMass * 1000)² * deltaVarInvSq
+            // GM = sqrt(targetVarianceReduction / deltaVarInvSq) / (bananaMass * 1000)
+            // ballMass = GM / 6.67e-11
+            
+            const GM_required = Math.sqrt(targetVarianceReduction / deltaVarInvSq) / (params.bananaMass * 1000);
+            const requiredMass = GM_required / 6.67e-11;
+            
+            // Update slider
+            const slider = document.getElementById('ballMass');
+            slider.max = Math.max(1e15, requiredMass * 2);
+            slider.value = requiredMass;
+            params.ballMass = requiredMass;
+            document.getElementById('ballMassValue').textContent = requiredMass.toExponential(2) + ' kg';
+            
+            // Reset simulation with new parameters
+            resetSimulation();
+        }
+        
+        function drawSpring(ctx, x1, y1, x2, y2, coils, color) {
+            const dy = y2 - y1;
+            const coilWidth = 12;
+            
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            
+            const coilHeight = dy / coils;
+            
+            for (let i = 0; i < coils; i++) {
+                const yBase = y1 + i * coilHeight;
+                ctx.lineTo(x1 - coilWidth, yBase + coilHeight * 0.25);
+                ctx.lineTo(x1 + coilWidth, yBase + coilHeight * 0.75);
+            }
+            
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+        }
+        
+        function drawScene(ctx, ball, withHarvesters) {
+            const width = ctx.canvas.width;
+            const height = ctx.canvas.height;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            // Stars
+            ctx.fillStyle = '#ffffff';
+            for (let i = 0; i < 30; i++) {
+                const x = (i * 73 + 10) % width;
+                const y = (i * 37) % 80;
+                ctx.beginPath();
+                ctx.arc(x, y, 0.5 + (i % 2), 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Ground
+            ctx.fillStyle = '#4a3728';
+            ctx.fillRect(0, groundY, width, height - groundY);
+            
+            ctx.fillStyle = '#5d4a3a';
+            for (let x = 0; x < width; x += 25) {
+                ctx.beginPath();
+                ctx.arc(x + 12, groundY, 6, Math.PI, 0);
+                ctx.fill();
+            }
+            
+            // Tower
+            const towerX = width / 2;
+            const towerTop = mToPixel(params.towerHeight);
+            
+            ctx.fillStyle = '#555';
+            ctx.fillRect(towerX - 8, towerTop, 16, groundY - towerTop);
+            
+            // Tower top platform
+            ctx.fillStyle = '#777';
+            ctx.fillRect(towerX - 25, towerTop - 5, 50, 10);
+            
+            // Spring
+            const ballY = mToPixel(ball.y);
+            const springColor = '#aaa';
+            drawSpring(ctx, towerX, towerTop + 5, towerX, ballY - 20, 12, springColor);
+            
+            // Ball
+            const gradient = ctx.createRadialGradient(towerX - 3, ballY - 3, 0, towerX, ballY, 18);
+            gradient.addColorStop(0, '#ffaa00');
+            gradient.addColorStop(0.5, '#ff6600');
+            gradient.addColorStop(1, '#cc0000');
+            
+            ctx.beginPath();
+            ctx.arc(towerX, ballY, 15, 0, Math.PI * 2);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Glow
+            ctx.beginPath();
+            ctx.arc(towerX, ballY, 25, 0, Math.PI * 2);
+            const glowGradient = ctx.createRadialGradient(towerX, ballY, 10, towerX, ballY, 28);
+            glowGradient.addColorStop(0, 'rgba(255, 100, 0, 0.4)');
+            glowGradient.addColorStop(1, 'rgba(255, 100, 0, 0)');
+            ctx.fillStyle = glowGradient;
+            ctx.fill();
+            
+            // Building
+            const buildingLeft = width / 2 - 55;
+            const buildingRight = width / 2 + 55;
+            const buildingTop = mToPixel(18);
+            
+            ctx.fillStyle = '#2a2a4a';
+            ctx.fillRect(buildingLeft, buildingTop, 110, groundY - buildingTop);
+            
+            // Floors
+            const floors = [
+                { height: params.floor5, label: '5F', hasPlatform: withHarvesters && platformsEnabled },
+                { height: params.floor4, label: '4F', hasPlatform: withHarvesters && platformsEnabled },
+                { height: params.floor3, label: '3F', hasPlatform: false, hasBanana: true }
+            ];
+            
+            floors.forEach((floor) => {
+                const floorY = mToPixel(floor.height);
+                
+                ctx.strokeStyle = '#555';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(buildingLeft, floorY);
+                ctx.lineTo(buildingRight, floorY);
+                ctx.stroke();
+                
+                ctx.fillStyle = '#666';
+                ctx.font = '10px monospace';
+                ctx.fillText(floor.label, buildingLeft + 3, floorY - 3);
+                
+                if (floor.hasPlatform) {
+                    const displacement = (ball.y - params.equilibriumHeight) * 0.05;
+                    const platformY = floorY - 12 + displacement * 2;
+                    
+                    // Springs
+                    ctx.strokeStyle = '#666';
+                    ctx.lineWidth = 1;
+                    drawSpring(ctx, buildingLeft + 25, floorY, buildingLeft + 25, platformY + 5, 4, '#666');
+                    drawSpring(ctx, buildingRight - 25, floorY, buildingRight - 25, platformY + 5, 4, '#666');
+                    
+                    // Platform
+                    ctx.fillStyle = '#00ff88';
+                    ctx.fillRect(buildingLeft + 12, platformY, 86, 8);
+                    
+                    // Battery
+                    ctx.fillStyle = '#333';
+                    ctx.fillRect(buildingRight - 8, platformY - 18, 12, 20);
+                    ctx.fillStyle = '#00ff00';
+                    const charge = Math.min(1, (floor.height === params.floor5 ? harvested5 : harvested4) / (initialEnergy * 0.3 + 1));
+                    ctx.fillRect(buildingRight - 6, platformY - 16 + (1 - charge) * 16, 8, charge * 16);
+                }
+                
+                if (floor.hasBanana) {
+                    const weight = getBananaWeight(ball.y);
+                    const baseWeight = params.bananaMass * params.planetoidG;
+                    const weightVar = (weight - baseWeight) / baseWeight;
+                    const bananaY = floorY - 20 - weightVar * 30;
+                    
+                    // Scale
+                    ctx.fillStyle = '#666';
+                    ctx.fillRect(width / 2 - 20, floorY - 6, 40, 6);
+                    
+                    // Banana
+                    ctx.fillStyle = '#ffff00';
+                    ctx.beginPath();
+                    ctx.ellipse(width / 2, bananaY, 12, 6, -0.3, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#cccc00';
+                    ctx.beginPath();
+                    ctx.ellipse(width / 2 - 4, bananaY - 2, 4, 2, -0.3, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Weight display
+                    ctx.fillStyle = '#00ff88';
+                    ctx.font = 'bold 10px monospace';
+                    ctx.fillText((weight * 1000).toFixed(2) + ' mN', width / 2 - 22, floorY + 12);
+                }
+            });
+            
+            // Ball height indicator
+            ctx.fillStyle = '#888';
+            ctx.font = '10px monospace';
+            ctx.fillText('h=' + ball.y.toFixed(1) + 'm', towerX + 22, ballY + 4);
+            
+            return getBananaWeight(ball.y);
+        }
+        
+        function drawGraph(gctx, history, color) {
+            const width = gctx.canvas.width;
+            const height = gctx.canvas.height;
+            
+            gctx.clearRect(0, 0, width, height);
+            
+            gctx.fillStyle = '#0a0a2a';
+            gctx.fillRect(0, 0, width, height);
+            
+            gctx.strokeStyle = '#222';
+            gctx.lineWidth = 1;
+            gctx.strokeRect(0, 0, width, height);
+            
+            if (history.length < 2) return;
+            
+            const min = Math.min(...history);
+            const max = Math.max(...history);
+            const range = max - min || 0.001;
+            const padding = range * 0.1;
+            
+            gctx.strokeStyle = '#333';
+            gctx.beginPath();
+            gctx.moveTo(0, height / 2);
+            gctx.lineTo(width, height / 2);
+            gctx.stroke();
+            
+            gctx.strokeStyle = color;
+            gctx.lineWidth = 1.5;
+            gctx.beginPath();
+            
+            history.forEach((val, i) => {
+                const x = (i / maxHistory) * width;
+                const y = height - ((val - min + padding) / (range + 2 * padding)) * height;
+                if (i === 0) gctx.moveTo(x, y);
+                else gctx.lineTo(x, y);
+            });
+            
+            gctx.stroke();
+        }
+        
+        function updateStats() {
+            const displacement1 = Math.abs(ball1.y - params.equilibriumHeight);
+            const displacement2 = Math.abs(ball2.y - params.equilibriumHeight);
+            
+            document.getElementById('timeStat').textContent = simTime.toFixed(1) + ' s';
+            document.getElementById('ampStat').textContent = displacement2.toFixed(2) + ' m';
+            document.getElementById('velStat').textContent = ball2.vy.toFixed(2) + ' m/s';
+            document.getElementById('freqStat').textContent = (getOmega() / (2 * Math.PI)).toFixed(3) + ' Hz';
+            
+            const weight1 = getBananaWeight(ball1.y);
+            const weight2 = getBananaWeight(ball2.y);
+            
+            // Update running variance calculation
+            // Convert to mN for the calculation
+            const w1_mN = weight1 * 1000;
+            const w2_mN = weight2 * 1000;
+            
+            sumWeight1 += w1_mN;
+            sumWeight1Sq += w1_mN * w1_mN;
+            countWeight1++;
+            
+            sumWeight2 += w2_mN;
+            sumWeight2Sq += w2_mN * w2_mN;
+            countWeight2++;
+            
+            // EMA smoothing for display
+            if (emaWeight1 === null) {
+                emaWeight1 = w1_mN;
+                emaWeight2 = w2_mN;
+            } else {
+                emaWeight1 = emaAlpha * w1_mN + (1 - emaAlpha) * emaWeight1;
+                emaWeight2 = emaAlpha * w2_mN + (1 - emaAlpha) * emaWeight2;
+            }
+            
+            // Calculate variance: Var(X) = E[X²] - E[X]²
+            const mean1 = sumWeight1 / countWeight1;
+            const mean2 = sumWeight2 / countWeight2;
+            const variance1 = (sumWeight1Sq / countWeight1) - (mean1 * mean1);
+            const variance2 = (sumWeight2Sq / countWeight2) - (mean2 * mean2);
+            
+            document.getElementById('weightNoHarv').textContent = emaWeight1.toFixed(3) + ' mN';
+            document.getElementById('weightWithHarv').textContent = emaWeight2.toFixed(3) + ' mN';
+            document.getElementById('varianceNoHarv').textContent = variance1.toFixed(6) + ' mN²';
+            document.getElementById('varianceWithHarv').textContent = variance2.toFixed(6) + ' mN²';
+            document.getElementById('varianceDiff').textContent = (variance1 - variance2).toFixed(6) + ' mN²';
+            
+            // Energy bars
+            const currentEnergy = 0.5 * params.springK * displacement2 * displacement2 + 
+                                  0.5 * mechanicalMass * ball2.vy * ball2.vy;
+            
+            const totalAccounted = currentEnergy + harvested5 + harvested4 + lostToNaturalDamping;
+            const energyScale = initialEnergy > 0 ? initialEnergy : 1;
+            
+            document.getElementById('remainingEnergyBar').style.width = 
+                Math.max(0, Math.min(100, (currentEnergy / energyScale) * 100)) + '%';
+            document.getElementById('harvested5Bar').style.width = 
+                Math.max(0, Math.min(100, (harvested5 / energyScale) * 100)) + '%';
+            document.getElementById('harvested4Bar').style.width = 
+                Math.max(0, Math.min(100, (harvested4 / energyScale) * 100)) + '%';
+            document.getElementById('lostEnergyBar').style.width = 
+                Math.max(0, Math.min(100, (lostToNaturalDamping / energyScale) * 100)) + '%';
+            
+            document.getElementById('totalHarvested').textContent = (harvested5 + harvested4).toFixed(1);
+            document.getElementById('totalLost').textContent = lostToNaturalDamping.toFixed(1);
+        }
+        
+        let lastTime = 0;
+        
+        function animate(currentTime) {
+            if (lastTime === 0) lastTime = currentTime;
+            const deltaTime = Math.min((currentTime - lastTime) / 1000, 0.05);
+            lastTime = currentTime;
+            
+            updateControls();
+            
+            if (playing) {
+                const dt = deltaTime * params.timeScale;
+                simTime += dt;
+                
+                // Simulate both balls
+                simulateBall(ball1, dt, false);
+                simulateBall(ball2, dt, true);
+            }
+            
+            // Draw scenes
+            const weight1 = drawScene(ctx1, ball1, false);
+            const weight2 = drawScene(ctx2, ball2, true);
+            
+            // Update histories
+            weightHistory1.push(weight1);
+            weightHistory2.push(weight2);
+            if (weightHistory1.length > maxHistory) weightHistory1.shift();
+            if (weightHistory2.length > maxHistory) weightHistory2.shift();
+            
+            // Draw graphs
+            drawGraph(gctx1, weightHistory1, '#ff6b6b');
+            drawGraph(gctx2, weightHistory2, '#00ff88');
+            
+            updateStats();
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // Initialize
+        resetSimulation();
+        requestAnimationFrame(animate);
+    </script>
+</body>
+</html>

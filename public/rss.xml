@@ -5,15 +5,22 @@
     <link>https://ad-absurdum.me</link>
     <description>So many ideas so little time</description>
     <language>en-us</language>
-    <lastBuildDate>Fri, 21 Nov 2025 19:56:33 +0530</lastBuildDate>
+    <lastBuildDate>Fri, 05 Dec 2025 18:54:58 +0530</lastBuildDate>
     <ttl>1440</ttl>
     <atom:link href="https://ad-absurdum.me/rss.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>AC Gravity and Gravitational Opacity</title>
+      <link>https://ad-absurdum.me/blog/alternating-gravity</link>
+      <guid>https://ad-absurdum.me/blog/alternating-gravity</guid>
+      <pubDate>Fri, 05 Dec 2025 00:00:00 +0530</pubDate>
+      <description>style={{display:&apos;block&apos;, margin:&apos;20px auto&apos;, border:&apos;2px solid rgba(255, 255, 255, 0.3)&apos;, borderRadius:&apos;10px&apos;}}</description>
+    </item>
     <item>
       <title>Theorem: Equivalence of -arccoth and tan Functions</title>
       <link>https://ad-absurdum.me/blog/infinitely-fat-tan-conjecture</link>
       <guid>https://ad-absurdum.me/blog/infinitely-fat-tan-conjecture</guid>
       <pubDate>Fri, 21 Nov 2025 00:00:00 +0530</pubDate>
-      <description>Imagine you could take the most repetitive, oscillating function in mathematics—the tangent function—and transform it into something that never repeats. It sounds impossible, but that&apos;s exactly what we&apos;ve discovered. By stretching tan&apos;s period to infinity and shifting it by half-infinity, we can ...</description>
+      <description>Imagine you could take the most repetitive, oscillating function in mathematics—the tangent function—and transform it into something that never repeats. It sounds impossible, but that&apos;s exactly what we&apos;ve discovered. By stretching tan&apos;s period to 2-infinity and shifting it by 1-infinity, we can m...</description>
     </item>
     <item>
       <title>The Photonic Transformer Hypothesis: Rethinking Photosynthesis and Methane Consumption in Plants</title>

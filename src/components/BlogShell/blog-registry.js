@@ -2,6 +2,12 @@ import React from 'react';
 
 export const blogRegistry = [
   {
+    slug: 'alternating-gravity',
+    title: 'AC Gravity and Gravitational Opacity',
+    component: React.lazy(() => import('../../blog/alternating-gravity/index.mdx')),
+    date: '05 Dec 2025',
+  },
+  {
     slug: 'infinitely-fat-tan-conjecture',
     title: 'Theorem: Equivalence of -arccoth and tan Functions',
     component: React.lazy(() => import('../../blog/infinitely-fat-tan-conjecture/index.mdx')),
