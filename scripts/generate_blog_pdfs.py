@@ -431,7 +431,15 @@ def main():
 
         for i, blog in enumerate(blogs, 1):
             slug = blog['slug']
+            pdf_path = os.path.join(OUTPUT_DIR, f"{slug}.pdf")
             print(f"\n[{i}/{len(blogs)}] Processing: {slug}")
+
+            # Skip if PDF already exists
+            if os.path.exists(pdf_path):
+                print(f"✓ Skipping (already exists): {slug}.pdf ({get_pdf_size(slug)})")
+                successful.append(blog)
+                continue
+
             if generate_pdf(page, slug, timeout=INITIAL_TIMEOUT, wait_time=INITIAL_WAIT, retry=False):
                 successful.append(blog)
             else:
