@@ -1,0 +1,149 @@
+# Passive Velocity Sorting: A Geometric Maxwell's Demon?
+
+## Real-World Passive Sorters
+
+If sorting had deep thermodynamic costs, these industrial processes shouldn't work so cheaply. But they do.
+
+### Steam Condensers (You Get Paid to Sort)
+
+This is the cleanest example. A steam condenser:
+
+- Hot steam (fast molecules) hits a cold surface
+- Fast molecules slow down, condense into liquid water
+- You've sorted by velocity—fast gas becomes slow liquid
+- The phase change releases latent heat
+- **You can capture that heat to do work**
+
+No moving parts. No power input. Net energy *out*.
+
+You're not just sorting for free—you're getting paid to sort. The sorting itself is the power source.
+
+And the starting condition? A thermal distribution of steam molecules. No synchronized start, no collimation, no special initial conditions. Just hot gas meeting cold surface.
+
+This completely inverts the Landauer framing. Instead of "sorting costs kT ln 2 per bit," it's "sorting can *release* energy if you pick the right phase transition."
+
+### Gas Centrifuges (Uranium Enrichment)
+
+This is the strongest example. Uranium hexafluoride (UF6) is a gas, and we sort it by molecular mass in centrifuges:
+
+- U-235 (fissile, releases ~200 MeV per fission)
+- U-238 (basically inert for fission)
+
+Mass difference: ~1.3% (three neutrons)
+
+The centrifuge just spins gas. Heavier molecules migrate outward, lighter ones stay closer to the center. The energy cost is trivial—just running the motor and vacuum pumps.
+
+**The energy we're sorting is astronomical.** One isotope can power cities or level them. The other is deadweight. And we separate them with spinning drums.
+
+If Landauer's principle imposed meaningful costs on sorting, this shouldn't be so cheap. But the centrifuge doesn't care about the energy content of what it's sorting. It just sees mass.
+
+At a given temperature, lighter molecules move faster on average (½mv² = 3/2 kT, so v ∝ 1/√m). So in a sense, the centrifuge *is* sorting by velocity, indirectly. Why isn't this considered a Maxwell's demon?
+
+### Ore Sorters (Conveyor Belt)
+
+Industrial ore sorters move material on a conveyor belt at uniform speed. When pieces fly off the end:
+
+- Heavier/denser pieces: less affected by air resistance, land in one bin
+- Lighter pieces: more drag, land shorter or get blown aside
+
+No per-particle decisions. No measurement. Just projectile motion and aerodynamics.
+
+### Other Centrifuge Applications
+
+Same principle, endless uses:
+
+- Blood separation (plasma, platelets, red cells)
+- Cream from milk
+- Protein purification in biology labs
+
+Nobody claims these violate the second law or require Landauer erasure costs. They're just machines that sort stuff.
+
+---
+
+## The BB Gun Thought Experiment
+
+A thought experiment exploring whether Maxwell's demon can be reduced to a simple geometric/timing trick.
+
+### The Setup
+
+A fully buildable apparatus:
+
+- BB shotgun
+- Steel wall
+- Laser tripwire
+- Gate on a solenoid triggered by the laser
+
+**Procedure:**
+
+1. Fire a BB shotgun (spread of pellets with varying velocities) from the left wall toward the right wall
+2. Pellets bounce off the steel wall and head back
+3. Close the gate when the returning pellet cloud is halfway through
+
+**Result:** Fast pellets make it back to the left chamber before the gate closes. Slow pellets are still in the right chamber when the gate closes.
+
+You've sorted particles by velocity. No exotic materials required.
+
+---
+
+## So What Makes Maxwell's Demon Special?
+
+The BB gun setup doesn't start from thermal equilibrium—it has exploitable structure built in (synchronized start, known direction, defined batch).
+
+But the steam condenser and UF6 centrifuge *do* start from thermal equilibrium:
+
+- Particles moving in all directions ✓
+- No synchronized start time ✓
+- No known initial positions ✓
+- No collimation ✓
+
+And yet they sort. The condenser even generates power while doing it.
+
+So what's the difference between these and Maxwell's demon?
+
+The demon tries to sort by **velocity directly**—measuring each particle's speed and deciding whether to let it through. The condenser and centrifuge sort by exploiting physical fields and phase transitions that naturally separate particles by their properties.
+
+But here's the thing: the end result is the same. Fast molecules end up in one place, slow molecules in another. The condenser turns fast gas into slow liquid. The centrifuge puts lighter (faster) molecules in a different location than heavier (slower) ones.
+
+**Maxwell's demon was never impossible. We just call the working versions "condensers" and "centrifuges" and don't give them demonic names.**
+
+## The Thermodynamic Insight
+
+The conventional story is that Maxwell's demon fails because of Landauer's principle—erasing information costs kT ln 2 per bit, and this saves the second law.
+
+But look at the examples:
+
+- **Steam condenser:** Sorts molecules by velocity. No information processing. Generates power.
+- **Gas centrifuge:** Sorts molecules from thermal equilibrium. Costs a bit to spin, but separates nuclear fuel from waste.
+- **Ore sorter:** Sorts by mass/density. Passive. No measurement.
+
+None of these care about Landauer. None of them are doing "information erasure." They're just exploiting physical gradients—temperature differences, centrifugal fields, aerodynamic drag.
+
+Maybe the real insight is:
+
+> **Maxwell's demon isn't defeated by information theory. It's just that "measure and decide per-particle" is an unnecessarily complicated way to sort. Physics offers cheaper methods—fields, phase transitions, geometry—that achieve the same result without the overhead.**
+
+The demon's mistake wasn't trying to sort. It was trying to be clever about it.
+
+## Why Not Flames?
+
+Replacing pellets with continuous media (fire, hot gas) fails because:
+
+1. Gas molecules scatter off each other, not just walls
+2. Velocity distributions thermalize quickly
+3. The correlation between departure and return times gets destroyed
+
+For this trick to work, you need:
+
+- Discrete, non-interacting particles
+- Elastic bounces
+- A synchronized start
+
+## Open Questions
+
+- Could this work with a pulse of neutrons in vacuum?
+- Is the Landauer cost (≈10⁻²¹ J per bit at room temperature) the only fundamental limit, making macroscopic sorting essentially "free"?
+- Does this reframe Maxwell's demon from an information paradox to a structure/equilibrium paradox?
+
+---
+
+Chat [link](https://claude.ai/share/757761b9-3d2b-491d-8596-6f4a8582dc24)

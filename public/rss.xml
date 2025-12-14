@@ -5,15 +5,22 @@
     <link>https://ad-absurdum.me</link>
     <description>So many ideas so little time</description>
     <language>en-us</language>
-    <lastBuildDate>Fri, 05 Dec 2025 18:54:58 +0530</lastBuildDate>
+    <lastBuildDate>Sun, 14 Dec 2025 15:23:57 +0530</lastBuildDate>
     <ttl>1440</ttl>
     <atom:link href="https://ad-absurdum.me/rss.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Passive Velocity Sorting: A Geometric Maxwell Demon?</title>
+      <link>https://ad-absurdum.me/blog/maxwells-demon-sorting</link>
+      <guid>https://ad-absurdum.me/blog/maxwells-demon-sorting</guid>
+      <pubDate>Sun, 14 Dec 2025 00:00:00 +0530</pubDate>
+      <description>If sorting had deep thermodynamic costs, these industrial processes shouldn&apos;t work so cheaply. But they do.</description>
+    </item>
     <item>
       <title>AC Gravity and Gravitational Opacity</title>
       <link>https://ad-absurdum.me/blog/alternating-gravity</link>
       <guid>https://ad-absurdum.me/blog/alternating-gravity</guid>
       <pubDate>Fri, 05 Dec 2025 00:00:00 +0530</pubDate>
-      <description>style={{display:&apos;block&apos;, margin:&apos;20px auto&apos;, border:&apos;2px solid rgba(255, 255, 255, 0.3)&apos;, borderRadius:&apos;10px&apos;}}</description>
+      <description>Imagine a planetoid with a dense ball floating above it, oscillating up and down sinusoidally. This creates an &quot;AC gravity&quot; field - a time-varying gravitational influence on objects below.</description>
     </item>
     <item>
       <title>Theorem: Equivalence of -arccoth and tan Functions</title>

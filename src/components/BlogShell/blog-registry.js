@@ -2,6 +2,12 @@ import React from 'react';
 
 export const blogRegistry = [
   {
+    slug: 'maxwells-demon-sorting',
+    title: 'Passive Velocity Sorting: A Geometric Maxwell Demon?',
+    component: React.lazy(() => import('../../blog/maxwells-demon-sorting/index.mdx')),
+    date: '14 Dec 2025',
+  },
+  {
     slug: 'alternating-gravity',
     title: 'AC Gravity and Gravitational Opacity',
     component: React.lazy(() => import('../../blog/alternating-gravity/index.mdx')),

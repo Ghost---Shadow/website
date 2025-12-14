@@ -87,6 +87,7 @@
     "eslint-plugin-react": "7.31.8",
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-storybook": "0.6.4",
+    "playwright": "^1.57.0",
     "recursive-readdir": "2.2.2",
     "source-map-explorer": "2.5.2",
     "webpack": "5.74.0"
