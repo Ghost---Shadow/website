@@ -1,3 +1,4 @@
+import { Table } from '@mantine/core';
 import KiwiDinosaurSvg from './kiwi-dinosaur.svg';
 import PenguinSkeletonJpg from './penguin-skeleton.jpg';
 import TrexSueSkeletonJpg from './trex-sue-skeleton.jpg';
@@ -10,7 +11,7 @@ import Ac6ReverseJointLegsJpg from './ac6-reverse-joint-legs.jpg';
 
 <date>28 Feb 2026</date>
 
-<p align="center"><img src={KiwiDinosaurSvg} alt="Kiwi Rex" width="50%" /></p>
+<p align="center"><img src={KiwiDinosaurSvg} alt="Kiwi Rex" width="100%" /></p>
 
 ## The Skeleton That Started It
 
@@ -58,10 +59,24 @@ Compare the kiwi, whose legs are optimized purely for ground life — strong, re
 
 ## What Armored Core 6 Gets Right (and Wrong)
 
-| AC6 Bipedal Legs (standard, upright stance) | AC6 Reverse-Joint Legs (crouched, bird-like stance) |
-|:---:|:---:|
-| <img src={Ac6BipedalLegsJpg} alt="AC6 Bipedal Legs — note the fully extended, upright stance" width="100%" /> | <img src={Ac6ReverseJointLegsJpg} alt="AC6 Reverse-Joint Legs — note the permanent crouch, exactly like a penguin" width="100%" /> |
-| *Upright default = must squat before jumping* | *Crouched default = pre-loaded, ready to fire* |
+<Table withBorder withColumnBorders>
+  <thead>
+    <tr>
+      <th style={{textAlign: 'center'}}>AC6 Bipedal Legs (standard, upright stance)</th>
+      <th style={{textAlign: 'center'}}>AC6 Reverse-Joint Legs (crouched, bird-like stance)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><img src={Ac6BipedalLegsJpg} alt="AC6 Bipedal Legs — note the fully extended, upright stance" width="100%" /></td>
+      <td><img src={Ac6ReverseJointLegsJpg} alt="AC6 Reverse-Joint Legs — note the permanent crouch, exactly like a penguin" width="100%" /></td>
+    </tr>
+    <tr>
+      <td style={{textAlign: 'center'}}><em>Upright default = must squat before jumping</em></td>
+      <td style={{textAlign: 'center'}}><em>Crouched default = pre-loaded, ready to fire</em></td>
+    </tr>
+  </tbody>
+</Table>
 
 *Screenshots © FromSoftware/Bandai Namco via [Charlie Intel](https://www.charlieintel.com/games/all-armored-core-6-leg-types-explained-bipedal-tetrapod-tank-more-267452/). See also: [KASUAR/42Z reverse-joint legs (Fextralife Wiki)](https://armoredcore6.wiki.fextralife.com/KASUAR+42Z), [RC-2000 SPRING CHICKEN (Fextralife Wiki)](https://armoredcore6.wiki.fextralife.com/RC-2000+SPRING+CHICKEN), [Reverse Joint history (Armored Core Wiki)](https://armoredcore.fandom.com/wiki/Reverse_Joint).*
 
@@ -107,13 +122,54 @@ Peer review pending.
 
 ## The Summary
 
-| Feature | T-Rex | Penguin | Kiwi | AC6 Reverse Joint |
-|---|---|---|---|---|
-| Leg resting state | Semi-flexed | Deep crouch | Upright | Deep crouch |
-| Jump capability | Debated | Explosive | Modest | Excellent |
-| Stability | Tail-assisted | Poor on land | Good | Low load limit |
-| Tail | Massive | Pygostyle nub | Pygostyle nub | N/A |
-| Tiny useless arms | Yes | Yes (flippers) | Yes (hidden) | Optional |
+<Table striped highlightOnHover withBorder withColumnBorders>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>T-Rex</th>
+      <th>Penguin</th>
+      <th>Kiwi</th>
+      <th>AC6 Reverse Joint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Leg resting state</td>
+      <td>Semi-flexed</td>
+      <td>Deep crouch</td>
+      <td>Upright</td>
+      <td>Deep crouch</td>
+    </tr>
+    <tr>
+      <td>Jump capability</td>
+      <td>Debated</td>
+      <td>Explosive</td>
+      <td>Modest</td>
+      <td>Excellent</td>
+    </tr>
+    <tr>
+      <td>Stability</td>
+      <td>Tail-assisted</td>
+      <td>Poor on land</td>
+      <td>Good</td>
+      <td>Low load limit</td>
+    </tr>
+    <tr>
+      <td>Tail</td>
+      <td>Massive</td>
+      <td>Pygostyle nub</td>
+      <td>Pygostyle nub</td>
+      <td>N/A</td>
+    </tr>
+    <tr>
+      <td>Tiny useless arms</td>
+      <td>Yes</td>
+      <td>Yes (flippers)</td>
+      <td>Yes (hidden)</td>
+      <td>Optional</td>
+    </tr>
+  </tbody>
+</Table>
 
 The joint direction is a red herring. The spring is what matters — and whether you're permanently sitting on it.
 
@@ -125,19 +181,72 @@ The joint direction is a red herring. The spring is what matters — and whether
 
 ## Image Sources
 
-| Image | Direct URL | License |
-|---|---|---|
-| King Penguin skeleton (labeled) | [fossilpenguins.wordpress.com](https://fossilpenguins.wordpress.com/wp-content/uploads/2011/10/tour-of-the-penguin-skeleton.jpg) | Dr. Daniel Ksepka |
-| T-Rex "Sue" skeleton | [upload.wikimedia.org](https://upload.wikimedia.org/wikipedia/commons/7/74/Sues_skeleton_white_background.jpg) | Wikimedia Commons |
-| T-Rex leg bones | [upload.wikimedia.org](https://upload.wikimedia.org/wikipedia/commons/b/bc/T_Rex_Leg_Bones.png) | CC0, Philcha |
-| Penguin anatomy diagram | [upload.wikimedia.org](https://upload.wikimedia.org/wikipedia/commons/c/c5/Penguin_diagram.JPG) | CC BY-SA 2.5 |
-| Penguin vs human leg comparison | [penguinsinternational.org](https://www.penguinsinternational.org/do-penguins-have-knees-and-other-frequently-asked-questions/) | Penguins International |
-| Penguin knee X-ray diagram | [scienceabc.com](https://www.scienceabc.com/eyeopeners/do-penguins-have-knees.html) | ScienceABC |
-| AC6 leg types comparison | [charlieintel.com](https://www.charlieintel.com/games/all-armored-core-6-leg-types-explained-bipedal-tetrapod-tank-more-267452/) | © FromSoftware via Charlie Intel |
-| AC6 Bipedal legs screenshot | [charlieintel.com](https://www.charlieintel.com/cdn-image/wp-content/uploads/2023/08/21/bipedal-legs-Armored-Core-6-1024x577.jpg) | © FromSoftware via Charlie Intel |
-| AC6 Reverse-joint legs screenshot | [charlieintel.com](https://www.charlieintel.com/cdn-image/wp-content/uploads/2023/08/21/reverse-joint-leg-in-armored-core-6-1024x577.jpg) | © FromSoftware via Charlie Intel |
-| AC6 KASUAR/42Z reverse-joint | [fextralife.com](https://armoredcore6.wiki.fextralife.com/KASUAR+42Z) | © FromSoftware |
-| AC6 SPRING CHICKEN reverse-joint | [fextralife.com](https://armoredcore6.wiki.fextralife.com/RC-2000+SPRING+CHICKEN) | © FromSoftware |
+<Table striped withBorder withColumnBorders>
+  <thead>
+    <tr>
+      <th>Image</th>
+      <th>Direct URL</th>
+      <th>License</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>King Penguin skeleton (labeled)</td>
+      <td><a href="https://fossilpenguins.wordpress.com/wp-content/uploads/2011/10/tour-of-the-penguin-skeleton.jpg">fossilpenguins.wordpress.com</a></td>
+      <td>Dr. Daniel Ksepka</td>
+    </tr>
+    <tr>
+      <td>T-Rex "Sue" skeleton</td>
+      <td><a href="https://upload.wikimedia.org/wikipedia/commons/7/74/Sues_skeleton_white_background.jpg">upload.wikimedia.org</a></td>
+      <td>Wikimedia Commons</td>
+    </tr>
+    <tr>
+      <td>T-Rex leg bones</td>
+      <td><a href="https://upload.wikimedia.org/wikipedia/commons/b/bc/T_Rex_Leg_Bones.png">upload.wikimedia.org</a></td>
+      <td>CC0, Philcha</td>
+    </tr>
+    <tr>
+      <td>Penguin anatomy diagram</td>
+      <td><a href="https://upload.wikimedia.org/wikipedia/commons/c/c5/Penguin_diagram.JPG">upload.wikimedia.org</a></td>
+      <td>CC BY-SA 2.5</td>
+    </tr>
+    <tr>
+      <td>Penguin vs human leg comparison</td>
+      <td><a href="https://www.penguinsinternational.org/do-penguins-have-knees-and-other-frequently-asked-questions/">penguinsinternational.org</a></td>
+      <td>Penguins International</td>
+    </tr>
+    <tr>
+      <td>Penguin knee X-ray diagram</td>
+      <td><a href="https://www.scienceabc.com/eyeopeners/do-penguins-have-knees.html">scienceabc.com</a></td>
+      <td>ScienceABC</td>
+    </tr>
+    <tr>
+      <td>AC6 leg types comparison</td>
+      <td><a href="https://www.charlieintel.com/games/all-armored-core-6-leg-types-explained-bipedal-tetrapod-tank-more-267452/">charlieintel.com</a></td>
+      <td>© FromSoftware via Charlie Intel</td>
+    </tr>
+    <tr>
+      <td>AC6 Bipedal legs screenshot</td>
+      <td><a href="https://www.charlieintel.com/cdn-image/wp-content/uploads/2023/08/21/bipedal-legs-Armored-Core-6-1024x577.jpg">charlieintel.com</a></td>
+      <td>© FromSoftware via Charlie Intel</td>
+    </tr>
+    <tr>
+      <td>AC6 Reverse-joint legs screenshot</td>
+      <td><a href="https://www.charlieintel.com/cdn-image/wp-content/uploads/2023/08/21/reverse-joint-leg-in-armored-core-6-1024x577.jpg">charlieintel.com</a></td>
+      <td>© FromSoftware via Charlie Intel</td>
+    </tr>
+    <tr>
+      <td>AC6 KASUAR/42Z reverse-joint</td>
+      <td><a href="https://armoredcore6.wiki.fextralife.com/KASUAR+42Z">fextralife.com</a></td>
+      <td>© FromSoftware</td>
+    </tr>
+    <tr>
+      <td>AC6 SPRING CHICKEN reverse-joint</td>
+      <td><a href="https://armoredcore6.wiki.fextralife.com/RC-2000+SPRING+CHICKEN">fextralife.com</a></td>
+      <td>© FromSoftware</td>
+    </tr>
+  </tbody>
+</Table>
 
 ---
 
