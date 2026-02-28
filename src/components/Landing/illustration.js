@@ -84,10 +84,12 @@ class WebGLErrorBoundary extends Component {
   }
 
   render() {
-    if (this.state.hasError) {
+    const { hasError } = this.state;
+    const { children } = this.props;
+    if (hasError) {
       return <img src={IllustrationSvg} alt="stacks" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />;
     }
-    return this.props.children;
+    return children;
   }
 }
 
