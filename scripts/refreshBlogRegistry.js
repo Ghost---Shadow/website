@@ -42,25 +42,26 @@ const fileNameToItem = async (fileName) => {
 };
 
 const templateBlogRegistry = (items) => {
-  const templateItem = (item) => `{
-    slug: '${item.slug}', 
-    title: '${item.title.replace("'", "\\'").trim()}', 
-    component: React.lazy(() => import('${item.component}')), 
-    date: '${moment(item.date).format('DD MMM YYYY')}', 
+  const templateItem = (item) => `  {
+    slug: '${item.slug}',
+    title: '${item.title.replace("'", "\\'").trim()}',
+    component: React.lazy(() => import('${item.component}')),
+    date: '${moment(item.date).format('DD MMM YYYY')}',
   }`;
 
   const blogRegistryList = items.map(templateItem).join(',\n');
 
-  const fileContents = `
-    import React from 'react';
+  const fileContents = `import React from 'react';
 
-  export const blogRegistry = [${blogRegistryList}];
+export const blogRegistry = [
+${blogRegistryList},
+];
 
-  export const slugToId = blogRegistry.reduce((acc, next, idx) => ({
-    ...acc,
-    [next.slug]: idx,
-  }), {});
-  `;
+export const slugToId = blogRegistry.reduce((acc, next, idx) => ({
+  ...acc,
+  [next.slug]: idx,
+}), {});
+`;
 
   return fileContents;
 };

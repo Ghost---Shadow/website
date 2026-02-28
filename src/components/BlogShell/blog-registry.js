@@ -2,8 +2,14 @@ import React from 'react';
 
 export const blogRegistry = [
   {
+    slug: 'spring-loaded-dinosaurs',
+    title: 'Spring-Loaded Dinosaurs: Tendons as Biological Energy Storage',
+    component: React.lazy(() => import('../../blog/spring-loaded-dinosaurs/index.mdx')),
+    date: '28 Feb 2026',
+  },
+  {
     slug: 'maxwells-demon-sorting',
-    title: 'Passive Velocity Sorting: A Geometric Maxwell Demon?',
+    title: 'Passive Velocity Sorting: A Geometric Maxwell\'s Demon?',
     component: React.lazy(() => import('../../blog/maxwells-demon-sorting/index.mdx')),
     date: '14 Dec 2025',
   },
