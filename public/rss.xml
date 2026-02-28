@@ -5,15 +5,22 @@
     <link>https://ad-absurdum.me</link>
     <description>So many ideas so little time</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 28 Feb 2026 12:50:42 +0530</lastBuildDate>
+    <lastBuildDate>Sat, 28 Feb 2026 12:59:56 +0530</lastBuildDate>
     <ttl>1440</ttl>
     <atom:link href="https://ad-absurdum.me/rss.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Spring-Loaded Dinosaurs: Tendons as Biological Energy Storage</title>
+      <title>Spring-Loaded Dinosaurs: What Penguins, Kiwis, and Armored Core Get Right (and Wrong) About Legs</title>
       <link>https://ad-absurdum.me/blog/spring-loaded-dinosaurs</link>
       <guid>https://ad-absurdum.me/blog/spring-loaded-dinosaurs</guid>
       <pubDate>Sat, 28 Feb 2026 00:00:00 +0530</pubDate>
-      <description>Dinosaurs were not slow, lumbering lizards. The largest animals to ever walk on land moved with a mechanical elegance that required something subtle and counterintuitive: **they ran on springs**.</description>
+      <description>Look at a penguin skeleton side-on and you&apos;d be forgiven for thinking you&apos;re looking at a small theropod dinosaur. Upright posture, forward-leaning stance, stubby vestigial forelimbs, powerful hind legs. The kiwi is arguably even more convincing — its wings are so reduced they&apos;re invisible, leavi...</description>
+    </item>
+    <item>
+      <title>Passive Velocity Sorting: A Geometric Maxwell&apos;s Demon?</title>
+      <link>https://ad-absurdum.me/blog/maxwells-demon-sorting</link>
+      <guid>https://ad-absurdum.me/blog/maxwells-demon-sorting</guid>
+      <pubDate>Sun, 14 Dec 2025 00:00:00 +0530</pubDate>
+      <description>If sorting had deep thermodynamic costs, these industrial processes shouldn&apos;t work so cheaply. But they do.</description>
     </item>
     <item>
       <title>AC Gravity and Gravitational Opacity</title>
@@ -63,6 +70,13 @@
       <guid>https://ad-absurdum.me/blog/x-ray-data-pipelines</guid>
       <pubDate>Sun, 26 Oct 2025 00:00:00 +0530</pubDate>
       <description>A revolutionary approach to data transmission using X-ray beams through limestone/concrete tubes, potentially achieving **10-100 Tbps** per channel at a fraction of current infrastructure costs.</description>
+    </item>
+    <item>
+      <title>The Universal Approximation Theorem Is Right. You&apos;re Using It Wrong.</title>
+      <link>https://ad-absurdum.me/blog/universal-approximation-theorem-is-right</link>
+      <guid>https://ad-absurdum.me/blog/universal-approximation-theorem-is-right</guid>
+      <pubDate>Sun, 19 Oct 2025 00:00:00 +0530</pubDate>
+      <description>Ask any ML student about the XOR problem and you&apos;ll hear: &quot;XOR is impossible for a single-layer perceptron. You need a hidden layer to solve it.&quot;</description>
     </item>
     <item>
       <title>The Power Law Illusion: A Measurement Artifact Hypothesis</title>

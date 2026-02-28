@@ -1,20 +1,10 @@
-import KiwiDinosaurSvg from './kiwi-dinosaur.svg';
-import PenguinSkeletonJpg from './penguin-skeleton.jpg';
-import TrexSueSkeletonJpg from './trex-sue-skeleton.jpg';
-import TrexLegBonesPng from './trex-leg-bones.png';
-import PenguinAnatomyJpg from './penguin-anatomy.jpg';
-import Ac6BipedalLegsJpg from './ac6-bipedal-legs.jpg';
-import Ac6ReverseJointLegsJpg from './ac6-reverse-joint-legs.jpg';
+# [Spring-Loaded Dinosaurs: What Penguins, Kiwis, and Armored Core Get Right (and Wrong) About Legs](https://claude.ai/share/bc711176-8af6-4ab3-bd60-c8f1c76e3f64)
 
-# Spring-Loaded Dinosaurs: What Penguins, Kiwis, and Armored Core Get Right (and Wrong) About Legs
-
-<date>28 Feb 2026</date>
-
-<p align="center"><img src={KiwiDinosaurSvg} alt="Kiwi Rex" width="50%" /></p>
+<p align="center"><img src="spring-loaded-dinosaurs/kiwi-dinosaur.svg" alt="Kiwi Rex" width="50%"></p>
 
 ## The Skeleton That Started It
 
-<p align="center"><img src={PenguinSkeletonJpg} alt="King Penguin skeleton, labeled — March of the Fossil Penguins" width="50%" /></p>
+<p align="center"><img src="spring-loaded-dinosaurs/penguin-skeleton.jpg" alt="King Penguin skeleton, labeled — March of the Fossil Penguins" width="50%"></p>
 
 *King Penguin (Aptenodytes patagonicus) skeleton with bones labeled. Source: [March of the Fossil Penguins](https://fossilpenguins.wordpress.com/2011/10/04/a-map-for-our-tour-of-the-penguin-skeleton/), Dr. Daniel Ksepka*
 
@@ -24,11 +14,11 @@ This isn't coincidence. Birds *are* theropod dinosaurs, cladistically speaking. 
 
 ## The Missing Counterbalance
 
-<p align="center"><img src={TrexSueSkeletonJpg} alt="T-Rex skeleton Sue, side view on white background" width="50%" /></p>
+<p align="center"><img src="spring-loaded-dinosaurs/trex-sue-skeleton.jpg" alt="T-Rex skeleton Sue, side view on white background" width="50%"></p>
 
 *"Sue" — the most complete T. rex skeleton, Field Museum of Natural History. Note the massive tail acting as counterbalance to the skull. Source: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Sues_skeleton_white_background.jpg)*
 
-<p align="center"><img src={TrexLegBonesPng} alt="T-Rex leg bones diagram" width="50%" /></p>
+<p align="center"><img src="spring-loaded-dinosaurs/trex-leg-bones.png" alt="T-Rex leg bones diagram" width="50%"></p>
 
 *Main bones of a T. rex leg and foot. Source: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:T_Rex_Leg_Bones.png), Philcha, CC0*
 
@@ -40,7 +30,7 @@ This is one of the most dramatic structural changes in the dinosaur-to-bird tran
 
 ## The Diving Board You Carry With You
 
-<p align="center"><img src={PenguinAnatomyJpg} alt="Penguin anatomy diagram" width="50%" /></p>
+<p align="center"><img src="spring-loaded-dinosaurs/penguin-anatomy.jpg" alt="Penguin anatomy diagram" width="50%"></p>
 
 *Penguin external anatomy. Source: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Penguin_diagram.JPG), CC BY-SA 2.5*
 
@@ -60,7 +50,7 @@ Compare the kiwi, whose legs are optimized purely for ground life — strong, re
 
 | AC6 Bipedal Legs (standard, upright stance) | AC6 Reverse-Joint Legs (crouched, bird-like stance) |
 |:---:|:---:|
-| <img src={Ac6BipedalLegsJpg} alt="AC6 Bipedal Legs — note the fully extended, upright stance" width="100%" /> | <img src={Ac6ReverseJointLegsJpg} alt="AC6 Reverse-Joint Legs — note the permanent crouch, exactly like a penguin" width="100%" /> |
+| <img src="spring-loaded-dinosaurs/ac6-bipedal-legs.jpg" alt="AC6 Bipedal Legs — note the fully extended, upright stance" width="100%"> | <img src="spring-loaded-dinosaurs/ac6-reverse-joint-legs.jpg" alt="AC6 Reverse-Joint Legs — note the permanent crouch, exactly like a penguin" width="100%"> |
 | *Upright default = must squat before jumping* | *Crouched default = pre-loaded, ready to fire* |
 
 *Screenshots © FromSoftware/Bandai Namco via [Charlie Intel](https://www.charlieintel.com/games/all-armored-core-6-leg-types-explained-bipedal-tetrapod-tank-more-267452/). See also: [KASUAR/42Z reverse-joint legs (Fextralife Wiki)](https://armoredcore6.wiki.fextralife.com/KASUAR+42Z), [RC-2000 SPRING CHICKEN (Fextralife Wiki)](https://armoredcore6.wiki.fextralife.com/RC-2000+SPRING+CHICKEN), [Reverse Joint history (Armored Core Wiki)](https://armoredcore.fandom.com/wiki/Reverse_Joint).*

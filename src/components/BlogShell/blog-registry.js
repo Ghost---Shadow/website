@@ -3,7 +3,7 @@ import React from 'react';
 export const blogRegistry = [
   {
     slug: 'spring-loaded-dinosaurs',
-    title: 'Spring-Loaded Dinosaurs: Tendons as Biological Energy Storage',
+    title: 'Spring-Loaded Dinosaurs: What Penguins, Kiwis, and Armored Core Get Right (and Wrong) About Legs',
     component: React.lazy(() => import('../../blog/spring-loaded-dinosaurs/index.mdx')),
     date: '28 Feb 2026',
   },

@@ -25,22 +25,21 @@ const extractDescription = async (slug) => {
     const dateIndex = lines.findIndex((line) => line.includes('<date>'));
     const linesAfterDate = dateIndex >= 0 ? lines.slice(dateIndex + 1) : lines;
 
-    const descriptionLine = linesAfterDate.find((line) => {
-      const trimmed = line.trim();
-      return trimmed.length > 50 && !line.startsWith('#') && !line.startsWith('import');
-    });
+    const cleanLine = (line) => line
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Remove markdown links
+      .replace(/<[^>]+>/g, '') // Remove HTML/JSX tags
+      .replace(/\{[^}]+\}/g, '') // Remove JSX expressions
+      .trim();
 
     let description = '';
-    if (descriptionLine) {
-      // Clean up the line - remove markdown and JSX
-      description = descriptionLine
-        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Remove markdown links
-        .replace(/<[^>]+>/g, '') // Remove HTML/JSX tags
-        .trim();
-
-      // Limit to ~300 characters
-      if (description.length > 300) {
-        description = `${description.substring(0, 297)}...`;
+    for (const line of linesAfterDate) {
+      const trimmed = line.trim();
+      if (trimmed.length > 50 && !line.startsWith('#') && !line.startsWith('import') && !trimmed.startsWith('*')) {
+        const cleaned = cleanLine(line);
+        if (cleaned.length > 50) {
+          description = cleaned.length > 300 ? `${cleaned.substring(0, 297)}...` : cleaned;
+          break;
+        }
       }
     }
 
@@ -154,7 +153,7 @@ const main = async () => {
     }
 
     // Parse blog posts manually from the registry
-    const postMatches = registryContent.matchAll(/\{\s*slug:\s*'([^']+)',\s*title:\s*'([^']+)',\s*component:[^,]+,\s*date:\s*'([^']+)',?\s*\}/g);
+    const postMatches = registryContent.matchAll(/\{\s*slug:\s*'([^']+)',\s*title:\s*'((?:[^'\\]|\\.)*)',\s*component:[^,]+,\s*date:\s*'([^']+)',?\s*\}/g);
 
     const posts = Array.from(postMatches).map((match) => ({
       slug: match[1],
