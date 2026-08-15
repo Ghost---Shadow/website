@@ -2,6 +2,12 @@ import React from 'react';
 
 export const blogRegistry = [
   {
+    slug: 'on-backspace-and-rom',
+    title: 'Four Tricks at the Edge of Formal Language Theory',
+    component: React.lazy(() => import('../../blog/on-backspace-and-rom/index.mdx')),
+    date: '15 Aug 2026',
+  },
+  {
     slug: 'spring-loaded-dinosaurs',
     title: 'Spring-Loaded Dinosaurs: What Penguins, Kiwis, and Armored Core Get Right (and Wrong) About Legs',
     component: React.lazy(() => import('../../blog/spring-loaded-dinosaurs/index.mdx')),
