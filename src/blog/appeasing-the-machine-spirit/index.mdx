@@ -1,5 +1,7 @@
 import { Table } from '@mantine/core';
 import AccuracyPng from './accuracy.png';
+import BaselinesPng from './rite1-baselines.png';
+import RoundsPng from './rite2-rounds.png';
 
 # Appeasing the Machine Spirit: RLHF in In-Context Learning
 
@@ -97,72 +99,110 @@ So the memory was rewritten as general do/don't pairs, each rule with its opposi
   </tbody>
 </Table>
 
+## Against the baselines
+
+The fair test is the three lists the memory never saw (191 notes). Two baselines don't use the First Rite at all. One gets no memory and no past lists. The other gets every earlier list raw and no memory.
+
+<p align="center"><img src={BaselinesPng} alt="Horizontal bar chart of held-out notes caught. No memory and no past lists: 4 of 191, 2.1%, the baseline. First Rite rules memory: 6, 3.1%, 1.5 times the baseline. First Rite do/don't memory with the last three lists: 10, 5.2%, 2.5 times. Every earlier list raw with no memory: 29, 15.2%, 7.2 times." width="100%" /></p>
+
+*Grey bars are baselines without the First Rite; blue bars use it. Percentages are held-out notes caught outright.*
+
+<Table striped highlightOnHover withBorder withColumnBorders>
+  <thead>
+    <tr>
+      <th>Held out, 191 notes</th>
+      <th>Caught</th>
+      <th>vs the no-memory baseline</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Baseline: no memory, no past lists</td>
+      <td>4 (2.1%)</td>
+      <td>1.0x</td>
+    </tr>
+    <tr>
+      <td>First Rite: rules memory, trained 3 epochs</td>
+      <td>6 (3.1%)</td>
+      <td>1.5x (+50%)</td>
+    </tr>
+    <tr>
+      <td>First Rite: do/don't memory + last 3 lists</td>
+      <td>10 (5.2%)</td>
+      <td>2.5x (+150%)</td>
+    </tr>
+    <tr>
+      <td>Baseline: every earlier list raw, no memory</td>
+      <td>29 (15.2%)</td>
+      <td>7.2x (+625%)</td>
+    </tr>
+  </tbody>
+</Table>
+
+So the First Rite beats having nothing, by 50% with trained rules and by 150% with the do/don't memory. But it doesn't beat simply reading my old lists, which is 2.9 times better than the do/don't memory on its own. That's why the memory now says to read every earlier list raw, and spends its rules on how to read them. That combination (the do/don't memory plus every earlier list, with no cap on lines) hasn't been scored yet. My next playtest scores it.
+
 ## Turning the forecast into work
 
 The Second Rite took the frozen memory, today's todo and all sixteen lists, and forecast 176 notes for my next playtest. Twenty-two turned out to be already handled in the code. The rest became 64 fix boxes, 35 warnings on existing boxes, and 9 decisions with defaults. Every box says how it gets checked without me playing.
 
-Then the rite ran again on the new todo, with a fresh agent each round, for five rounds. Most of each round's finds were faults in the last round's fixes, which is what you'd expect: every fix adds a little surface. On that surface alone it converged.
+Then the rite ran again on the new todo, with a fresh agent each round, for five rounds. The baseline is not running it: the todo stays as it was, and the forecast's 176 issues stay in the build.
 
-<svg viewBox="0 0 660 320" role="img" aria-label="Line chart of new issues found per round. All issues: 176, 79, 44, 28, 22, 32. On the original surface alone: 79, 44, 28, 12, 10." style={{ width: '100%', height: 'auto', display: 'block', margin: '1.5rem 0' }}>
-  <g stroke="currentColor" strokeOpacity="0.2">
-    <line x1="50" y1="250" x2="610" y2="250" />
-    <line x1="50" y1="186.1" x2="610" y2="186.1" />
-    <line x1="50" y1="122.2" x2="610" y2="122.2" />
-    <line x1="50" y1="58.3" x2="610" y2="58.3" />
-  </g>
-  <g fill="currentColor" fontSize="12" textAnchor="end">
-    <text x="42" y="254">0</text>
-    <text x="42" y="190">50</text>
-    <text x="42" y="126">100</text>
-    <text x="42" y="62">150</text>
-  </g>
-  <g fill="currentColor" fontSize="12" textAnchor="middle">
-    <text x="50" y="272">0</text>
-    <text x="162" y="272">1</text>
-    <text x="274" y="272">2</text>
-    <text x="386" y="272">3</text>
-    <text x="498" y="272">4</text>
-    <text x="610" y="272">5</text>
-    <text x="330" y="296">Round</text>
-  </g>
-  <polyline fill="none" stroke="#c0392b" strokeWidth="2.5" points="50,25.1 162,149.1 274,193.8 386,214.2 498,221.9 610,209.1" />
-  <polyline fill="none" stroke="#2e86ab" strokeWidth="2.5" strokeDasharray="6 4" points="162,149.1 274,193.8 386,214.2 498,234.7 610,237.2" />
-  <g fill="#c0392b">
-    <circle cx="50" cy="25.1" r="4" />
-    <circle cx="162" cy="149.1" r="4" />
-    <circle cx="274" cy="193.8" r="4" />
-    <circle cx="386" cy="214.2" r="4" />
-    <circle cx="498" cy="221.9" r="4" />
-    <circle cx="610" cy="209.1" r="4" />
-  </g>
-  <g fill="#2e86ab">
-    <circle cx="162" cy="149.1" r="3" fill="#fff" stroke="#2e86ab" strokeWidth="2" />
-    <circle cx="274" cy="193.8" r="3" fill="#fff" stroke="#2e86ab" strokeWidth="2" />
-    <circle cx="386" cy="214.2" r="3" fill="#fff" stroke="#2e86ab" strokeWidth="2" />
-    <circle cx="498" cy="234.7" r="4" />
-    <circle cx="610" cy="237.2" r="4" />
-  </g>
-  <g fill="currentColor" fontSize="12" textAnchor="middle">
-    <text x="64" y="30" textAnchor="start">176</text>
-    <text x="162" y="138">79</text>
-    <text x="274" y="183">44</text>
-    <text x="386" y="204">28</text>
-    <text x="498" y="212">22</text>
-    <text x="610" y="198">32</text>
-    <text x="498" y="252">12</text>
-    <text x="610" y="256">10</text>
-  </g>
-  <g fontSize="13" fill="currentColor">
-    <line x1="380" y1="30" x2="410" y2="30" stroke="#c0392b" strokeWidth="2.5" />
-    <text x="416" y="34">All new issues</text>
-    <line x1="380" y1="52" x2="410" y2="52" stroke="#2e86ab" strokeWidth="2.5" strokeDasharray="6 4" />
-    <text x="416" y="56">Original surface alone</text>
-  </g>
-</svg>
+<p align="center"><img src={RoundsPng} alt="Bar chart of new forecast issues per round against a dashed baseline at 176. Round 0: 176, the baseline forecast. Round 1: 79, 55% below. Round 2: 44, 75% below. Round 3: 28, 84% below. Round 4: 22, of which 12 came from the last round's own fixes, 93% below on its own fixes. Round 5: 32, of which 10 from its own fixes, 94% below on its own fixes." width="100%" /></p>
 
-*New issues found per round. The dashed line counts only issues on the original surface, ignoring faults introduced by the previous round's fixes.*
+*Blue is what each round found in the last round's fixes. Orange is what it found in a source it read for the first time (my chapter docs). The dashed line is the baseline: no Second Rite.*
 
-The bump at the end came from the agent finally reading my chapter docs, which list the parts I hadn't tested. Each new source behaved like new data. Next time, round zero gets every source at once. What's left is what only playing can find: how it feels, the prices, the numbers, and a real friend on a real connection.
+<Table striped highlightOnHover withBorder withColumnBorders>
+  <thead>
+    <tr>
+      <th>Round</th>
+      <th>New issues found</th>
+      <th>From the last round's fixes</th>
+      <th>vs the 176 baseline</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0 (the baseline forecast)</td>
+      <td>176</td>
+      <td>n/a</td>
+      <td>n/a</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>79</td>
+      <td>79</td>
+      <td>55% fewer</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>44</td>
+      <td>44</td>
+      <td>75% fewer</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>28</td>
+      <td>28</td>
+      <td>84% fewer</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>22</td>
+      <td>12</td>
+      <td>88% fewer (93% on its own fixes)</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>32</td>
+      <td>10</td>
+      <td>82% fewer (94% on its own fixes)</td>
+    </tr>
+  </tbody>
+</Table>
+
+Most of each round's finds were faults in the last round's fixes, which is what you'd expect: every fix adds a little surface. On that surface alone it converged, from 79 to 10. The bump at the end came from the agent finally reading my chapter docs, which list the parts I hadn't tested. A new source behaves like new data. Next time, round zero gets every source at once.
+
+One caveat matters. These are issues a forecaster expects me to find, not issues I found. "94% fewer" means the frozen memory can't think of much more to complain about. Whether I can is the next playtest. What's left is what only playing can find: how it feels, the prices, the numbers, and a real friend on a real connection.
 
 The real test is my next playtest. If the list is short, the spirit is appeased. If it isn't, the list becomes pair seventeen, and the First Rite begins again.
 
