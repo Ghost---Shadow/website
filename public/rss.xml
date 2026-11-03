@@ -5,9 +5,16 @@
     <link>https://ad-absurdum.me</link>
     <description>So many ideas so little time</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 15 Aug 2026 19:58:46 +0530</lastBuildDate>
+    <lastBuildDate>Tue, 03 Nov 2026 19:10:57 +0530</lastBuildDate>
     <ttl>1440</ttl>
     <atom:link href="https://ad-absurdum.me/rss.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Appeasing the Machine Spirit: RLHF in In-Context Learning</title>
+      <link>https://ad-absurdum.me/blog/appeasing-the-machine-spirit</link>
+      <guid>https://ad-absurdum.me/blog/appeasing-the-machine-spirit</guid>
+      <pubDate>Tue, 03 Nov 2026 00:00:00 +0530</pubDate>
+      <description>I&apos;m making a game alone: *The Good Vet*, an open-world vet game with soulslike fights. Every few days I play the latest build and write down everything that bothers me. Then the list goes back into the todo, the todo gets built, and I play again.</description>
+    </item>
     <item>
       <title>Four Tricks at the Edge of Formal Language Theory</title>
       <link>https://ad-absurdum.me/blog/on-backspace-and-rom</link>

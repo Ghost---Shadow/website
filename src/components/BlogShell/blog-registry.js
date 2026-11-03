@@ -2,6 +2,12 @@ import React from 'react';
 
 export const blogRegistry = [
   {
+    slug: 'appeasing-the-machine-spirit',
+    title: 'Appeasing the Machine Spirit: RLHF in In-Context Learning',
+    component: React.lazy(() => import('../../blog/appeasing-the-machine-spirit/index.mdx')),
+    date: '03 Nov 2026',
+  },
+  {
     slug: 'on-backspace-and-rom',
     title: 'Four Tricks at the Edge of Formal Language Theory',
     component: React.lazy(() => import('../../blog/on-backspace-and-rom/index.mdx')),
