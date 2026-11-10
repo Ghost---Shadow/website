@@ -8,6 +8,12 @@ export const blogRegistry = [
     date: '10 Nov 2026',
   },
   {
+    slug: 'squiggly-line-conjecture',
+    title: 'The Squiggly Line Conjecture: An Idea From 2022 and What the Test Found',
+    component: React.lazy(() => import('../../blog/squiggly-line-conjecture/index.mdx')),
+    date: '10 Nov 2026',
+  },
+  {
     slug: 'appeasing-the-machine-spirit',
     title: 'Appeasing the Machine Spirit: RLHF in In-Context Learning',
     component: React.lazy(() => import('../../blog/appeasing-the-machine-spirit/index.mdx')),
