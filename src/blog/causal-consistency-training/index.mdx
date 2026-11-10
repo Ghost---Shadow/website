@@ -124,6 +124,20 @@ So the revised version differs from 2021 in four ways:
 
 Step 2 matters most. My two playground examples could be unlucky. If the error rate of a current model on the backward step is small, the idea has little to fix.
 
+## An in-context version (untested)
+
+Fine-tuning is not the only place to run the cycle. The same ritual can run in context, on one draft answer, with no change to the weights.
+
+1. The model writes a draft and lists the claims that the answer depends on.
+2. For each claim it writes the cause ("why?"). It must not reuse the words of the claim.
+3. It writes a hard distractor: a plausible wrong alternative to the claim.
+4. A fresh subagent sees only the cause. It picks between the claim and the distractor ("therefore?").
+5. A claim that does not come back is changed, hedged or removed.
+
+I wrote this as a Claude skill, one `SKILL.md` file: [why-therefore](https://gist.github.com/Ghost---Shadow/409687db6d711a9b9a09417fe30852cc).
+
+It is currently untested. I have no measurement that shows it improves answers. It also has an obvious limit: the cycle checks that the model agrees with itself, not that it is right. A wrong belief that is held consistently passes.
+
 ## Where it stands
 
 I proposed this in 2021, and the closest published work that I found came three years later. I am not claiming priority. The papers above cover the parts well, and my claim is only that the discriminative cycle over a causal inverse pair did not show up in my search. The next job is the small synthetic corpus.
