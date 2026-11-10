@@ -4,7 +4,7 @@
 
 *A training objective that asks a language model to agree with itself across documents. Nothing here is implemented or measured.*
 
-In 2021 I put an idea into a slide deck and did not have time to build it. In 2026 I revised the deck. This post is the written version of [the 2026 slides](https://docs.google.com/presentation/d/1gSwNj3VmGG-11UbirovTkRNc0zRZEkNEETYd88vZfYs/edit?usp=sharing).
+In 2021 I put an idea into [a slide deck](https://docs.google.com/presentation/d/1QZony2o_EFzHmStWyfw4Ivyu5-OQvMuOY8ullP1i52s/edit?usp=sharing) and did not have time to build it. In 2026 I revised the deck. This post is the written version of [the 2026 slides](https://docs.google.com/presentation/d/1gSwNj3VmGG-11UbirovTkRNc0zRZEkNEETYd88vZfYs/edit?usp=sharing).
 
 <div style={{display: 'flex', justifyContent: 'center'}}>
   <iframe src="https://docs.google.com/presentation/d/1gSwNj3VmGG-11UbirovTkRNc0zRZEkNEETYd88vZfYs/embed" title="Causal-consistency training slides" width="640" height="389" frameBorder="0" allowFullScreen></iframe>
@@ -47,6 +47,16 @@ Now take the story of the Three Little Pigs. If you ask "why" enough times from 
 4. The loss is plain next-token prediction on the correct option.
 
 This is a cycle-consistency loss. A line goes to a cause and back to the line. It connects text across documents, because the line and the distractor can come from different places in the corpus. The cycle also runs in the other direction: therefore, then why, then therefore.
+
+### Why "post-pre-training"
+
+The 2021 deck called this a post-pre-training objective. The name says where the stage sits.
+
+It cannot be part of pre-training, because step 2 needs a model that can already answer "Why?". A model with random weights cannot write a cause, so there is nothing to build the cycle from.
+
+It is also not fine-tuning in the usual sense. It uses no task data and no labels. It takes lines from the same pre-training corpus, and the loss is the same next-token prediction. The only new thing is that the model's own answers make the training pairs.
+
+So it is a second stage on the same data: pre-train first, then run the cycle, and do any task fine-tuning after that.
 
 ### Is there a signal to train on?
 
@@ -118,4 +128,4 @@ Step 2 matters most. My two playground examples could be unlucky. If the error r
 
 I proposed this in 2021, and the closest published work that I found came three years later. I am not claiming priority. The papers above cover the parts well, and my claim is only that the discriminative cycle over a causal inverse pair did not show up in my search. The next job is the small synthetic corpus.
 
-Slides: [Causal-consistency training (2026)](https://docs.google.com/presentation/d/1gSwNj3VmGG-11UbirovTkRNc0zRZEkNEETYd88vZfYs/edit?usp=sharing)
+Slides: [Causal-consistency training (2026)](https://docs.google.com/presentation/d/1gSwNj3VmGG-11UbirovTkRNc0zRZEkNEETYd88vZfYs/edit?usp=sharing) and [the original 2021 deck](https://docs.google.com/presentation/d/1QZony2o_EFzHmStWyfw4Ivyu5-OQvMuOY8ullP1i52s/edit?usp=sharing)

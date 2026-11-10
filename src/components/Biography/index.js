@@ -9,9 +9,15 @@ import {
 
 const timelineData = [
   {
+    company: 'Stealth Startup',
+    role: 'Founder',
+    tenure: '2025 - Present',
+    description: 'In stealth.',
+  },
+  {
     company: 'University of Texas at Dallas',
-    role: 'Phd Candidate',
-    tenure: '2023 - Present',
+    role: 'PhD (dropped out)',
+    tenure: '2023 - June 2025',
     description: 'Worked on making large language models slightly better.',
   },
   {
