@@ -138,8 +138,26 @@ I wrote this as a Claude skill, one `SKILL.md` file: [why-therefore](https://gis
 
 It is currently untested. I have no measurement that shows it improves answers. It also has an obvious limit: the cycle checks that the model agrees with itself, not that it is right. A wrong belief that is held consistently passes.
 
+## Possible errata
+
+Nothing here is tested, so I went looking for places where the idea can be wrong. These are the ones I found in a review in November 2026.
+
+**In the evidence**
+
+1. Position bias. In both playground examples the model picked the first option in the list. That alone can explain the two failures, with no failure of causal reasoning.
+2. Sampling noise. Two different answers about a favourite president can come from sampling at a non-zero temperature. They do not prove two beliefs.
+3. Earlier work. ATOMIC and COMET (2019) generate "intent" and "effect" relations for events. Abductive NLI (2020) and round-trip consistency for question answering (2019) are also before 2021. The idea was not the first of its kind in 2021.
+4. A special case. Repeated "why" converges in the Three Little Pigs because there is one character with one motive. In general the chains branch, loop, or do not end.
+
+**In the objective**
+
+5. "Why" is not a true inverse. One effect has many causes, and one cause has many effects. With a hard distractor from the same document, the distractor can also be a valid effect.
+6. Lines with no cause. A "why" for a definition or a description is a rationalisation. The model then trains on causes that it invented.
+7. Unclear loss target. In my playground screenshots the answer is one letter. A loss on one letter gives about one bit for each example.
+8. Test mismatch. Paraphrase consistency on SQuAD measures a property that the cycle does not train.
+
 ## Where it stands
 
-I proposed this in 2021, and the closest published work that I found came three years later. I am not claiming priority. The papers above cover the parts well, and my claim is only that the discriminative cycle over a causal inverse pair did not show up in my search. The next job is the small synthetic corpus.
+I proposed this in 2021, and the closest training methods that I found came three years later. Work on generating causes and effects is older than that (see the errata above). I am not claiming priority. The papers above cover the parts well, and my claim is only that the discriminative cycle over a causal inverse pair did not show up in my search. The next job is the small synthetic corpus.
 
 Slides: [Causal-consistency training (2026)](https://docs.google.com/presentation/d/1gSwNj3VmGG-11UbirovTkRNc0zRZEkNEETYd88vZfYs/edit?usp=sharing) and [the original 2021 deck](https://docs.google.com/presentation/d/1QZony2o_EFzHmStWyfw4Ivyu5-OQvMuOY8ullP1i52s/edit?usp=sharing)
