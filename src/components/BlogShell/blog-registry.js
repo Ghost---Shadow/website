@@ -2,6 +2,12 @@ import React from 'react';
 
 export const blogRegistry = [
   {
+    slug: 'causal-consistency-training',
+    title: 'Causal-Consistency Training: An Idea From 2021 and the Research Since',
+    component: React.lazy(() => import('../../blog/causal-consistency-training/index.mdx')),
+    date: '10 Nov 2026',
+  },
+  {
     slug: 'appeasing-the-machine-spirit',
     title: 'Appeasing the Machine Spirit: RLHF in In-Context Learning',
     component: React.lazy(() => import('../../blog/appeasing-the-machine-spirit/index.mdx')),

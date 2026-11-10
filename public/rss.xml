@@ -5,9 +5,16 @@
     <link>https://ad-absurdum.me</link>
     <description>So many ideas so little time</description>
     <language>en-us</language>
-    <lastBuildDate>Tue, 03 Nov 2026 19:10:57 +0530</lastBuildDate>
+    <lastBuildDate>Tue, 10 Nov 2026 08:58:54 +0530</lastBuildDate>
     <ttl>1440</ttl>
     <atom:link href="https://ad-absurdum.me/rss.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Causal-Consistency Training: An Idea From 2021 and the Research Since</title>
+      <link>https://ad-absurdum.me/blog/causal-consistency-training</link>
+      <guid>https://ad-absurdum.me/blog/causal-consistency-training</guid>
+      <pubDate>Tue, 10 Nov 2026 00:00:00 +0530</pubDate>
+      <description>In 2021 I put an idea into a slide deck and did not have time to build it. In 2026 I revised the deck. This post is the written version of the 2026 slides.</description>
+    </item>
     <item>
       <title>Appeasing the Machine Spirit: RLHF in In-Context Learning</title>
       <link>https://ad-absurdum.me/blog/appeasing-the-machine-spirit</link>

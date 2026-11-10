@@ -1,0 +1,121 @@
+# Causal-Consistency Training: An Idea From 2021 and the Research Since
+
+<date>10 Nov 2026</date>
+
+*A training objective that asks a language model to agree with itself across documents. Nothing here is implemented or measured.*
+
+In 2021 I put an idea into a slide deck and did not have time to build it. In 2026 I revised the deck. This post is the written version of [the 2026 slides](https://docs.google.com/presentation/d/1gSwNj3VmGG-11UbirovTkRNc0zRZEkNEETYd88vZfYs/edit?usp=sharing).
+
+<div style={{display: 'flex', justifyContent: 'center'}}>
+  <iframe src="https://docs.google.com/presentation/d/1gSwNj3VmGG-11UbirovTkRNc0zRZEkNEETYd88vZfYs/embed" title="Causal-consistency training slides" width="640" height="389" frameBorder="0" allowFullScreen></iframe>
+</div>
+
+I have not run any experiment for this idea. There are no results below. What I can say is that the closest published work that I found is from 2024 and 2025, and that each paper covers one part of the idea.
+
+## The problem
+
+Large language models are trained on next-token prediction. That forces a model to be consistent inside one document, because every token is predicted from the context window before it. It does not force the model to be consistent between documents.
+
+Here is an example of the gap.
+
+- "Who is your favourite president?" The model says "George Bush".
+- "Who is your favourite US president?" The model says "Obama".
+
+Each answer is fine alone. But a model with a consistent world view should not give both. Nothing in the training signal connects the two questions, because they never appeared in the same window.
+
+The Reversal Curse ([Berglund et al., ICLR 2024](https://arxiv.org/abs/2309.12288)) measured the same kind of gap later. A model that learns "A is B" does not learn "B is A". The fact is in the weights in one direction only.
+
+## The idea
+
+"Why" is the inverse of "therefore". Take this chain:
+
+```txt
+I went to a donut shop
+  -[why]->  I wanted to eat donuts
+  -[why]->  I was hungry
+```
+
+Read the other way, with "therefore", it goes from "I was hungry" back to "I went to a donut shop".
+
+Now take the story of the Three Little Pigs. If you ask "why" enough times from any line of the story, the chains should converge on one root cause: "He was hungry". That is a link between lines, and next-token prediction does not train on it.
+
+### The objective
+
+1. Pick a random line from the pre-training corpus.
+2. Prompt the model with "Why?" and record its answer. This is abduction: the model guesses a cause.
+3. Give that answer as input and ask "Therefore?". Offer the original line as one option, next to a distractor line.
+4. The loss is plain next-token prediction on the correct option.
+
+This is a cycle-consistency loss. A line goes to a cause and back to the line. It connects text across documents, because the line and the distractor can come from different places in the corpus. The cycle also runs in the other direction: therefore, then why, then therefore.
+
+### Is there a signal to train on?
+
+I tested this in a playground with few-shot prompts, on the base model. The backward step failed.
+
+In the first example, the model wrote "There has been a lack of rainfall recently" as the cause of "The plants in the garden started to wilt". That is a good cause. But when I gave it that cause and asked for the effect, it picked "Tim got a promotion at work" over the original line.
+
+In a second example, which I added to the deck in 2023, the cause was "The hurricane is expected to hit the Florida coast". The model had abduced it from a line about a FEMA team. Then it matched this cause to an unrelated news line about arrests in Germany.
+
+These are two examples. They are not a measured error rate. They only show me that the model's forward and backward steps can disagree, so a loss on that disagreement has something to push against.
+
+## Related work since 2021
+
+Each paper below covers one part of the idea. I list them from closest in motivation to furthest.
+
+**Deductive Closure Training** ([Akyürek et al., 2024](https://arxiv.org/abs/2401.08574)). The model generates implications and contradictions of seed statements. It then selects the most probable logically consistent truth assignment and fine-tunes on it. This is the closest in motivation, because it also treats consistency as something to train. It goes forward only (deduction). It has no inverse step.
+
+**Reasoning to Learn from Latent Thoughts, or BoLT** ([Ruan et al., 2025](https://arxiv.org/abs/2503.18866)). The method infers the latent thoughts behind raw text. It trains both directions, text to thought and thought to text, with next-token prediction, in an EM loop. This is the closest to the "why" half of my idea. The cycle is generative, and there is no distractor test.
+
+**RevThink** ([Chen et al., 2024](https://arxiv.org/abs/2411.19865), "Reverse Thinking Makes LLMs Stronger Reasoners"). It trains a student on forward reasoning, a backward question and backward reasoning. It needs a teacher model and question-answer pairs, so it does not work from raw text.
+
+**Cycle-Instruct** ([EMNLP 2025](https://arxiv.org/abs/2508.16100)). Two models, one for question to answer and one for answer to question, train each other from unpaired raw text. The signal is cycle consistency. It pairs instructions with responses, not causes with effects.
+
+**Time-Reversal** ([NeurIPS 2024](https://arxiv.org/abs/2412.02626)) and **LEDOM: Reverse Language Model** ([ACL 2026](https://aclanthology.org/2026.acl-long.975)). These reverse the token order, not the meaning. A reversed sentence is not a cause.
+
+**Maieutic Prompting** ([Jung et al., EMNLP 2022](https://arxiv.org/abs/2205.11822)). This is earlier, and it works at inference time only. It builds a recursive tree of abductive explanations and uses a consistency solver on the tree. Nothing is trained.
+
+## What I did not find
+
+I did a literature search in November 2026. A search can miss papers, so read this as "I did not find", not as "does not exist". These three parts were not in anything I found:
+
+- The discriminative cycle. Abduce a cause, then pick the source line against a distractor, and train on that.
+- Root-cause convergence of repeated "why" as a training structure, or as a test.
+- A causal inverse pair, cause and effect. The published cycles use question and answer, or token order.
+
+## The 2026 revision
+
+These are proposals. None of them is tested.
+
+Two failure modes from later papers changed my thinking.
+
+**Collapse.** A consistency loss with no anchor can push a model to one constant answer. One 2026 paper on medical vision-language models ([arXiv 2603.00148](https://arxiv.org/abs/2603.00148)) reports a model that answered "Yes" to everything. A cycle loss on its own could be satisfied the same way.
+
+**Leakage.** The model can recover the line from shared words, not from the causal relation. See Cycle-Consistent Search ([arXiv 2604.12967](https://arxiv.org/abs/2604.12967)). If the abduced cause copies words from the line, the "therefore" step is a string match and teaches nothing about cause.
+
+So the revised version differs from 2021 in four ways:
+
+1. The distractor comes from the same document, not a random corpus line. A random line is too easy to rule out by topic.
+2. The cycle loss is added to the standard language-model loss, which acts as an anchor against collapse.
+3. A consistency check filters the abduced causes first, as in Deductive Closure Training.
+4. Chains of "why" steps go to the root cause, instead of one step.
+
+### How I would evaluate it
+
+- Paraphrase consistency: SQuAD with paraphrased questions. This was the 2021 plan.
+- Accuracy on the Reversal Curse test set.
+- Root-cause convergence: the share of "why" chains from one story that end at the same cause.
+- A guard that task accuracy does not go down.
+
+### Next steps
+
+1. Build a small synthetic corpus with a known causal graph.
+2. Measure the backward-step error rate of a current model, before any training.
+3. Train with the cycle loss plus the anchor loss, with Deductive Closure Training as the baseline.
+
+Step 2 matters most. My two playground examples could be unlucky. If the error rate of a current model on the backward step is small, the idea has little to fix.
+
+## Where it stands
+
+I proposed this in 2021, and the closest published work that I found came three years later. I am not claiming priority. The papers above cover the parts well, and my claim is only that the discriminative cycle over a causal inverse pair did not show up in my search. The next job is the small synthetic corpus.
+
+Slides: [Causal-consistency training (2026)](https://docs.google.com/presentation/d/1gSwNj3VmGG-11UbirovTkRNc0zRZEkNEETYd88vZfYs/edit?usp=sharing)
