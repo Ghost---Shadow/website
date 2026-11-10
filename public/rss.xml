@@ -5,7 +5,7 @@
     <link>https://ad-absurdum.me</link>
     <description>So many ideas so little time</description>
     <language>en-us</language>
-    <lastBuildDate>Tue, 10 Nov 2026 10:06:35 +0530</lastBuildDate>
+    <lastBuildDate>Tue, 10 Nov 2026 19:20:26 +0530</lastBuildDate>
     <ttl>1440</ttl>
     <atom:link href="https://ad-absurdum.me/rss.xml" rel="self" type="application/rss+xml" />
     <item>
@@ -14,6 +14,13 @@
       <guid>https://ad-absurdum.me/blog/causal-consistency-training</guid>
       <pubDate>Tue, 10 Nov 2026 00:00:00 +0530</pubDate>
       <description>In 2021 I put an idea into a slide deck and did not have time to build it. In 2026 I revised the deck. This post is the written version of the 2026 slides.</description>
+    </item>
+    <item>
+      <title>InSQuaD: Picking In-Context Examples That Are Relevant and Diverse</title>
+      <link>https://ad-absurdum.me/blog/insquad</link>
+      <guid>https://ad-absurdum.me/blog/insquad</guid>
+      <pubDate>Tue, 10 Nov 2026 00:00:00 +0530</pubDate>
+      <description>InSQuaD is a paper by Anay Majee, Rishabh Iyer and me at The University of Texas at Dallas. It was published at ICDM 2025. This post explains it for a reader who knows what an LLM prompt is, but not what submodularity is. The slides are public. The paper is on arXiv (the arXiv version is the long...</description>
     </item>
     <item>
       <title>The Squiggly Line Conjecture: An Idea From 2022 and What the Test Found</title>

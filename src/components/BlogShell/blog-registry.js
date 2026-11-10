@@ -8,6 +8,12 @@ export const blogRegistry = [
     date: '10 Nov 2026',
   },
   {
+    slug: 'insquad',
+    title: 'InSQuaD: Picking In-Context Examples That Are Relevant and Diverse',
+    component: React.lazy(() => import('../../blog/insquad/index.mdx')),
+    date: '10 Nov 2026',
+  },
+  {
     slug: 'squiggly-line-conjecture',
     title: 'The Squiggly Line Conjecture: An Idea From 2022 and What the Test Found',
     component: React.lazy(() => import('../../blog/squiggly-line-conjecture/index.mdx')),

@@ -1,0 +1,197 @@
+import IllustrationPng from './illustration.png';
+import AvgPerfPng from './avg_perf.png';
+import PerTaskPng from './per_task.png';
+import LambdaPng from './lambda.png';
+import { Table } from '@mantine/core';
+
+# InSQuaD: Picking In-Context Examples That Are Relevant and Diverse
+
+<date>10 Nov 2026</date>
+
+*A plain-language walk through our ICDM 2025 paper. One submodular function picks the examples to label, picks the examples for each prompt, and trains the retriever.*
+
+InSQuaD is a paper by Anay Majee, Rishabh Iyer and me at The University of Texas at Dallas. It was published at ICDM 2025. This post explains it for a reader who knows what an LLM prompt is, but not what submodularity is. The [slides are public](https://docs.google.com/presentation/d/1DxsEibODvDJjwGxymZsTnDfa1IEySlZGLVB0U9v5oOo/edit?usp=sharing). The [paper is on arXiv](https://arxiv.org/abs/2508.21003) (the arXiv version is the long version of the ICDM paper) and the [code is on GitHub](https://github.com/Ghost---Shadow/InSQuaD).
+
+<div style={{display: 'flex', justifyContent: 'center'}}>
+  <iframe src="https://docs.google.com/presentation/d/1DxsEibODvDJjwGxymZsTnDfa1IEySlZGLVB0U9v5oOo/embed" title="InSQuaD slides" width="640" height="389" frameBorder="0" allowFullScreen></iframe>
+</div>
+
+The short version: we pick in-context examples with one function that rewards relevance to the query and penalises redundancy. We use the same function to choose what to annotate, to choose what to put in each prompt, and to train the retriever. On nine benchmarks with Gemma 2B, it beats eight baselines on average score.
+
+## The problem
+
+In-context learning (ICL) means that an LLM gets a few worked examples, called exemplars, in the prompt. Then it gets the test query. Which exemplars go in the prompt decides how well this works.
+
+There are two selection problems:
+
+1. Annotation. We have a large pool of unlabeled examples. We choose a small set to label, within a budget B. Labels cost money.
+2. Retrieval. For each test query, we choose k labeled exemplars. The order of the exemplars in the prompt also matters.
+
+Each simple rule fails in its own way. Relevance alone returns near-duplicates: several examples that say the same thing. Diversity alone covers the pool, but drifts away from the query. A good prompt needs exemplars that are near the query and different from each other.
+
+<div style={{background: '#fff', padding: '12px', borderRadius: '8px', margin: '16px 0'}}>
+  <img src={IllustrationPng} alt="Three panels: relevance only, diversity only, relevance and diversity. A star is the test query, grey dots are candidates, coloured dots are the four selected." width="100%" />
+</div>
+
+This figure is an illustration with synthetic points. It is not data from the paper. The star is the test query and the grey dots are candidate examples. The coloured dots are the four that each rule selects.
+
+The paper names four limits of earlier work:
+
+- Selective annotation methods, for example Vote-K and IDEAL, focus on relevance. They do not model diversity together with it.
+- Pretrained sentence embeddings, for example SBERT, favour similarity to the query. Paraphrases and distractors still score high.
+- Multi-stage pipelines treat relevance and diversity in separate stages.
+- Multi-hop QA training sets have no paraphrases, so a retriever does not learn to skip duplicates.
+
+## One function for relevance and diversity
+
+The tool we use is Submodular Mutual Information (SMI). Write it as I_f(A; Q). It is the information that a set of exemplars A shares with a query set Q.
+
+A submodular function has diminishing returns. A second copy of the same example adds little to the set. So one function rewards relevance to Q and also penalises redundancy inside A. We do not need two stages.
+
+We use three instantiations. S is a similarity kernel between two items, and eta is a weighting term.
+
+<Table striped highlightOnHover withBorder withColumnBorders>
+  <thead>
+    <tr><th>Name</th><th>Formula</th><th>In words</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Graph-Cut (GC)</td><td>sum over a in A, b in Q of S(a, b)</td><td>Total similarity between A and Q.</td></tr>
+    <tr><td>Facility-Location (FL)</td><td>sum over a in A of max over b in Q of S(a, b), plus eta times sum over b in Q of max over a in A of S(a, b)</td><td>Each side is covered by its best match.</td></tr>
+    <tr><td>Log-Determinant (LD)</td><td>log det(S_A) - log det(S_A - eta^2 * S_AQ * S_Q^-1 * S_AQ^T)</td><td>The volume of A that Q explains.</td></tr>
+  </tbody>
+</Table>
+
+## InSQuaD-RETRIEVE
+
+InSQuaD-RETRIEVE uses the same greedy rule in two stages.
+
+1. Annotate, once. Pick at most B examples from the pool V that maximise I_f(shortlist; V). Here the "query" is the full pool, so this picks a set that represents the pool. People then label the shortlist.
+2. Retrieve, for each test query q. Pick at most k labeled examples C that maximise I_f(C; q).
+
+The greedy rule is simple. Start with an empty set. Add the example with the largest gain in I_f. Repeat. The order of selection is the order of decreasing gain, and we use that order as the order in the prompt.
+
+## InSQuaD-LEARN
+
+The selection rule needs a similarity S. A pretrained embedding model gives one, but it was not trained for this. InSQuaD-LEARN trains the retrieval (embedding) model so that its similarities suit the same function.
+
+For each training question q there are three sets:
+
+- S+, the positives (relevant documents).
+- S-, the negatives (distractors).
+- Sp, the paraphrases of the positives.
+
+The quality loss raises the overlap of the query with the positives and lowers it with the negatives:
+
+```txt
+L_q = sum [ log I_f(S-; q) - log I_f(S+; q) ]
+```
+
+The diversity loss pulls each positive and its paraphrase together, so that a paraphrase is not retrieved as a new exemplar:
+
+```txt
+L_d = sum [ log I_f(S-; Sp) - log I_f(S+; Sp) ]
+```
+
+The joint loss, as written in the paper, mixes the two with a weight lambda in [0, 1]:
+
+```txt
+L = exp((1 - lambda) * L_q + lambda * L_d)
+```
+
+With lambda = 0 the loss uses quality only. The loss is a likelihood ratio from a submodular point process. Only the retriever is trained. The LLM is not changed.
+
+The training data is HotpotQA. It gives supporting documents and distractor documents for each question. We added one paraphrase for each document, written by GPT-3.5 Turbo. The retriever is an SBERT model with MPNet. We trained it for 7 epochs with batch size 32, learning rate 3e-5, AdamW and weight decay 0.01. This took about 527 L4 GPU hours.
+
+## Setup
+
+We used nine benchmarks:
+
+- Classification: MRPC, SST5, MNLI, DBpedia, RTE.
+- Multi-choice: HellaSwag.
+- Dialogue: MWoZ.
+- Generation: GeoQ, Xsum.
+
+The LLMs are Gemma 2B (the main one), Gemma 7B and Davinci-002. The baselines are Zero-shot, Random, Diversity, Least Confidence, MFL, GC, Vote-K and IDEAL. Oracle is an upper bound. The main table uses Gemma 2B, an annotation budget of B = 18, and the mean of three trials.
+
+## Results
+
+The next figure shows the average score over the nine benchmarks.
+
+<div style={{background: '#fff', padding: '12px', borderRadius: '8px', margin: '16px 0'}}>
+  <img src={AvgPerfPng} alt="Horizontal bars of the average score on nine benchmarks for Oracle, InSQuaD-GC, LD, FL, MFL, IDEAL, Vote-K, Random and Zero-shot" width="100%" />
+</div>
+
+The averages are: Zero-shot 0.34, Random 0.44, Vote-K 0.44, IDEAL 0.45, MFL 0.46, InSQuaD-FL 0.47, InSQuaD-LD 0.48, InSQuaD-GC 0.50 and Oracle 0.64. All three InSQuaD variants are above all eight baselines on average score.
+
+For average rank (lower is better), InSQuaD-GC has 3.6, InSQuaD-FL 5.7 and InSQuaD-LD 6.1. The best baseline, MFL, has 7.6.
+
+The paper reports gains of up to 21.6% on classification, 16.4% on multi-choice and 7% on generation over existing baselines.
+
+Here is InSQuaD-GC against IDEAL on each task.
+
+<div style={{background: '#fff', padding: '12px', borderRadius: '8px', margin: '16px 0'}}>
+  <img src={PerTaskPng} alt="For each of nine benchmarks, IDEAL in grey against InSQuaD-GC in green" width="100%" />
+</div>
+
+InSQuaD-GC has a higher mean on all nine tasks. For example, MRPC goes from 0.47 to 0.58 and MNLI from 0.35 to 0.44. The SST5 gap is 0.01 (0.42 to 0.43), and that is inside the spread of the trials.
+
+### Trained against not trained
+
+Is the gain from the selection rule or from the trained retriever? We ran the same selection rule with the pretrained retriever.
+
+<Table striped highlightOnHover withBorder withColumnBorders>
+  <thead>
+    <tr><th>Variant</th><th>Average score, not trained</th><th>Average score, trained</th><th>Average rank, not trained</th><th>Average rank, trained</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>FL</td><td>0.43</td><td>0.47</td><td>10.3</td><td>5.7</td></tr>
+    <tr><td>LD</td><td>0.46</td><td>0.48</td><td>8.7</td><td>6.1</td></tr>
+    <tr><td>GC</td><td>0.46</td><td>0.50</td><td>8.4</td><td>3.6</td></tr>
+  </tbody>
+</Table>
+
+With no training, the selection rule alone is level with the best baselines (0.43 to 0.46 against 0.46). The trained retriever adds the margin.
+
+## The quality-diversity weight
+
+The weight lambda sets the balance between the quality loss and the diversity loss. We tested lambda = 0, 0.25, 0.5 and 1 for InSQuaD-GC.
+
+<div style={{background: '#fff', padding: '12px', borderRadius: '8px', margin: '16px 0'}}>
+  <img src={LambdaPng} alt="Four small panels of InSQuaD-GC score against lambda for MRPC, MNLI, DBpedia and HellaSwag, each with its own vertical scale" width="100%" />
+</div>
+
+Each panel has its own vertical scale. These are the numbers from Table IV of the paper.
+
+<Table striped highlightOnHover withBorder withColumnBorders>
+  <thead>
+    <tr><th>Task</th><th>lambda = 0</th><th>lambda = 0.25</th><th>lambda = 0.5</th><th>lambda = 1</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>MRPC</td><td>0.58</td><td>0.51</td><td>0.48</td><td>0.38</td></tr>
+    <tr><td>MNLI</td><td>0.37</td><td>0.44</td><td>0.33</td><td>0.41</td></tr>
+    <tr><td>DBpedia</td><td>0.63</td><td>0.52</td><td>0.63</td><td>0.68</td></tr>
+    <tr><td>HellaSwag</td><td>0.24</td><td>0.24</td><td>0.29</td><td>0.25</td></tr>
+  </tbody>
+</Table>
+
+No one value is best. The paper reports that lambda > 0 gives the best result on 7 of 9 tasks.
+
+## Other ablations
+
+The paper gives these results in figures. I state the trends only.
+
+- The method improves Gemma 2B, Gemma 7B and Davinci-002.
+- InSQuaD-RETRIEVE is better than random exemplars and better than the top-k most similar. It has the highest gain on 7 of 9 tasks.
+- A budget of 100 is not reliably better than a budget of 18.
+- Greedy selection is much faster than the iterative Vote-K and IDEAL. Graph-Cut is the fastest variant and Log-Determinant the slowest.
+
+## Limitations
+
+- We used only HotpotQA to build the training set.
+- lambda needs calibration for each task.
+- A gap to the Oracle remains: 0.50 against 0.64.
+- The paper also names selection bias in annotation and retrieval, and interpretability, as future work.
+
+## Links
+
+Slides: [InSQuaD slides](https://docs.google.com/presentation/d/1DxsEibODvDJjwGxymZsTnDfa1IEySlZGLVB0U9v5oOo/edit?usp=sharing) | Paper: [arXiv 2508.21003](https://arxiv.org/abs/2508.21003) | Code: [GitHub](https://github.com/Ghost---Shadow/InSQuaD)
