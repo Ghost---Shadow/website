@@ -5,7 +5,7 @@
     <link>https://ad-absurdum.me</link>
     <description>So many ideas so little time</description>
     <language>en-us</language>
-    <lastBuildDate>Wed, 11 Nov 2026 19:39:00 +0530</lastBuildDate>
+    <lastBuildDate>Wed, 11 Nov 2026 22:10:14 +0530</lastBuildDate>
     <ttl>1440</ttl>
     <atom:link href="https://ad-absurdum.me/rss.xml" rel="self" type="application/rss+xml" />
     <item>
@@ -23,7 +23,7 @@
       <description>InSQuaD is a paper by Anay Majee, Rishabh Iyer and me at The University of Texas at Dallas. It was published at ICDM 2025. This post explains it for a reader who knows what an LLM prompt is, but not what submodularity is. The slides are public. The paper is on arXiv (the arXiv version is the long...</description>
     </item>
     <item>
-      <title>The Squiggly Line Conjecture: An Idea From 2022 and What the Test Found</title>
+      <title>The Squiggly Line Theorem: An Idea From 2022 and What the Test Found</title>
       <link>https://ad-absurdum.me/blog/squiggly-line-conjecture</link>
       <guid>https://ad-absurdum.me/blog/squiggly-line-conjecture</guid>
       <pubDate>Tue, 10 Nov 2026 00:00:00 +0530</pubDate>

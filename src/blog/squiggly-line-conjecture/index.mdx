@@ -10,27 +10,27 @@ import FloorPng from './floor.png';
 import InitialMsePng from './initial_mse.png';
 import { Table } from '@mantine/core';
 
-# The Squiggly Line Conjecture: An Idea From 2022 and What the Test Found
+# The Squiggly Line Theorem: An Idea From 2022 and What the Test Found
 
 <date>10 Nov 2026</date>
 
-*A picture that was meant to tie together the lottery ticket hypothesis, double descent and faster learning in large networks. The geometry turned out to be true. The learning claim did not.*
+*A picture that was meant to tie together the lottery ticket hypothesis, double descent and faster learning in large networks. The geometry turned out to be true, and for sines it is now a theorem: a squigglier curve is closer to the data, in a direction that the loss at the start does not see. The learning claim did not hold.*
 
-*Revised on 11 Nov 2026, after a review. The verdict is corrected: the conjecture as I defined it is not true. The tube derivation is replaced by an exact one, the initial-loss numbers are measured again with a script that is kept, the statements about length and about the wall are corrected, and there are new notes on a Lean formalisation and on a limit of the test.*
+*Revised on 11 Nov 2026, after a review. The verdict is corrected: the learning claim is false, and the idea as I defined it is not established for networks. The tube derivation is replaced by an exact one, the initial-loss numbers are measured again with a script that is kept, the statements about length and about the wall are corrected, and there are new notes on a Lean formalisation and on a limit of the test. Revised a second time on 11 Nov 2026: the geometric claim is now proved for sines, and the post is renamed from "The Squiggly Line Conjecture".*
 
 In 2022, the year Stable Diffusion was released, I had an idea about why large networks learn fast. In 2025 I put it into [a slide deck](https://docs.google.com/presentation/d/1hucbKOalHq7g2sTdvyAnd1pDTRlAkg48H2wFui5UQTg/edit?usp=sharing) and wrote the first scripts. In 2026 I tested it properly and revised the deck. This post is the written version of [the 2026 slides](https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing).
 
 <div style={{display: 'flex', justifyContent: 'center'}}>
-  <iframe src="https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/embed" title="Squiggly line conjecture slides" width="640" height="389" frameBorder="0" allowFullScreen></iframe>
+  <iframe src="https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/embed" title="Squiggly line theorem slides" width="640" height="389" frameBorder="0" allowFullScreen></iframe>
 </div>
 
-The short version: the idea is three claims in a chain, and only the first one holds.
+The short version: the idea is three claims in a chain. The first one holds, and for sines it is now a theorem. The other two fail.
 
-- (G) Geometry. A squigglier curve has a smaller nearest-point distance to random points. True.
+- (G) Geometry. A squigglier curve has a smaller nearest-point distance to random points. True, and proved for sines.
 - (P) Parameters. More parameters give a squigglier random function. False for width. Depth adds a little.
 - (L) Learning. A smaller nearest-point distance means a smaller training loss at the start. False.
 
-So a squigglier curve really is closer to random points, but only in a distance that training does not use. The conjecture as I defined it (more parameters, lower expected nearest-point loss at initialisation) is not true, and the idea does not explain why large networks learn fast. The link to the lottery ticket hypothesis and to double descent was always a claim in the deck, and I did not derive either effect. Below are the idea, my experiments, a correction to my derivation, and what published work says.
+So a squigglier curve really is closer to random points, but in a direction that the loss at the start does not see. A shift of the input can use that nearness, at the price of a steep curve. For a random-phase sine I can say this exactly, and that is the squiggly line theorem (see "What is proved in Lean"). I keep the name "squiggly line conjecture" for the idea of 2022: more parameters give a squigglier curve, which starts closer to the data and learns faster. As a statement about the initial loss it is false. For neural networks it is still a conjecture. There is one place where the idea is true: in parameter space, for models that are linear in their parameters, more parameters put a fit nearer to the random start, at an exchange rate of 1 / sqrt(c). That is the known lazy-training picture, not a new result. The link to the lottery ticket hypothesis and to double descent was always a claim in the deck, and I did not derive either effect. Below are the idea, my experiments, a correction to my derivation, and what published work says.
 
 ## The claim of the original deck
 
@@ -146,7 +146,7 @@ The figure is the same run as the table, with frequencies 0.5, 2, 8 and 32 added
 
 **The geometry holds.** The nearest-point distance falls by a factor of 30.
 
-**The learning claim fails.** The vertical error does not move. It stays between 0.6649 and 0.6688. A regression loss charges the vertical error. The wiggles let the curve pass near a point that is to the left or right of it, and training gets nothing for that. The squiggly line is closer to the data in a direction that gradient descent does not measure.
+**The learning claim fails.** The vertical error does not move. It stays between 0.6649 and 0.6688. A regression loss charges the vertical error. The wiggles let the curve pass near a point that is to the left or right of it, and the loss at the start gets nothing for that. The squiggly line is closer to the data in a direction that the loss does not measure at the start. A shift of the input can use it, as I describe under "Where it stands".
 
 **The flat column is an identity, not a finding.** The expected loss of a random function depends only on the distribution of f(x) at each single x. How f moves between two inputs does not enter. A random phase gives the sine the same distribution at every x, for every frequency. So the column must be flat, and the spread from 0.6649 to 0.6688 is sampling noise. The identity is enough to refute the learning claim for these curves: the nearest-point distance falls by a factor of 30, and the expected loss cannot move.
 
@@ -225,18 +225,43 @@ With the PyTorch default initialisation (smaller weights), the random curves are
 
 My reading: a longer curve is closer to the data in the nearest-point distance, but more parameters do not reliably give a longer curve. Width adds no length in this check. Depth adds some. This is claim (P) of the chain, and it fails for width. This agrees with the flat initial error in the experiments above.
 
+## Where the idea is true
+
+The sine family has one random number, so it cannot test a claim about parameter count. [`scripts/fourier_params.py`](https://github.com/Ghost---Shadow/squiggly-line-theorem/blob/main/scripts/fourier_params.py) uses a family where the count is the only dial: a Fourier series with m terms and random coefficients, scaled so that the output has the same variance at every m. There are 20 points with random labels, and a fit of all points exists once there are 20 parameters.
+
+<Table striped highlightOnHover withBorder withColumnBorders>
+  <thead>
+    <tr><th>Parameters</th><th>Initial MSE</th><th>Nearest-point distance</th><th>Travel to a fit</th><th>Gradient-descent steps</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>9</td><td>0.65</td><td>0.229</td><td>no fit</td><td>never</td></tr>
+    <tr><td>21</td><td>0.65</td><td>0.128</td><td>448</td><td>188 000 000</td></tr>
+    <tr><td>25</td><td>0.64</td><td>0.110</td><td>35.5</td><td>79 300</td></tr>
+    <tr><td>65</td><td>0.71</td><td>0.056</td><td>1.61</td><td>166</td></tr>
+    <tr><td>129</td><td>0.66</td><td>0.027</td><td>0.48</td><td>13</td></tr>
+    <tr><td>513</td><td>0.63</td><td>–</td><td>0.23</td><td>3</td></tr>
+  </tbody>
+</Table>
+
+"Travel" is the distance in parameter space from the random start to the nearest parameter vector that fits every point. "Steps" is plain gradient descent to a mean squared error of 0.001 with the largest stable step size.
+
+A larger random model does start closer to a trained one, and it trains in far fewer steps. But the closeness is in parameter space. The initial loss is the same at every size (0.63 to 0.71, sampling noise around 2/3), as the marginal lemma requires. The nearest-point distance also falls, like 1/parameters, because these random series get steeper as terms are added. The worst case is right at the threshold, 21 parameters for 20 points, which is where double descent has its peak.
+
+Far above the threshold, the travel is about sqrt(n x initial MSE / (m + 1)) for n points and m terms. That gives 0.45, 0.32 and 0.22 for 129, 257 and 513 parameters, against 0.48, 0.34 and 0.23 measured. So the distance in parameter space is the root of the loss, divided by a factor that grows like the root of the parameter count. This is the form in which my original idea is true. It is the known lazy-training picture, not a new result.
+
 ## What is proved in Lean
 
-The research repository now has [a Lean 4 project on Mathlib](https://github.com/Ghost---Shadow/squiggly-line-theorem/tree/main/lean). It states the conjecture and the learning claim. It proves four results:
+The research repository has [a Lean 4 project on Mathlib](https://github.com/Ghost---Shadow/squiggly-line-theorem/tree/main/lean). It states the conjecture and the learning claim and proves what follows. There is no `sorry` in the project, each theorem depends only on Lean's three standard axioms, and a GitHub workflow rebuilds the proofs on every change.
 
-- The slope sandwich.
-- The tube identity.
-- A regression loss sees only the distribution of f(x) at each single x (the one-point marginals).
-- The learning claim fails for random-phase sines of any amplitude and any frequencies, for every regression loss and every data distribution.
+- **The squiggly line theorem** (`squiggly_line_theorem`). For a random-phase sine A sin(w x + phi) and data whose labels lie inside the band the sine sweeps, at every data point and every phase, `vertical / sqrt(1 + (A w)^2) <= nearest <= pi / w`. The expected nearest-point distance tends to zero as the frequency grows. The expected loss, for every regression loss, is the same at every frequency.
+- **Its pieces.** The slope sandwich, the tube identity, the one-point marginals (a regression loss sees only the distribution of f(x) at each single x), and the covering bound (a function that reaches every label within rho of every input is within rho of the data).
+- **The verdict.** The learning claim fails for random-phase sines, for every regression loss and every data distribution.
+- **Parameter space, for models linear in their parameters.** A movement of size e buys the fraction e / d of the loss. Adding parameters never moves the nearest fit further away. When the features are orthogonal on the data with squared length c, the distance to the nearest fit is exactly the size of the residual divided by sqrt(c). Gradient descent follows the kernel, so two models with the same kernel have the same path and the same travel.
+- **ReLU chains.** A ReLU network with one neuron per layer never turns, L layers of two neurons make 2^L - 1 turns, ReLU in the plane acts as a polarizer, and L folds are one Fourier term of frequency 2^L. These are the narrow chain, polarizer, depth and bridge results.
 
-There is no `sorry` in the project, and the proofs use only the standard axioms.
+Not formalised: the exact constant 0.2974 for sines, the V / (4 l) bound, the rate at which travel falls with parameter count (about 1 / sqrt(parameters)), and anything about network width.
 
-Not formalised: that frequency lowers the nearest-point distance (this is measured only), the V / (4 l) bound, and anything about network width.
+I have also written [a draft of a paper](https://github.com/Ghost---Shadow/squiggly-line-theorem/blob/main/paper/main.pdf) with these results. It is a draft and it has not been reviewed.
 
 ## What published work says
 
@@ -284,22 +309,25 @@ Here are the places where I think the idea or the check can be wrong.
 
 ## Next steps
 
-The original question is answered, so these are new questions.
+The original question is answered, so these are new questions. The full list, with a status for each, is in [the open problems](https://github.com/Ghost---Shadow/squiggly-line-theorem/blob/main/docs/open-problems.md). Reachability is now addressed for models linear in their parameters (see "Where the idea is true"). For ReLU networks it would only repeat what the lazy-training work already says.
 
-1. Reachability. Does a larger network travel a shorter distance in weight space from its start to a fit? That is "starts closer" in the one space where it can be true.
-2. The lower tail. The mean initial error is flat in width. Is the chance of a low initial error also flat?
-3. Subnetworks. Compare the best subnetwork of a random network with the full network, on the vertical error.
-4. Training. Find out if a trained network keeps, removes or moves its kinks.
-5. Joint fit (untested). Score a joint fit of all the points, not single points. Under a random-function prior with kernel K, the cost of fitting labels y is y^T K^-1 y. For random labels its mean is tr(K^-1). At fixed amplitude this is smallest when K is the identity, that is, for the least correlated (squiggliest) prior. For smooth targets the order reverses. This is a proposal. I have not tested it.
+1. The lower tail. The mean initial error is flat in width. Is the chance of a low initial error also flat?
+2. Subnetworks. Compare the best subnetwork of a random network with the full network, on the vertical error.
+3. Training. Find out if a trained network keeps, removes or moves its kinks.
+4. Joint fit (untested). Score a joint fit of all the points, not single points. Under a random-function prior with kernel K, the cost of fitting labels y is y^T K^-1 y. For random labels its mean is tr(K^-1). At fixed amplitude this is smallest when K is the identity, that is, for the least correlated (squiggliest) prior. For smooth targets the order reverses. This is a proposal. I have not tested it.
 
 ## Where it stands
 
-The first version of this post said here that the conjecture is true, and true in a direction that training cannot use. That was too generous. The conjecture as I defined it says: more parameters, lower expected nearest-point loss at initialisation. It is not true, because width adds no curve length and no closeness. Of the three claims in the chain, only the first holds.
+The first version of this post said here that the conjecture is true, and true in a direction that training cannot use. Both halves needed correcting. Of the three claims in the chain, only the first holds. And the nearness can be used, as the last paragraph of this section says.
 
-- (G) A squigglier curve has a smaller nearest-point distance to random points. True.
+- (G) A squigglier curve has a smaller nearest-point distance to random points. True, and proved for sines.
 - (P) More parameters give a squigglier random function. False for width. Depth adds a little.
 - (L) A smaller nearest-point distance means a smaller training loss at the start. False.
 
-The vertical error, which training minimises, does not change with squiggliness, and a wider random network does not start with a lower loss. So the picture does not explain why large networks learn fast. The negative result is cleaner than the positive one would have been. I am not claiming priority for any of this. The next job is the reachability question.
+The accurate summary is four statements. There is a theorem for sines. The idea is true in parameter space, for models that are linear in their parameters: more parameters put a fit nearer to the random start, at an exchange rate of 1 / sqrt(c). It is false as a statement about the initial loss, because the vertical error, which training minimises, does not change with squiggliness, and a wider random network does not start with a lower loss. And for neural networks it is still a conjecture: how the oscillation scale of a random network depends on width, depth and weight scale is open. So the picture does not explain why large networks learn fast.
 
-Slides: [The Squiggly Line Conjecture (2026)](https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing) and [the original 2022 deck](https://docs.google.com/presentation/d/1hucbKOalHq7g2sTdvyAnd1pDTRlAkg48H2wFui5UQTg/edit?usp=sharing)
+The nearness is not useless, though. It can be cashed in by a small shift of the input: if the curve is within rho of a data point, shifting the input by at most rho makes the curve pass through that point. For one point this is a shift of the curve, which for a sine is a change of phase. For many points it needs a different small shift at each point, which is a small warp of the input, and that is what an earlier layer can do. This is proved: a curve that reaches every label within rho of every input fits any target after a warp that moves no input by more than rho. It is not shown that training finds the warp. The price is slope: a fit bought this way is steep and fragile.
+
+I am not claiming priority for any of this. The open problems are listed in the repository.
+
+Slides: [The Squiggly Line Theorem (2026)](https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing) and [the original 2022 deck](https://docs.google.com/presentation/d/1hucbKOalHq7g2sTdvyAnd1pDTRlAkg48H2wFui5UQTg/edit?usp=sharing)

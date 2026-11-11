@@ -15,7 +15,7 @@ export const blogRegistry = [
   },
   {
     slug: 'squiggly-line-conjecture',
-    title: 'The Squiggly Line Conjecture: An Idea From 2022 and What the Test Found',
+    title: 'The Squiggly Line Theorem: An Idea From 2022 and What the Test Found',
     component: React.lazy(() => import('../../blog/squiggly-line-conjecture/index.mdx')),
     date: '10 Nov 2026',
   },
