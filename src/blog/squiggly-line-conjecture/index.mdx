@@ -160,7 +160,7 @@ So the nearest-point distance can be far below the vertical error only when the 
 
 **Length outside the data region is worth nothing.** I stretched a straight line to the same length as the frequency-64 curve (209 units). Its distance was 0.50, against 0.02 for the squiggly curve. That is 24 times worse at the same length. But a straight line of length 209 over x in [-1, 1] has a slope of about 104, so about 99% of it lies above or below the data box. So this test shows that length outside the data region is worth nothing. It does not show that length is not the mechanism. By the tube bound above, length inside the region is required. What matters is that the length is inside the data region and spread across it.
 
-**Random networks agree.** This is the same identity. Under He initialisation, E[f(x)^2] of a random ReLU network is the same at every width. So the expected mean squared error before training is E[y^2] + E[f(x)^2] at every width. I measured it with [`scripts/initial_mse.py`](https://github.com/Ghost---Shadow/squiggly-line-conjecture/blob/main/scripts/initial_mse.py): 10 inputs, 200 points, x and y uniform on [-1, 1], two hidden layers, 200 random networks per width. The measured values were 1.07, 1.02, 1.07, 1.10 and 1.03 for widths 4, 16, 64, 256 and 1024, against a predicted 1.03 at every width. It is flat. A wider network does not start closer. The first version of this post quoted other numbers here (2.97 to 3.13). The script that produced them was not kept, so I measured again with a stated setup.
+**Random networks agree.** This is the same identity. Under He initialisation, E[f(x)^2] of a random ReLU network is the same at every width. So the expected mean squared error before training is E[y^2] + E[f(x)^2] at every width. I measured it with [`scripts/initial_mse.py`](https://github.com/Ghost---Shadow/squiggly-line-theorem/blob/main/scripts/initial_mse.py): 10 inputs, 200 points, x and y uniform on [-1, 1], two hidden layers, 200 random networks per width. The measured values were 1.07, 1.02, 1.07, 1.10 and 1.03 for widths 4, 16, 64, 256 and 1024, against a predicted 1.03 at every width. It is flat. A wider network does not start closer. The first version of this post quoted other numbers here (2.97 to 3.13). The script that produced them was not kept, so I measured again with a stated setup.
 
 <div style={{background: '#fff', padding: '12px', borderRadius: '8px', margin: '16px 0'}}>
   <img src={InitialMsePng} alt="Mean squared error before training of random ReLU networks at five widths. Every width is near the predicted value of 1.03." width="100%" />
@@ -227,7 +227,7 @@ My reading: a longer curve is closer to the data in the nearest-point distance, 
 
 ## What is proved in Lean
 
-The research repository now has [a Lean 4 project on Mathlib](https://github.com/Ghost---Shadow/squiggly-line-conjecture/tree/main/lean). It states the conjecture and the learning claim. It proves four results:
+The research repository now has [a Lean 4 project on Mathlib](https://github.com/Ghost---Shadow/squiggly-line-theorem/tree/main/lean). It states the conjecture and the learning claim. It proves four results:
 
 - The slope sandwich.
 - The tube identity.
