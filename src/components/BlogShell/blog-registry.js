@@ -75,7 +75,7 @@ export const blogRegistry = [
   },
   {
     slug: 'boron-nitrogen-catastrophe',
-    title: 'The Boron-Nitrogen Catastrophe: A Critical Gap in Beta Decay Verification',
+    title: 'RETRACTED: The Boron-Nitrogen Catastrophe: A Critical Gap in Beta Decay Verification',
     component: React.lazy(() => import('../../blog/boron-nitrogen-catastrophe/index.mdx')),
     date: '28 Oct 2025',
   },

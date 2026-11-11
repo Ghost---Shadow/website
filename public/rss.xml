@@ -5,7 +5,7 @@
     <link>https://ad-absurdum.me</link>
     <description>So many ideas so little time</description>
     <language>en-us</language>
-    <lastBuildDate>Tue, 10 Nov 2026 19:20:26 +0530</lastBuildDate>
+    <lastBuildDate>Wed, 11 Nov 2026 18:26:18 +0530</lastBuildDate>
     <ttl>1440</ttl>
     <atom:link href="https://ad-absurdum.me/rss.xml" rel="self" type="application/rss+xml" />
     <item>
@@ -93,18 +93,18 @@
       <description>src=&quot;/blog/how-to-make-a-ball-orbit-itself/ball_orbit_animation.html&quot;</description>
     </item>
     <item>
-      <title>The Boron-Nitrogen Catastrophe: A Critical Gap in Beta Decay Verification</title>
+      <title>RETRACTED: The Boron-Nitrogen Catastrophe: A Critical Gap in Beta Decay Verification</title>
       <link>https://ad-absurdum.me/blog/boron-nitrogen-catastrophe</link>
       <guid>https://ad-absurdum.me/blog/boron-nitrogen-catastrophe</guid>
       <pubDate>Tue, 28 Oct 2025 00:00:00 +0530</pubDate>
-      <description>Standard nuclear physics claims that Carbon-14 undergoes beta decay to produce Nitrogen-14:</description>
+      <description>Retracted on 11 Nov 2026. The central claim of this article, that carbon-14 decays into boron and that this explains boron in coal, oil and gas, does not survive a basic back-of-the-envelope check. I am leaving the original text below unedited so the record stays honest, but please do not treat i...</description>
     </item>
     <item>
       <title>X-Ray Data Pipeline: Ultra-High-Speed Communication Through Limestone Tubes</title>
       <link>https://ad-absurdum.me/blog/x-ray-data-pipelines</link>
       <guid>https://ad-absurdum.me/blog/x-ray-data-pipelines</guid>
       <pubDate>Sun, 26 Oct 2025 00:00:00 +0530</pubDate>
-      <description>A revolutionary approach to data transmission using X-ray beams through limestone/concrete tubes, potentially achieving **10-100 Tbps** per channel at a fraction of current infrastructure costs.</description>
+      <description>A revolutionary approach to data transmission using X-ray beams through limestone/concrete tubes, potentially achieving 10-100 Tbps per channel at a fraction of current infrastructure costs.</description>
     </item>
     <item>
       <title>The Universal Approximation Theorem Is Right. You&apos;re Using It Wrong.</title>

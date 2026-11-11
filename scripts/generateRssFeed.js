@@ -26,6 +26,8 @@ const extractDescription = async (slug) => {
     const linesAfterDate = dateIndex >= 0 ? lines.slice(dateIndex + 1) : lines;
 
     const cleanLine = (line) => line
+      .replace(/^\s*>\s*/, '') // Remove blockquote marker
+      .replace(/\*\*/g, '') // Remove bold markers
       .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Remove markdown links
       .replace(/<[^>]+>/g, '') // Remove HTML/JSX tags
       .replace(/\{[^}]+\}/g, '') // Remove JSX expressions
