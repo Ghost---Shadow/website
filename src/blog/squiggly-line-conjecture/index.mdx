@@ -4,6 +4,10 @@ import TubePng from './tube.png';
 import SineScalingPng from './sine_scaling.png';
 import CheckLengthPng from './check_length.png';
 import CheckDistPng from './check_dist.png';
+import TwoDistancesPng from './two_distances.png';
+import FrequencyPng from './frequency.png';
+import FloorPng from './floor.png';
+import InitialMsePng from './initial_mse.png';
 import { Table } from '@mantine/core';
 
 # The Squiggly Line Conjecture: An Idea From 2022 and What the Test Found
@@ -12,13 +16,21 @@ import { Table } from '@mantine/core';
 
 *A picture that was meant to tie together the lottery ticket hypothesis, double descent and faster learning in large networks. The geometry turned out to be true. The learning claim did not.*
 
+*Revised on 11 Nov 2026, after a review. The verdict is corrected: the conjecture as I defined it is not true. The tube derivation is replaced by an exact one, the initial-loss numbers are measured again with a script that is kept, the statements about length and about the wall are corrected, and there are new notes on a Lean formalisation and on a limit of the test.*
+
 In 2022, the year Stable Diffusion was released, I had an idea about why large networks learn fast. In 2025 I put it into [a slide deck](https://docs.google.com/presentation/d/1hucbKOalHq7g2sTdvyAnd1pDTRlAkg48H2wFui5UQTg/edit?usp=sharing) and wrote the first scripts. In 2026 I tested it properly and revised the deck. This post is the written version of [the 2026 slides](https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing).
 
 <div style={{display: 'flex', justifyContent: 'center'}}>
   <iframe src="https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/embed" title="Squiggly line conjecture slides" width="640" height="389" frameBorder="0" allowFullScreen></iframe>
 </div>
 
-The short version: a squigglier curve really is closer to random points, but only in a distance that training does not use. So the idea does not explain why large networks learn fast. The link to the lottery ticket hypothesis and to double descent was always a claim in the deck, and I did not derive either effect. Below are the idea, my experiments, a correction to my derivation, and what published work says.
+The short version: the idea is three claims in a chain, and only the first one holds.
+
+- (G) Geometry. A squigglier curve has a smaller nearest-point distance to random points. True.
+- (P) Parameters. More parameters give a squigglier random function. False for width. Depth adds a little.
+- (L) Learning. A smaller nearest-point distance means a smaller training loss at the start. False.
+
+So a squigglier curve really is closer to random points, but only in a distance that training does not use. The conjecture as I defined it (more parameters, lower expected nearest-point loss at initialisation) is not true, and the idea does not explain why large networks learn fast. The link to the lottery ticket hypothesis and to double descent was always a claim in the deck, and I did not derive either effect. Below are the idea, my experiments, a correction to my derivation, and what published work says.
 
 ## The claim of the original deck
 
@@ -79,23 +91,39 @@ Autoregression is chained classification, so the line returns. The hidden state 
 
 ## A correction to the original derivation
 
-In the 2026 review I found a sign error. The original deck took E[dist] about (1 - l*k*eps^(d-1)/V)^(1/d) and concluded diminishing returns from a positive second derivative. For d greater than 1 the second derivative in l is negative (a negative exponent does not flip the sign). So that formula gives increasing returns, the opposite of the slide's conclusion.
+In the 2026 review I found a sign error. The original deck took E[dist] about (1 - l * k * eps^(d-1) / V)^(1/d) and concluded diminishing returns from a positive second derivative. For d greater than 1 the second derivative in l is negative (a negative exponent does not flip the sign). So that formula gives increasing returns, the opposite of the slide's conclusion.
 
-Here is a corrected form. Let the tube grow until it fills the space. The graph of f is a surface of area l (for one input dimension, a curve of length l). So the tube is a slab of thickness V / l, and a random point is on average a quarter of that from the surface:
+Here is the exact form, the tube identity. The mean distance from a random point P to a set S is the probability that P is outside the tube of radius r around S, integrated over r:
 
 ```txt
-E[dist] ~ V / (4 l)
+E[dist(P, S)] = integral from r = 0 to infinity of Prob(P is outside the tube of radius r) dr
 ```
 
-This is convex in l. It gives diminishing returns, and zero distance only at infinite length. So the two conclusions stay, for a curve that can reach all the points.
+This replaces the (uncovered fraction)^(1/d) estimate of the original deck, which had no derivation. It also replaces the "slab" picture that the first version of this post used here.
 
-For a 1-D path in D dimensions, for example a hidden-state trajectory, the same argument gives (V / (k l))^(1/(D-1)). This falls very slowly when D is large.
+For one input dimension the graph of f is a curve of length l. A tube of radius r around it has area at most about 2 l r. So in a region of area V the mean distance is at least about
+
+```txt
+E[dist] >= V / (4 l)
+```
+
+with equality only for a curve that is spread evenly. So V / (4 l) is a lower bound, not an estimate. I call it the tube bound below. Length inside the data region is necessary for a small distance. It is not sufficient.
+
+The bound is above zero at every finite length, so zero distance needs infinite length. For an evenly spread curve the distance equals the bound, which is convex in l, so the returns diminish. So the two conclusions stay, for a curve that can reach all the points.
+
+For a 1-D path in D dimensions, for example a hidden-state trajectory, the same argument gives a bound of the order (V / (k l))^(1/(D-1)). This falls very slowly when D is large.
 
 ## What my experiments found
 
 I ran these in September 2026. The first scripts from 2025 had looked like support for the idea, but their measurement code was wrong. One "distance" was really a count of active neurons. One scaling law was the network output fading to zero. So I started again with one clean experiment.
 
 The experiment uses sine curves with one fixed amplitude and a random phase. Only the frequency changes, so at each x the curve has the same distribution of values for all frequencies. I measured two things against random points: the distance to the nearest point of the curve, and the vertical error |y - f(x)|.
+
+<div style={{background: '#fff', padding: '12px', borderRadius: '8px', margin: '16px 0'}}>
+  <img src={TwoDistancesPng} alt="The same 16 points beside a smooth curve and a squiggly curve, with a line from each point to the nearest point of the curve and a vertical line from each point to the curve" width="100%" />
+</div>
+
+This figure shows the two distances for one example: the same 16 points, a smooth curve and a squiggly curve. A blue line goes from a point to the nearest point of the curve. An orange line is the vertical error. On the squiggly curve the blue lines are much shorter (mean 0.03 against 0.23). The orange lines are not (mean 0.54 against 0.51).
 
 <Table striped highlightOnHover withBorder withColumnBorders>
   <thead>
@@ -110,15 +138,43 @@ The experiment uses sine curves with one fixed amplitude and a random phase. Onl
   </tbody>
 </Table>
 
+<div style={{background: '#fff', padding: '12px', borderRadius: '8px', margin: '16px 0'}}>
+  <img src={FrequencyPng} alt="Mean nearest-point distance and mean vertical error against frequency. The nearest-point distance falls 30 times. The vertical error is flat." width="100%" />
+</div>
+
+The figure is the same run as the table, with frequencies 0.5, 2, 8 and 32 added. The grey line is the lower bound of the slope sandwich, which I describe below.
+
 **The geometry holds.** The nearest-point distance falls by a factor of 30.
 
 **The learning claim fails.** The vertical error does not move. It stays between 0.6649 and 0.6688. A regression loss charges the vertical error. The wiggles let the curve pass near a point that is to the left or right of it, and training gets nothing for that. The squiggly line is closer to the data in a direction that gradient descent does not measure.
 
-**Length is not the mechanism.** I stretched a straight line to the same length as the frequency-64 curve (209 units). Its distance was 0.50, against 0.02 for the squiggly curve. That is 24 times worse at the same length. What matters is that the length is spread across the input range.
+**The flat column is an identity, not a finding.** The expected loss of a random function depends only on the distribution of f(x) at each single x. How f moves between two inputs does not enter. A random phase gives the sine the same distribution at every x, for every frequency. So the column must be flat, and the spread from 0.6649 to 0.6688 is sampling noise. The identity is enough to refute the learning claim for these curves: the nearest-point distance falls by a factor of 30, and the expected loss cannot move.
 
-**Random networks agree.** For random ReLU networks with 10 inputs and He initialisation, the mean squared error on 200 random points before training was 2.97, 2.98, 3.00, 3.13 and 2.99 for widths 4, 16, 64, 256 and 1024. It is flat. A wider network does not start closer.
+**The slope sandwich.** The two distances are tied together by the slope of the curve. If f is K-Lipschitz (its slope is never above K), then at every data point:
 
-**The wall is not at infinity.** The distance stops falling at a floor. The floor comes from the amplitude: the curve can never reach points outside the band that it sweeps. For my amplitude the floor was 0.017. It does not depend on the number of points. With a band that covers all the data, the distance keeps falling like 1/frequency.
+```txt
+vertical / sqrt(1 + K^2) <= nearest <= vertical
+```
+
+So the nearest-point distance can be far below the vertical error only when the curve is steep. A small nearest-point distance means that a small change of the input reaches the label.
+
+**Length outside the data region is worth nothing.** I stretched a straight line to the same length as the frequency-64 curve (209 units). Its distance was 0.50, against 0.02 for the squiggly curve. That is 24 times worse at the same length. But a straight line of length 209 over x in [-1, 1] has a slope of about 104, so about 99% of it lies above or below the data box. So this test shows that length outside the data region is worth nothing. It does not show that length is not the mechanism. By the tube bound above, length inside the region is required. What matters is that the length is inside the data region and spread across it.
+
+**Random networks agree.** This is the same identity. Under He initialisation, E[f(x)^2] of a random ReLU network is the same at every width. So the expected mean squared error before training is E[y^2] + E[f(x)^2] at every width. I measured it with [`scripts/initial_mse.py`](https://github.com/Ghost---Shadow/squiggly-line-conjecture/blob/main/scripts/initial_mse.py): 10 inputs, 200 points, x and y uniform on [-1, 1], two hidden layers, 200 random networks per width. The measured values were 1.07, 1.02, 1.07, 1.10 and 1.03 for widths 4, 16, 64, 256 and 1024, against a predicted 1.03 at every width. It is flat. A wider network does not start closer. The first version of this post quoted other numbers here (2.97 to 3.13). The script that produced them was not kept, so I measured again with a stated setup.
+
+<div style={{background: '#fff', padding: '12px', borderRadius: '8px', margin: '16px 0'}}>
+  <img src={InitialMsePng} alt="Mean squared error before training of random ReLU networks at five widths. Every width is near the predicted value of 1.03." width="100%" />
+</div>
+
+The bars are 2 standard errors up and down. The grey line is the predicted value.
+
+**The floor comes from the amplitude, and the wall stays at infinity.** At higher frequencies the distance stops falling at a floor. The floor comes from the amplitude: the curve can never reach points outside the band that it sweeps. For my amplitude the floor was 0.017. It does not depend on the number of points. With a band that covers all the data there is no floor. The distance keeps falling like 1/frequency: it tends to 0.2974 / frequency, where 0.2974 = (2 - 8/pi^2) / 4. So the wall is at infinity after all, as the original deck said. The first version of this post had the heading "The wall is not at infinity" here. My own control contradicted it.
+
+<div style={{background: '#fff', padding: '12px', borderRadius: '8px', margin: '16px 0'}}>
+  <img src={FloorPng} alt="Nearest-point distance against frequency for two amplitudes. With the narrow band the curve levels off at the floor. With the band that covers the data it keeps falling." width="100%" />
+</div>
+
+Blue is the amplitude of the experiment. Its band is from -0.82 to 0.82, and the distance levels off at the floor. Green is the control, with a band that covers the data. It follows 0.2974 / frequency and reaches 0.0012 at frequency 256.
 
 ## What a second small check found
 
@@ -141,7 +197,9 @@ First I took sine curves with 1, 2, 4, 8 and 16 periods in a box of side 2, and 
   </tbody>
 </Table>
 
-Distance times length stays between 1.2 and 1.6. So the distance falls like 1/length. The geometry part of the idea holds. The corrected formula above predicts a value of 1.0 for this product, and the measured values are 1.2 to 1.6.
+Distance times length stays between 1.2 and 1.6. So the distance falls like 1/length. The geometry part of the idea holds.
+
+The tube bound above says that this product is at least 1.0, with equality only for an evenly spread curve. The measured values are 1.2 to 1.6, and there is a reason. For a sine that spans the box, distance times length tends to 2 - 8/pi^2 = 1.19 at high frequency, because the strokes of a sine are not evenly spaced at each height. I measured 1.186 at 256 periods. The larger values at low frequency are finite-frequency corrections.
 
 <div style={{background: '#fff', padding: '12px', borderRadius: '8px', margin: '16px 0'}}>
   <img src={SineScalingPng} alt="Mean distance against curve length for sine curves" width="100%" />
@@ -165,7 +223,20 @@ Next I made 300 random ReLU networks of each size, with He-uniform weights. I re
 
 With the PyTorch default initialisation (smaller weights), the random curves are almost flat lines at every size. Their length is 2.0 to 2.1, where a flat line has length 2.0.
 
-My reading: a longer curve is closer to the data in the nearest-point distance, but more parameters do not reliably give a longer curve. Width adds no length in this check. Depth adds some. This agrees with the flat initial error in the experiments above.
+My reading: a longer curve is closer to the data in the nearest-point distance, but more parameters do not reliably give a longer curve. Width adds no length in this check. Depth adds some. This is claim (P) of the chain, and it fails for width. This agrees with the flat initial error in the experiments above.
+
+## What is proved in Lean
+
+The research repository now has [a Lean 4 project on Mathlib](https://github.com/Ghost---Shadow/squiggly-line-conjecture/tree/main/lean). It states the conjecture and the learning claim. It proves four results:
+
+- The slope sandwich.
+- The tube identity.
+- A regression loss sees only the distribution of f(x) at each single x (the one-point marginals).
+- The learning claim fails for random-phase sines of any amplitude and any frequencies, for every regression loss and every data distribution.
+
+There is no `sorry` in the project, and the proofs use only the standard axioms.
+
+Not formalised: that frequency lowers the nearest-point distance (this is measured only), the V / (4 l) bound, and anything about network width.
 
 ## What published work says
 
@@ -173,7 +244,7 @@ The summary first: published work backs the geometry (length and coverage) and d
 
 **Raghu et al., "On the Expressive Power of Deep Neural Networks"** ([ICML 2017](https://arxiv.org/abs/1606.05336)). The length of the image of an input path grows exponentially with depth when the weights are large. Width matters little. This is for the idea, for depth only.
 
-**Hanin, Jeong and Rolnick, "Deep ReLU Networks Preserve Expected Length"** ([ICLR 2022](https://arxiv.org/abs/2102.10492)). At standard (He) initialisation the expected length does not grow with depth. It shrinks slightly. This is against the random-initialisation form of the conjecture, if length is the mechanism. My straight-line test says that length was not the mechanism in any case.
+**Hanin, Jeong and Rolnick, "Deep ReLU Networks Preserve Expected Length"** ([ICLR 2022](https://arxiv.org/abs/2102.10492)). At standard (He) initialisation the expected length does not grow with depth. It shrinks slightly. This is against the random-initialisation form of the conjecture. My straight-line test does not remove this objection: by the tube bound, length inside the data region is required.
 
 **Dherin et al., "The Geometric Occam's Razor Implicit in Deep Learning"** ([2021](https://arxiv.org/abs/2111.15090)). It uses the same arc-length measure. SGD pushes the length down, and a trained 1-D ReLU network is near the shortest curve through the data. This is against "longer is better" after training.
 
@@ -191,9 +262,9 @@ The summary first: published work backs the geometry (length and coverage) and d
 
 ## The 2026 revision
 
-The first point is a result of my experiments. The other two are proposals with no test.
+The first point is a result of my experiments and of the tube bound. The other two are proposals with no test.
 
-1. Spread, not length or parameter count. A straight line of the same length does 24 times worse. Length helps only when it is spread across the input range.
+1. Length inside the data region and spread across it, not parameter count. Length is necessary: the mean distance is at least about V / (4 l). Length is not sufficient: a straight line of the same length has about 99% of its length outside the data box, and it does 24 times worse.
 2. Look at reachable curves, not one random curve. A larger network can reach more curves, by training or by a subnetwork search. Measure the coverage of that family.
 3. Training spends length. Published results show shorter curves and straighter token paths after training. So squiggliness can be a starting resource, not the end state.
 
@@ -203,11 +274,13 @@ Here are the places where I think the idea or the check can be wrong.
 
 1. The sign error described above.
 2. The graph of f is a surface, not a curve, when the input has more than one dimension. The "length" integral is then a surface area, and the tube volume is area times 2 eps.
-3. The original distance estimate, (uncovered fraction)^(1/d), is stated with no derivation.
-4. The loss is not the training loss. It is the distance to the nearest point of the curve. Regression trains on the vertical error, which is never smaller. My experiments measured this: the effect on the vertical error is zero. This is the erratum that ends the learning claim.
+3. The original distance estimate, (uncovered fraction)^(1/d), is stated with no derivation. The tube identity above replaces it.
+4. The loss is not the training loss. It is the distance to the nearest point of the curve. Regression trains on the vertical error, which is never smaller. For the sine curves the effect of squiggliness on the expected vertical error is zero, and this is an identity. This is the erratum that ends the learning claim.
 5. The data are assumed to fill the box. Real data lie near a function. A curve that covers all the space also fits noise, so generalisation is not addressed.
 6. The links to the lottery ticket hypothesis, double descent and faster learning are claims with no derivation.
-7. The experiments and the check are 1-D (the initial-loss table has 10 inputs). They are my own scripts, not a published benchmark.
+7. The experiments and the check are 1-D (the initial-loss measurement has 10 inputs). They are my own scripts, not a published benchmark.
+8. A numerical correction. The routine for the distance from a point to the curve picked the wrong stroke of the curve once the strokes were closer together than the sample spacing. This overestimated one control by 11% at frequency 1000. I fixed it on 11 Nov 2026. No number from the first version of this post changes: the frequency table is identical to every digit.
+9. The test family is limited. A random-phase sine has one degree of freedom. It can never fit more than two points at once, at any frequency. The mean nearest-point distance scores each point alone, so it cannot see this. That is why the number of points dropped out of every result. The lottery ticket hypothesis and double descent are about fitting n points jointly.
 
 ## Next steps
 
@@ -217,9 +290,16 @@ The original question is answered, so these are new questions.
 2. The lower tail. The mean initial error is flat in width. Is the chance of a low initial error also flat?
 3. Subnetworks. Compare the best subnetwork of a random network with the full network, on the vertical error.
 4. Training. Find out if a trained network keeps, removes or moves its kinks.
+5. Joint fit (untested). Score a joint fit of all the points, not single points. Under a random-function prior with kernel K, the cost of fitting labels y is y^T K^-1 y. For random labels its mean is tr(K^-1). At fixed amplitude this is smallest when K is the identity, that is, for the least correlated (squiggliest) prior. For smooth targets the order reverses. This is a proposal. I have not tested it.
 
 ## Where it stands
 
-The conjecture is true, and true in a direction that training cannot use. A squigglier curve is closer to random points in the nearest-point distance. The vertical error, which training minimises, does not change, and a wider random network does not start with a lower loss. So the picture does not explain why large networks learn fast. The negative result is cleaner than the positive one would have been. I am not claiming priority for any of this. The next job is the reachability question.
+The first version of this post said here that the conjecture is true, and true in a direction that training cannot use. That was too generous. The conjecture as I defined it says: more parameters, lower expected nearest-point loss at initialisation. It is not true, because width adds no curve length and no closeness. Of the three claims in the chain, only the first holds.
+
+- (G) A squigglier curve has a smaller nearest-point distance to random points. True.
+- (P) More parameters give a squigglier random function. False for width. Depth adds a little.
+- (L) A smaller nearest-point distance means a smaller training loss at the start. False.
+
+The vertical error, which training minimises, does not change with squiggliness, and a wider random network does not start with a lower loss. So the picture does not explain why large networks learn fast. The negative result is cleaner than the positive one would have been. I am not claiming priority for any of this. The next job is the reachability question.
 
 Slides: [The Squiggly Line Conjecture (2026)](https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing) and [the original 2022 deck](https://docs.google.com/presentation/d/1hucbKOalHq7g2sTdvyAnd1pDTRlAkg48H2wFui5UQTg/edit?usp=sharing)
