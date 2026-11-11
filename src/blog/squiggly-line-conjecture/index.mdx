@@ -19,7 +19,7 @@ import { Table } from '@mantine/core';
 
 *Revised on 11 Nov 2026, after a review. The verdict is corrected: the learning claim is false, and the idea as I defined it is not established for networks. The tube derivation is replaced by an exact one, the initial-loss numbers are measured again with a script that is kept, the statements about length and about the wall are corrected, and there are new notes on a Lean formalisation and on a limit of the test. Revised a second time on 11 Nov 2026: the geometric claim is now proved for sines, and the post is renamed from "The Squiggly Line Conjecture". Revised a third time on 11 Nov 2026: the theorem no longer needs the sine, the first two claims are proved for a constructed ReLU family, and there is a new section on double descent.*
 
-In 2022, the year Stable Diffusion was released, I had an idea about why large networks learn fast. In 2025 I put it into [a slide deck](https://docs.google.com/presentation/d/1hucbKOalHq7g2sTdvyAnd1pDTRlAkg48H2wFui5UQTg/edit?usp=sharing) and wrote the first scripts. In 2026 I tested it properly and revised the deck. This post is the written version of [the 2026 slides](https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing).
+In 2022, the year Stable Diffusion was released, I had an idea about why large networks learn fast. In 2025 I wrote the first scripts. In 2026 I tested it properly. There is also [a slide version](https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing).
 
 <div style={{display: 'flex', justifyContent: 'center'}}>
   <iframe src="https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/embed" title="Squiggly line theorem slides" width="640" height="389" frameBorder="0" allowFullScreen></iframe>
@@ -31,17 +31,17 @@ The short version: the idea is three claims in a chain. The first one holds, and
 - (P) Parameters. More parameters give a squigglier random function. False for width with random weights; depth adds a little. True for a constructed ReLU family.
 - (L) Learning. A smaller nearest-point distance means a smaller training loss at the start. False.
 
-So a squigglier curve really is closer to random points, but in a direction that the loss at the start does not see. A shift of the input can use that nearness, at the price of a steep curve. The squiggly line theorem says it for any function: squeeze it sideways by a factor w, and it gets closer to the data, steeper, and no better at the start. A sine with a random phase is the standard example (see "What is proved in Lean"). I keep the name "squiggly line conjecture" for the idea of 2022: more parameters give a squigglier curve, which starts closer to the data and learns faster. As a statement about the initial loss it is false. For neural networks, the first two claims are proved for a constructed ReLU family, and what is still open is the claim for networks with random weights. There is one place where the idea is true: in parameter space, for models that are linear in their parameters, more parameters put a fit nearer to the random start, at an exchange rate of 1 / sqrt(c). That is the known lazy-training picture, not a new result. The link to the lottery ticket hypothesis was always a claim in the deck, and I did not derive it. For double descent I now have a partly proved account of one model (see "Double descent"). Below are the idea, my experiments, a correction to my derivation, and what published work says.
+So a squigglier curve really is closer to random points, but in a direction that the loss at the start does not see. A shift of the input can use that nearness, at the price of a steep curve. The squiggly line theorem says it for any function: squeeze it sideways by a factor w, and it gets closer to the data, steeper, and no better at the start. A sine with a random phase is the standard example (see "What is proved in Lean"). I keep the name "squiggly line conjecture" for the idea of 2022: more parameters give a squigglier curve, which starts closer to the data and learns faster. As a statement about the initial loss it is false. For neural networks, the first two claims are proved for a constructed ReLU family, and what is still open is the claim for networks with random weights. There is one place where the idea is true: in parameter space, for models that are linear in their parameters, more parameters put a fit nearer to the random start, at an exchange rate of 1 / sqrt(c). That is the known lazy-training picture, not a new result. The link to the lottery ticket hypothesis was always a claim, and I did not derive it. For double descent I now have a partly proved account of one model (see "Double descent"). Below are the idea, my experiments, a correction to my derivation, and what published work says.
 
-## The claim of the original deck
+## The original claim
 
-The deck connects three puzzles of large networks in one geometric picture:
+The idea connects three puzzles of large networks in one geometric picture:
 
 - The lottery ticket hypothesis: a large random network contains a small subnetwork that trains well.
 - Double descent: test error falls, rises, then falls again as the model grows.
 - Why larger networks learn faster.
 
-The deck states this link as a claim. It does not derive the three effects.
+I stated this link as a claim. I did not derive the three effects.
 
 ## The core idea
 
@@ -66,7 +66,7 @@ l(f) = integral of sqrt(1 + ||grad f(x)||^2) dx
   <img src={CoreHighPng} alt="A long curve through the same scatter, with shorter distances from points to the curve" width="100%" />
 </div>
 
-The conjecture (Definition 3.1 in the deck): for two randomly initialised functions with parameter counts |theta_1| < |theta_2|, the expected loss E[L(f_theta_2, D)] is smaller than E[L(f_theta_1, D)]. More parameters, lower expected loss at initialisation.
+The conjecture: for two randomly initialised functions with parameter counts |theta_1| < |theta_2|, the expected loss E[L(f_theta_2, D)] is smaller than E[L(f_theta_1, D)]. More parameters, lower expected loss at initialisation.
 
 ### The tube argument
 
@@ -76,7 +76,7 @@ Draw a tube of radius epsilon around the curve. The volume of the tube grows in 
   <img src={TubePng} alt="A tube of radius epsilon drawn around a curve" width="100%" />
 </div>
 
-The original deck draws two conclusions from this. More length helps, but with diminishing returns. Perfect coverage needs infinite length: there is a wall, but it is at infinity. Also, a curve that folds or loops too tightly wastes length, because its tube overlaps itself.
+At first I drew two conclusions from this. More length helps, but with diminishing returns. Perfect coverage needs infinite length: there is a wall, but it is at infinity. Also, a curve that folds or loops too tightly wastes length, because its tube overlaps itself.
 
 ### ReLU networks
 
@@ -92,7 +92,7 @@ Autoregression is chained classification, so the line returns. The hidden state 
 
 ## A correction to the original derivation
 
-In the 2026 review I found a sign error. The original deck took E[dist] about (1 - l * k * eps^(d-1) / V)^(1/d) and concluded diminishing returns from a positive second derivative. For d greater than 1 the second derivative in l is negative (a negative exponent does not flip the sign). So that formula gives increasing returns, the opposite of the slide's conclusion.
+In the 2026 review I found a sign error. My first derivation took E[dist] about (1 - l * k * eps^(d-1) / V)^(1/d) and concluded diminishing returns from a positive second derivative. For d greater than 1 the second derivative in l is negative (a negative exponent does not flip the sign). So that formula gives increasing returns, the opposite of my first conclusion.
 
 Here is the exact form, the tube identity. The mean distance from a random point P to a set S is the probability that P is outside the tube of radius r around S, integrated over r:
 
@@ -100,7 +100,7 @@ Here is the exact form, the tube identity. The mean distance from a random point
 E[dist(P, S)] = integral from r = 0 to infinity of Prob(P is outside the tube of radius r) dr
 ```
 
-This replaces the (uncovered fraction)^(1/d) estimate of the original deck, which had no derivation. It also replaces the "slab" picture that the first version of this post used here.
+This replaces my first estimate, (uncovered fraction)^(1/d), which had no derivation. It also replaces the "slab" picture that the first version of this post used here.
 
 For one input dimension the graph of f is a curve of length l. A tube of radius r around it has area at most about 2 l r. So in a region of area V the mean distance is at least about
 
@@ -169,7 +169,7 @@ So the nearest-point distance can be far below the vertical error only when the 
 
 The bars are 2 standard errors up and down. The grey line is the predicted value.
 
-**The floor comes from the amplitude, and the wall stays at infinity.** At higher frequencies the distance stops falling at a floor. The floor comes from the amplitude: the curve can never reach points outside the band that it sweeps. For my amplitude the floor was 0.017. It does not depend on the number of points. With a band that covers all the data there is no floor. The distance keeps falling like 1/frequency: it tends to 0.2974 / frequency, where 0.2974 = (2 - 8/pi^2) / 4. So the wall is at infinity after all, as the original deck said. The first version of this post had the heading "The wall is not at infinity" here. My own control contradicted it.
+**The floor comes from the amplitude, and the wall stays at infinity.** At higher frequencies the distance stops falling at a floor. The floor comes from the amplitude: the curve can never reach points outside the band that it sweeps. For my amplitude the floor was 0.017. It does not depend on the number of points. With a band that covers all the data there is no floor. The distance keeps falling like 1/frequency: it tends to 0.2974 / frequency, where 0.2974 = (2 - 8/pi^2) / 4. So the wall is at infinity after all, as I first thought. The first version of this post had the heading "The wall is not at infinity" here. My own control contradicted it.
 
 <div style={{background: '#fff', padding: '12px', borderRadius: '8px', margin: '16px 0'}}>
   <img src={FloorPng} alt="Nearest-point distance against frequency for two amplitudes. With the narrow band the curve levels off at the floor. With the band that covers the data it keeps falling." width="100%" />
@@ -179,7 +179,7 @@ Blue is the amplitude of the experiment. Its band is from -0.82 to 0.82, and the
 
 ## What a second small check found
 
-I made this check in November 2026 for the deck revision, before I compared it with the experiments above. It has a 1-D input and no training. It measures only the nearest-point distance, so it tests the geometry and not the learning claim.
+I made this check in November 2026, before I compared it with the experiments above. It has a 1-D input and no training. It measures only the nearest-point distance, so it tests the geometry and not the learning claim.
 
 ### Reference curves
 
@@ -252,7 +252,7 @@ Far above the threshold, the travel is about sqrt(n x initial MSE / (m + 1)) for
 
 ## Double descent
 
-The 2022 deck said that the picture ties in with double descent, and it derived nothing. [`scripts/double_descent.py`](https://github.com/Ghost---Shadow/squiggly-line-theorem/blob/main/scripts/double_descent.py) fits the same Fourier model to 20 noisy points and scores it on fresh ones.
+The original idea said that the picture ties in with double descent, and derived nothing. [`scripts/double_descent.py`](https://github.com/Ghost---Shadow/squiggly-line-theorem/blob/main/scripts/double_descent.py) fits the same Fourier model to 20 noisy points and scores it on fresh ones.
 
 <Table striped highlightOnHover withBorder withColumnBorders>
   <thead>
@@ -357,4 +357,4 @@ The nearness is not useless, though. It can be cashed in by a small shift of the
 
 I am not claiming priority for any of this. The open problems are listed in the repository.
 
-Slides: [The Squiggly Line Theorem (2026)](https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing) and [the original 2022 deck](https://docs.google.com/presentation/d/1hucbKOalHq7g2sTdvyAnd1pDTRlAkg48H2wFui5UQTg/edit?usp=sharing)
+Slides: [The Squiggly Line Theorem](https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing)
