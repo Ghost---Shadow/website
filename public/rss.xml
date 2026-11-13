@@ -5,15 +5,15 @@
     <link>https://ad-absurdum.me</link>
     <description>So many ideas so little time</description>
     <language>en-us</language>
-    <lastBuildDate>Wed, 11 Nov 2026 22:39:58 +0530</lastBuildDate>
+    <lastBuildDate>Fri, 13 Nov 2026 10:51:46 +0530</lastBuildDate>
     <ttl>1440</ttl>
     <atom:link href="https://ad-absurdum.me/rss.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Causal-Consistency Training: An Idea From 2021 and the Research Since</title>
+      <title>Causal-Consistency Training: An Untested Idea and the Related Research</title>
       <link>https://ad-absurdum.me/blog/causal-consistency-training</link>
       <guid>https://ad-absurdum.me/blog/causal-consistency-training</guid>
       <pubDate>Tue, 10 Nov 2026 00:00:00 +0530</pubDate>
-      <description>In 2021 I put an idea into a slide deck and did not have time to build it. In 2026 I revised the deck. This post is the written version of the 2026 slides.</description>
+      <description>This post describes an idea that I have not built. It is the written version of the slides.</description>
     </item>
     <item>
       <title>InSQuaD: Picking In-Context Examples That Are Relevant and Diverse</title>
@@ -23,11 +23,11 @@
       <description>InSQuaD is a paper by Anay Majee, Rishabh Iyer and me at The University of Texas at Dallas. It was published at ICDM 2025. This post explains it for a reader who knows what an LLM prompt is, but not what submodularity is. The slides are public. The paper is on arXiv (the arXiv version is the long...</description>
     </item>
     <item>
-      <title>The Squiggly Line Theorem: An Idea From 2022 and What the Test Found</title>
+      <title>The Squiggly Line Theorem: An Idea and What the Test Found</title>
       <link>https://ad-absurdum.me/blog/squiggly-line-conjecture</link>
       <guid>https://ad-absurdum.me/blog/squiggly-line-conjecture</guid>
       <pubDate>Tue, 10 Nov 2026 00:00:00 +0530</pubDate>
-      <description>In 2022, the year Stable Diffusion was released, I had an idea about why large networks learn fast. In 2025 I put it into a slide deck and wrote the first scripts. In 2026 I tested it properly and revised the deck. This post is the written version of the 2026 slides.</description>
+      <description>I had an idea about why large networks learn fast. In 2026 I tested it properly. There is also a slide version.</description>
     </item>
     <item>
       <title>Appeasing the Machine Spirit: RLHF in In-Context Learning</title>

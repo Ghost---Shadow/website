@@ -11,7 +11,7 @@ import InitialMsePng from './initial_mse.png';
 import DoubleDescentPng from './double_descent.png';
 import { Table } from '@mantine/core';
 
-# The Squiggly Line Theorem: An Idea From 2022 and What the Test Found
+# The Squiggly Line Theorem: An Idea and What the Test Found
 
 <date>10 Nov 2026</date>
 
@@ -19,7 +19,7 @@ import { Table } from '@mantine/core';
 
 *Revised on 11 Nov 2026, after a review. The verdict is corrected: the learning claim is false, and the idea as I defined it is not established for networks. The tube derivation is replaced by an exact one, the initial-loss numbers are measured again with a script that is kept, the statements about length and about the wall are corrected, and there are new notes on a Lean formalisation and on a limit of the test. Revised a second time on 11 Nov 2026: the geometric claim is now proved for sines, and the post is renamed from "The Squiggly Line Conjecture". Revised a third time on 11 Nov 2026: the theorem no longer needs the sine, the first two claims are proved for a constructed ReLU family, and there is a new section on double descent.*
 
-In 2022, the year Stable Diffusion was released, I had an idea about why large networks learn fast. In 2025 I wrote the first scripts. In 2026 I tested it properly. There is also [a slide version](https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing).
+I had an idea about why large networks learn fast. In 2026 I tested it properly. There is also [a slide version](https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/edit?usp=sharing).
 
 <div style={{display: 'flex', justifyContent: 'center'}}>
   <iframe src="https://docs.google.com/presentation/d/1xFoVq8pzuHHCICbLZh_NTZbHF80gQJMp8VbFF8Pzskc/embed" title="Squiggly line theorem slides" width="640" height="389" frameBorder="0" allowFullScreen></iframe>
@@ -31,7 +31,7 @@ The short version: the idea is three claims in a chain. The first one holds, and
 - (P) Parameters. More parameters give a squigglier random function. False for width with random weights; depth adds a little. True for a constructed ReLU family.
 - (L) Learning. A smaller nearest-point distance means a smaller training loss at the start. False.
 
-So a squigglier curve really is closer to random points, but in a direction that the loss at the start does not see. A shift of the input can use that nearness, at the price of a steep curve. The squiggly line theorem says it for any function: squeeze it sideways by a factor w, and it gets closer to the data, steeper, and no better at the start. A sine with a random phase is the standard example (see "What is proved in Lean"). I keep the name "squiggly line conjecture" for the idea of 2022: more parameters give a squigglier curve, which starts closer to the data and learns faster. As a statement about the initial loss it is false. For neural networks, the first two claims are proved for a constructed ReLU family, and what is still open is the claim for networks with random weights. There is one place where the idea is true: in parameter space, for models that are linear in their parameters, more parameters put a fit nearer to the random start, at an exchange rate of 1 / sqrt(c). That is the known lazy-training picture, not a new result. The link to the lottery ticket hypothesis was always a claim, and I did not derive it. For double descent I now have a partly proved account of one model (see "Double descent"). Below are the idea, my experiments, a correction to my derivation, and what published work says.
+So a squigglier curve really is closer to random points, but in a direction that the loss at the start does not see. A shift of the input can use that nearness, at the price of a steep curve. The squiggly line theorem says it for any function: squeeze it sideways by a factor w, and it gets closer to the data, steeper, and no better at the start. A sine with a random phase is the standard example (see "What is proved in Lean"). I keep the name "squiggly line conjecture" for the original idea: more parameters give a squigglier curve, which starts closer to the data and learns faster. As a statement about the initial loss it is false. For neural networks, the first two claims are proved for a constructed ReLU family, and what is still open is the claim for networks with random weights. There is one place where the idea is true: in parameter space, for models that are linear in their parameters, more parameters put a fit nearer to the random start, at an exchange rate of 1 / sqrt(c). That is the known lazy-training picture, not a new result. The link to the lottery ticket hypothesis was always a claim, and I did not derive it. For double descent I now have a partly proved account of one model (see "Double descent"). Below are the idea, my experiments, a correction to my derivation, and what published work says.
 
 ## The original claim
 
@@ -116,7 +116,7 @@ For a 1-D path in D dimensions, for example a hidden-state trajectory, the same 
 
 ## What my experiments found
 
-I ran these in September 2026. The first scripts from 2025 had looked like support for the idea, but their measurement code was wrong. One "distance" was really a count of active neurons. One scaling law was the network output fading to zero. So I started again with one clean experiment.
+I ran these in September 2026. My first scripts had looked like support for the idea, but their measurement code was wrong. One "distance" was really a count of active neurons. One scaling law was the network output fading to zero. So I started again with one clean experiment.
 
 The experiment uses sine curves with one fixed amplitude and a random phase. Only the frequency changes, so at each x the curve has the same distribution of values for all frequencies. I measured two things against random points: the distance to the nearest point of the curve, and the vertical error |y - f(x)|.
 

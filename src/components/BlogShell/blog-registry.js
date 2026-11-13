@@ -3,7 +3,7 @@ import React from 'react';
 export const blogRegistry = [
   {
     slug: 'causal-consistency-training',
-    title: 'Causal-Consistency Training: An Idea From 2021 and the Research Since',
+    title: 'Causal-Consistency Training: An Untested Idea and the Related Research',
     component: React.lazy(() => import('../../blog/causal-consistency-training/index.mdx')),
     date: '10 Nov 2026',
   },
@@ -15,7 +15,7 @@ export const blogRegistry = [
   },
   {
     slug: 'squiggly-line-conjecture',
-    title: 'The Squiggly Line Theorem: An Idea From 2022 and What the Test Found',
+    title: 'The Squiggly Line Theorem: An Idea and What the Test Found',
     component: React.lazy(() => import('../../blog/squiggly-line-conjecture/index.mdx')),
     date: '10 Nov 2026',
   },

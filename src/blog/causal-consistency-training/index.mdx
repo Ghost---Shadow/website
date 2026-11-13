@@ -1,10 +1,10 @@
-# Causal-Consistency Training: An Idea From 2021 and the Research Since
+# Causal-Consistency Training: An Untested Idea and the Related Research
 
 <date>10 Nov 2026</date>
 
 *A training objective that asks a language model to agree with itself across documents. Nothing here is implemented or measured.*
 
-In 2021 I had an idea and did not have time to build it. In 2026 I revised it. This post is the written version of [the slides](https://docs.google.com/presentation/d/1gSwNj3VmGG-11UbirovTkRNc0zRZEkNEETYd88vZfYs/edit?usp=sharing).
+This post describes an idea that I have not built. It is the written version of [the slides](https://docs.google.com/presentation/d/1gSwNj3VmGG-11UbirovTkRNc0zRZEkNEETYd88vZfYs/edit?usp=sharing).
 
 <div style={{display: 'flex', justifyContent: 'center'}}>
   <iframe src="https://docs.google.com/presentation/d/1gSwNj3VmGG-11UbirovTkRNc0zRZEkNEETYd88vZfYs/embed" title="Causal-consistency training slides" width="640" height="389" frameBorder="0" allowFullScreen></iframe>
@@ -64,11 +64,11 @@ I tested this in a playground with few-shot prompts, on the base model. The back
 
 In the first example, the model wrote "There has been a lack of rainfall recently" as the cause of "The plants in the garden started to wilt". That is a good cause. But when I gave it that cause and asked for the effect, it picked "Tim got a promotion at work" over the original line.
 
-In a second example, which I added to my notes in 2023, the cause was "The hurricane is expected to hit the Florida coast". The model had abduced it from a line about a FEMA team. Then it matched this cause to an unrelated news line about arrests in Germany.
+In a second example, the cause was "The hurricane is expected to hit the Florida coast". The model had abduced it from a line about a FEMA team. Then it matched this cause to an unrelated news line about arrests in Germany.
 
 These are two examples. They are not a measured error rate. They only show me that the model's forward and backward steps can disagree, so a loss on that disagreement has something to push against.
 
-## Related work since 2021
+## Related work
 
 Each paper below covers one part of the idea. I list them from closest in motivation to furthest.
 
@@ -92,7 +92,7 @@ I did a literature search in November 2026. A search can miss papers, so read th
 - Root-cause convergence of repeated "why" as a training structure, or as a test.
 - A causal inverse pair, cause and effect. The published cycles use question and answer, or token order.
 
-## The 2026 revision
+## The revised design
 
 These are proposals. None of them is tested.
 
@@ -102,7 +102,7 @@ Two failure modes from later papers changed my thinking.
 
 **Leakage.** The model can recover the line from shared words, not from the causal relation. See Cycle-Consistent Search ([arXiv 2604.12967](https://arxiv.org/abs/2604.12967)). If the abduced cause copies words from the line, the "therefore" step is a string match and teaches nothing about cause.
 
-So the revised version differs from 2021 in four ways:
+So the revised design differs from the first design in four ways:
 
 1. The distractor comes from the same document, not a random corpus line. A random line is too easy to rule out by topic.
 2. The cycle loss is added to the standard language-model loss, which acts as an anchor against collapse.
@@ -111,7 +111,7 @@ So the revised version differs from 2021 in four ways:
 
 ### How I would evaluate it
 
-- Paraphrase consistency: SQuAD with paraphrased questions. This was the 2021 plan.
+- Paraphrase consistency: SQuAD with paraphrased questions. This was the first plan.
 - Accuracy on the Reversal Curse test set.
 - Root-cause convergence: the share of "why" chains from one story that end at the same cause.
 - A guard that task accuracy does not go down.
@@ -146,7 +146,7 @@ Nothing here is tested, so I went looking for places where the idea can be wrong
 
 1. Position bias. In both playground examples the model picked the first option in the list. That alone can explain the two failures, with no failure of causal reasoning.
 2. Sampling noise. Two different answers about a favourite president can come from sampling at a non-zero temperature. They do not prove two beliefs.
-3. Earlier work. ATOMIC and COMET (2019) generate "intent" and "effect" relations for events. Abductive NLI (2020) and round-trip consistency for question answering (2019) are also before 2021. The idea was not the first of its kind in 2021.
+3. Earlier work. ATOMIC and COMET (2019) generate "intent" and "effect" relations for events. Abductive NLI (2020) and round-trip consistency for question answering (2019) are older. The idea is not the first of its kind.
 4. A special case. Repeated "why" converges in the Three Little Pigs because there is one character with one motive. In general the chains branch, loop, or do not end.
 
 **In the objective**
@@ -158,6 +158,6 @@ Nothing here is tested, so I went looking for places where the idea can be wrong
 
 ## Where it stands
 
-I proposed this in 2021, and the closest training methods that I found came three years later. Work on generating causes and effects is older than that (see the errata above). I am not claiming priority. The papers above cover the parts well, and my claim is only that the discriminative cycle over a causal inverse pair did not show up in my search. The next job is the small synthetic corpus.
+Work on generating causes and effects is older than this idea (see the errata above). I am not claiming priority. The papers above cover the parts well, and my claim is only that the discriminative cycle over a causal inverse pair did not show up in my search. The next job is the small synthetic corpus.
 
 Slides: [Causal-consistency training](https://docs.google.com/presentation/d/1gSwNj3VmGG-11UbirovTkRNc0zRZEkNEETYd88vZfYs/edit?usp=sharing)
