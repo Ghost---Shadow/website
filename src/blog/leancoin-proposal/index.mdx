@@ -27,11 +27,97 @@ LeanCoin's answer is to stop asking proofs to secure the chain. Proofs get their
 
 LeanCoin has two layers: a conventional consensus layer that secures the ledger, and a Lean layer where the kernel settles bounties and contracts.
 
+<svg viewBox="0 0 680 400" role="img" aria-label="LeanCoin has two layers. The consensus layer, made of stakers and validators and the ledger, secures the chain. The Lean layer, made of the bounty market, the Lean kernel and smart contracts, settles proofs. Validators run the kernel and the ledger only records its results." style={{ width: '100%', height: 'auto', display: 'block', margin: '1.5rem 0' }} fontFamily="sans-serif">
+  <defs>
+    <marker id="lc-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+    </marker>
+  </defs>
+  <rect x="10" y="10" width="660" height="150" rx="10" fill="#2e86ab" fillOpacity="0.1" stroke="#2e86ab" strokeWidth="1.5" />
+  <text x="28" y="34" fontSize="14" fontWeight="bold" fill="currentColor">Consensus layer: secures the ledger</text>
+  <g fill="none" stroke="currentColor" strokeWidth="1.5">
+    <rect x="40" y="60" width="270" height="76" rx="8" />
+    <rect x="370" y="60" width="270" height="76" rx="8" />
+  </g>
+  <g fill="currentColor" fontSize="13" textAnchor="middle">
+    <text x="175" y="92" fontWeight="bold">Stakers and validators</text>
+    <text x="175" y="112">stake LEAN, produce blocks</text>
+    <text x="505" y="92" fontWeight="bold">Ledger</text>
+    <text x="505" y="112">balances, escrow, fees</text>
+  </g>
+  <g fill="currentColor" fontSize="12.5">
+    <text x="20" y="190" fontStyle="italic">Proofs never touch block production, so proof difficulty cannot weaken security.</text>
+  </g>
+  <line x1="505" y1="250" x2="505" y2="164" stroke="currentColor" strokeWidth="1.5" strokeDasharray="5 4" markerEnd="url(#lc-arrow)" />
+  <rect x="150" y="208" width="340" height="28" rx="6" fill="currentColor" fillOpacity="0.07" />
+  <text x="480" y="227" fontSize="12.5" textAnchor="end" fill="currentColor">Validators run the kernel; the ledger only records results</text>
+  <rect x="10" y="250" width="660" height="140" rx="10" fill="#c0392b" fillOpacity="0.08" stroke="#c0392b" strokeWidth="1.5" />
+  <text x="28" y="274" fontSize="14" fontWeight="bold" fill="currentColor">Lean layer: settles proofs</text>
+  <g fill="none" stroke="currentColor" strokeWidth="1.5">
+    <rect x="40" y="296" width="180" height="76" rx="8" />
+    <rect x="250" y="296" width="180" height="76" rx="8" />
+    <rect x="460" y="296" width="180" height="76" rx="8" />
+  </g>
+  <g fill="currentColor" fontSize="13" textAnchor="middle">
+    <text x="130" y="328" fontWeight="bold">Bounty market</text>
+    <text x="130" y="348">statements and rewards</text>
+    <text x="340" y="328" fontWeight="bold">Lean kernel</text>
+    <text x="340" y="348">judge of every proof</text>
+    <text x="550" y="328" fontWeight="bold">Smart contracts</text>
+    <text x="550" y="348">code plus a proved spec</text>
+  </g>
+  <line x1="220" y1="334" x2="248" y2="334" stroke="currentColor" strokeWidth="1.5" markerEnd="url(#lc-arrow)" />
+  <line x1="460" y1="334" x2="432" y2="334" stroke="currentColor" strokeWidth="1.5" markerEnd="url(#lc-arrow)" />
+</svg>
+
 Validators run the kernel on every revealed proof and contract spec, and the consensus layer only records the results, so proof difficulty never affects block production.
 
 ## Proof bounty market
 
 Anyone can post a Lean statement with a token reward, and the first valid proof collects it. The kernel decides validity, so payout needs no human judge.
+
+<svg viewBox="0 0 680 300" role="img" aria-label="Life of a bounty in four steps. One, a sponsor posts a Lean statement and escrows the reward. Two, a prover commits a hash of the proof bound to their address. Three, after a delay the prover reveals the proof and validators run the Lean kernel on it. Four, if the proof type-checks and uses only approved axioms, escrow releases to the prover. A review window lets anyone flag a bad statement before payout." style={{ width: '100%', height: 'auto', display: 'block', margin: '1.5rem 0' }} fontFamily="sans-serif">
+  <defs>
+    <marker id="lc-arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+    </marker>
+  </defs>
+  <g fill="none" stroke="currentColor" strokeWidth="1.5">
+    <rect x="10" y="30" width="150" height="110" rx="10" />
+    <rect x="190" y="30" width="150" height="110" rx="10" />
+    <rect x="370" y="30" width="150" height="110" rx="10" />
+    <rect x="550" y="30" width="120" height="110" rx="10" fill="#2e86ab" fillOpacity="0.12" stroke="#2e86ab" />
+  </g>
+  <g fill="currentColor" fontSize="12.5" textAnchor="middle">
+    <text x="85" y="56" fontWeight="bold" fontSize="14">1. Post</text>
+    <text x="85" y="80">Sponsor submits a</text>
+    <text x="85" y="97">Lean statement and</text>
+    <text x="85" y="114">escrows the reward</text>
+    <text x="265" y="56" fontWeight="bold" fontSize="14">2. Commit</text>
+    <text x="265" y="80">Prover publishes a</text>
+    <text x="265" y="97">hash of the proof,</text>
+    <text x="265" y="114">bound to their address</text>
+    <text x="445" y="56" fontWeight="bold" fontSize="14">3. Reveal</text>
+    <text x="445" y="80">After a delay the proof</text>
+    <text x="445" y="97">is shown; validators run</text>
+    <text x="445" y="114">the Lean kernel on it</text>
+    <text x="610" y="56" fontWeight="bold" fontSize="14">4. Pay</text>
+    <text x="610" y="80">Type-checks, no</text>
+    <text x="610" y="97">bad axioms:</text>
+    <text x="610" y="114">escrow releases</text>
+  </g>
+  <g stroke="currentColor" strokeWidth="1.5">
+    <line x1="160" y1="85" x2="188" y2="85" markerEnd="url(#lc-arrow2)" />
+    <line x1="340" y1="85" x2="368" y2="85" markerEnd="url(#lc-arrow2)" />
+    <line x1="520" y1="85" x2="548" y2="85" markerEnd="url(#lc-arrow2)" />
+  </g>
+  <rect x="10" y="165" width="660" height="44" rx="8" fill="#c0392b" fillOpacity="0.1" stroke="#c0392b" strokeWidth="1.5" strokeDasharray="6 4" />
+  <text x="340" y="192" fontSize="12.5" textAnchor="middle" fill="currentColor">Review window before payout: anyone can flag a vacuous, false or mis-specified statement</text>
+  <g fill="currentColor" fontSize="12.5">
+    <text x="10" y="244">Commit-reveal stops front-running. The axiom allow-list rejects sorry and cheating.</text>
+    <text x="10" y="266">First valid reveal wins; milestones (lemmas) let provers split the work.</text>
+  </g>
+</svg>
 
 1. **Post.** A sponsor submits a Lean statement (a `theorem` type, with its definitions) and escrows the reward on chain.
 2. **Commit.** A prover publishes a hash of the proof bound to their own address, which prevents front-running.
@@ -147,6 +233,47 @@ The largest risk is proving the wrong thing, not breaking the chain.
 ## Roadmap
 
 LeanCoin moves through four phases, and each gate must clear before the next phase starts. Phases are not drawn to scale, and dates are left open until the research phase settles the cost model.
+
+<svg viewBox="0 0 680 230" role="img" aria-label="Roadmap: four phases in order, research, test network, audit and mainnet, separated by three gates. Gate one fixes the open parameters. Gate two proves the bounty market on the test network. Gate three is an outside audit before any mainnet launch." style={{ width: '100%', height: 'auto', display: 'block', margin: '1.5rem 0' }} fontFamily="sans-serif">
+  <g fill="none" stroke="currentColor" strokeWidth="1.5">
+    <rect x="10" y="50" width="130" height="70" rx="10" />
+    <rect x="190" y="50" width="130" height="70" rx="10" />
+    <rect x="370" y="50" width="130" height="70" rx="10" />
+    <rect x="550" y="50" width="120" height="70" rx="10" fill="#2e86ab" fillOpacity="0.12" stroke="#2e86ab" />
+  </g>
+  <g fill="currentColor" fontSize="13" textAnchor="middle">
+    <text x="75" y="78" fontWeight="bold" fontSize="14">Research</text>
+    <text x="75" y="99">cost model</text>
+    <text x="255" y="78" fontWeight="bold" fontSize="14">Test network</text>
+    <text x="255" y="99">bounty market</text>
+    <text x="435" y="78" fontWeight="bold" fontSize="14">Audit</text>
+    <text x="435" y="99">outside review</text>
+    <text x="610" y="78" fontWeight="bold" fontSize="14">Mainnet</text>
+    <text x="610" y="99">launch</text>
+  </g>
+  <g stroke="currentColor" strokeWidth="1.5">
+    <line x1="140" y1="85" x2="190" y2="85" />
+    <line x1="320" y1="85" x2="370" y2="85" />
+    <line x1="500" y1="85" x2="550" y2="85" />
+  </g>
+  <g fill="#c0392b" stroke="#c0392b">
+    <path d="M165 70 L180 85 L165 100 L150 85 z" />
+    <path d="M345 70 L360 85 L345 100 L330 85 z" />
+    <path d="M525 70 L540 85 L525 100 L510 85 z" />
+  </g>
+  <g fill="currentColor" fontSize="12.5" textAnchor="middle">
+    <text x="165" y="140" fontWeight="bold" fill="#c0392b">Gate 1</text>
+    <text x="165" y="158">Open parameters</text>
+    <text x="165" y="174">are fixed</text>
+    <text x="345" y="140" fontWeight="bold" fill="#c0392b">Gate 2</text>
+    <text x="345" y="158">Bounty market works</text>
+    <text x="345" y="174">on the test network</text>
+    <text x="525" y="140" fontWeight="bold" fill="#c0392b">Gate 3</text>
+    <text x="525" y="158">Outside audit</text>
+    <text x="525" y="174">passes</text>
+  </g>
+  <text x="10" y="212" fontSize="12.5" fontStyle="italic" fill="currentColor">Each gate must clear before the next phase starts. Phases are not to scale; dates stay open.</text>
+</svg>
 
 The first gate fixes the open parameters, the second proves the bounty market on a test network, and the third requires an outside audit before any mainnet launch.
 
