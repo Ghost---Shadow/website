@@ -2,6 +2,12 @@ import React from 'react';
 
 export const blogRegistry = [
   {
+    slug: 'leancoin-proposal',
+    title: 'LeanCoin: Proposal',
+    component: React.lazy(() => import('../../blog/leancoin-proposal/index.mdx')),
+    date: '23 Nov 2026',
+  },
+  {
     slug: 'causal-consistency-training',
     title: 'Causal-Consistency Training: An Untested Idea and the Related Research',
     component: React.lazy(() => import('../../blog/causal-consistency-training/index.mdx')),
